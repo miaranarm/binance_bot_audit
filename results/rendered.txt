@@ -12,12 +12,12 @@ Sign Up
 Trading Bots
 Deploy bots for seamless crypto trading automation. Discover and replicate top strategies on Binance.
 Active Strategies
-134,672
+134,589
 Total Value
 $8.54B
-Spot Trading Bots × bStocks Trading Competition – Share 18,000 USDT Prize Pool!
-More details
-2 / 2
+Discover Our Trading Bots
+Learn More
+1 / 2
 All
 Spot
 Futures
@@ -64,11 +64,11 @@ Create
 30d APR
 809.38%
 Spread Rate
-1.2681%
+1.2295%
 Next Funding
--0.13301%
+-0.14246%
 Countdown
-00:23:10
+00:08:18
 B
 GTCUSDT
 Perp
@@ -82,11 +82,11 @@ Create
 30d APR
 37.59%
 Spread Rate
-0.7275%
+0.6830%
 Next Funding
--0.62492%
+-0.60974%
 Countdown
-03:23:10
+03:08:18
 B
 SANDUSDT
 Perp
@@ -100,11 +100,11 @@ Create
 30d APR
 46.68%
 Spread Rate
--0.0132%
+-0.0914%
 Next Funding
--0.10440%
+-0.09649%
 Countdown
-03:23:10
+03:08:18
 B
 ONEUSDT
 Perp
@@ -118,11 +118,11 @@ Create
 30d APR
 892.30%
 Spread Rate
-1.8880%
+1.8214%
 Next Funding
--0.36296%
+-0.36553%
 Countdown
-03:23:10
+03:08:18
 B
 2ZUSDT
 Perp
@@ -136,11 +136,11 @@ Create
 30d APR
 54.90%
 Spread Rate
-0.2633%
+0.1969%
 Next Funding
--0.08628%
+-0.08251%
 Countdown
-03:23:10
+03:08:18
 B
 ENJUSDT
 Perp
@@ -154,11 +154,11 @@ Create
 30d APR
 8.51%
 Spread Rate
-0.0907%
+0.1502%
 Next Funding
--0.01220%
+-0.01371%
 Countdown
-03:23:10
+03:08:18
 B
 MANAUSDT
 Perp
@@ -172,11 +172,11 @@ Create
 30d APR
 6.49%
 Spread Rate
-0.1055%
+0.1342%
 Next Funding
--0.03793%
+-0.03611%
 Countdown
-03:23:10
+03:08:18
 B
 SCRUSDT
 Perp
@@ -190,11 +190,11 @@ Create
 30d APR
 2.59%
 Spread Rate
--0.0399%
+0.1587%
 Next Funding
-0.00313%
+0.00486%
 Countdown
-03:23:10
+03:08:18
 B
 QNTUSDT
 Perp
@@ -209,11 +209,11 @@ Create
 4.74%
 30d APR = | Average (Last 720hr Funding Rate%) | / Funding Interval * 24 * 365
 Spread Rate
-0.9701%
+0.6353%
 Next Funding
--0.15400%
+-0.15592%
 Countdown
-03:23:10
+03:08:18
 1
 2
 3
@@ -223,7 +223,7 @@ Countdown
 46
 Hot Coin Leaderboard
 Trending Market Top 10
-Last updated on 2026-10-04 11:36:30.
+Last updated on 2026-10-04 12:36:30.
 USDⓈ-M
 Spot Grid
 Futures Grid
@@ -233,28 +233,28 @@ Neutral / Long / Short Ratio
 Action
 ETHUSDT
 Perp
-2,633
-744 : 1,573 : 316
+2,628
+739 : 1,573 : 316
 Create
 BTCUSDT
 Perp
-2,099
-689 : 1,116 : 294
+2,097
+690 : 1,112 : 295
 Create
 SOLUSDT
 Perp
-1,476
-480 : 832 : 164
+1,473
+479 : 830 : 164
 Create
 BNBUSDT
 Perp
-1,250
-368 : 744 : 138
+1,244
+362 : 745 : 137
 Create
 XRPUSDT
 Perp
-1,008
-479 : 458 : 71
+1,007
+475 : 460 : 72
 Create
 XAUUSDT
 Perp
@@ -263,23 +263,23 @@ Perp
 Create
 ZECUSDT
 Perp
-921
-189 : 232 : 500
+923
+189 : 234 : 500
 Create
 SPCXUSDT
 Perp
-889
-122 : 636 : 131
+892
+123 : 639 : 130
 Create
 ETHUSDC
 Perp
 788
-142 : 504 : 142
+143 : 503 : 142
 Create
 DOGEUSDT
 Perp
-681
-250 : 385 : 46
+677
+248 : 383 : 46
 Create
 1
 2
@@ -289,7 +289,7 @@ Create
 ...
 79
 Volatility Top 10
-Last updated on 2026-10-04 11:36:30.
+Last updated on 2026-10-04 12:36:30.
 USDⓈ-M
 Spot Grid
 Futures Grid
@@ -301,62 +301,62 @@ Action
 AINUSDT
 Perp
 6.98
-0.0564100
-+143.56%
+0.0558100
++140.14%
 Create
 龙虾USDT
 Perp
-5.07
-0.0458700
--7.63%
+5.06
+0.0453500
+-6.51%
 Create
 LSKUSDT
 Perp
 4.48
-0.267150
--4.84%
+0.265980
+-4.77%
 Create
 AKEUSDT
 Perp
 4.23
-0.0347310
-+7.69%
+0.0344850
++6.30%
 Create
 QUSDT
 Perp
 4.17
-0.0215350
--1.38%
+0.0214960
+-1.97%
 Create
 BULLAUSDT
 Perp
 4.13
-0.0823300
-+0.34%
+0.0840000
++3.00%
 Create
 ONEUSDT
 Perp
 3.69
-0.0023516
--1.30%
+0.0023443
+-4.52%
 Create
 BTWUSDT
 Perp
 3.68
-1.1734000
--18.70%
+1.1791000
+-18.28%
 Create
 BRUSDT
 Perp
 3.60
-0.4636400
--21.14%
+0.4620100
+-21.19%
 Create
 SAGAUSDT
 Perp
 3.53
-0.0226700
-+0.57%
+0.0226300
+-0.04%
 Create
 1
 2
