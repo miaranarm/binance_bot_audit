@@ -16,12 +16,11 @@ jobs:
         with: {python-version: "3.11"}
       - run: pip install -r requirements.txt
       - run: playwright install --with-deps chromium
-      - run: python src/audit.py
-      - run: python src/historical_full.py
+      - run: python src/audit_all.py
       - name: Commit results
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add results
-          git diff --cached --quiet || git commit -m "audit: refresh Binance public bot data"
+          git diff --cached --quiet || git commit -m "audit: all no-leverage Binance bots"
           git push
