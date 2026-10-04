@@ -54,6 +54,7 @@ with sync_playwright() as w:
  open(f"{OUT}/api_urls.txt","w").write("\n".join(dict.fromkeys(api)))
  open(f"{OUT}/api_requests.json","w",encoding="utf-8").write(json.dumps(reqs,ensure_ascii=False,indent=2))
  b.close()
-fields=["snapshot_utc","category","sort","pair","meta","pnl_usd","roi_pct","runtime","min_investment","trades_24h","trades_total","mdd7d_pct"]
+fields=sorted({k for x in rows for k in x})
 with open(f"{OUT}/bots.csv","w",newline="",encoding="utf-8") as f:
- w=csv.DictWriter(f,fieldnames=fields);w.writeheader();w.writerows(rows)
+ w=csv.DictWriter(f,fieldnames=fields,extrasaction="ignore");w.writeheader();w.writerows(rows)
+print(f"OK: {len(rows)} bots, {len(charts)} ROI charts")
