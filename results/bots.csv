@@ -1,20 +1,77 @@
-pair,meta,pnl_usd,roi_pct,runtime,min_investment,trades_24h,trades_total,mdd7d_pct,score,source
-XRPUSDT,"Neutral 5x
-22",3573.48,1.78,4d 8h 21m,1555.29,469,8493,0.17,1.5213675213675215,https://www.binance.com/en/trading-bots
-QNTUSDT,"Long 5x
+category,sort,pair,meta,pnl_usd,roi_pct,runtime,runtime_days,min_investment,trades_24h,trades_total,mdd7d_pct,roi_per_day,roi_mdd,maturity,risk_class
+Spot Grid,Most Matched,XRPUSDT,"Neutral 5x
+22",3573.48,1.78,4d 8h 21m,4.33,1555.29,469,8493,0.17,0.4111,10.4706,Emerging,Candidate
+Futures Grid,Most Matched,XRPUSDT,"Neutral 5x
+22",3573.48,1.78,4d 8h 21m,4.33,1555.29,469,8493,0.17,0.4111,10.4706,Emerging,Candidate
+Futures DCA,Most Matched,XRPUSDT,"Neutral 5x
+22",3573.48,1.78,4d 8h 21m,4.33,1555.29,469,8493,0.17,0.4111,10.4706,Emerging,Candidate
+Arbitrage,Most Matched,XRPUSDT,"Neutral 5x
+22",3573.48,1.78,4d 8h 21m,4.33,1555.29,469,8493,0.17,0.4111,10.4706,Emerging,Candidate
+Spot Grid,Most Matched,SOLUSDT,"Neutral 5x
+12",2475.7,1.23,6d 3h 52m,6.12,1805.18,187,5074,0.29,0.201,4.2414,Emerging,Candidate
+Futures Grid,Most Matched,SOLUSDT,"Neutral 5x
+12",2475.7,1.23,6d 3h 52m,6.12,1805.18,187,5074,0.29,0.201,4.2414,Emerging,Candidate
+Futures DCA,Most Matched,SOLUSDT,"Neutral 5x
+12",2475.7,1.23,6d 3h 52m,6.12,1805.18,187,5074,0.29,0.201,4.2414,Emerging,Candidate
+Arbitrage,Most Matched,SOLUSDT,"Neutral 5x
+12",2475.7,1.23,6d 3h 52m,6.12,1805.18,187,5074,0.29,0.201,4.2414,Emerging,Candidate
+Spot Grid,Most Matched,ZECUSDT,"Short 10x
+419",49261.11,29.2,6d 1h 20m,6.04,126.79,13,159,10.89,4.8344,2.6814,Emerging,Candidate
+Futures Grid,Most Matched,ZECUSDT,"Short 10x
+419",49261.11,29.2,6d 1h 20m,6.04,126.76,13,159,10.89,4.8344,2.6814,Emerging,Candidate
+Futures DCA,Most Matched,ZECUSDT,"Short 10x
+419",49261.11,29.2,6d 1h 20m,6.04,126.69,13,159,10.89,4.8344,2.6814,Emerging,Candidate
+Arbitrage,Most Matched,ZECUSDT,"Short 10x
+419",49261.11,29.2,6d 1h 20m,6.04,126.64,13,159,10.89,4.8344,2.6814,Emerging,Candidate
+Spot Grid,Most Matched,MONUSDT,"Long 10x
+4",1891.89,18.91,6d 2h 43m,6.08,663.83,32,355,12.54,3.1102,1.508,Emerging,Candidate
+Futures Grid,Most Matched,MONUSDT,"Long 10x
+4",1891.89,18.91,6d 2h 43m,6.08,663.6,32,355,12.54,3.1102,1.508,Emerging,Candidate
+Futures DCA,Most Matched,MONUSDT,"Long 10x
+4",1891.89,18.91,6d 2h 43m,6.08,663.86,32,355,12.54,3.1102,1.508,Emerging,Candidate
+Arbitrage,Most Matched,MONUSDT,"Long 10x
+4",1891.89,18.91,6d 2h 43m,6.08,663.61,32,355,12.54,3.1102,1.508,Emerging,Candidate
+Spot Grid,Most Matched,SPCXUSDT,"Long 5x
+6",2920.78,9.73,3d 7h 14m,3.29,272.41,4,411,7.45,2.9574,1.306,Emerging,Candidate
+Futures Grid,Most Matched,SPCXUSDT,"Long 5x
+6",2920.78,9.73,3d 7h 14m,3.29,272.39,4,411,7.45,2.9574,1.306,Emerging,Candidate
+Futures DCA,Most Matched,SPCXUSDT,"Long 5x
+6",2920.78,9.73,3d 7h 14m,3.29,272.41,4,411,7.45,2.9574,1.306,Emerging,Candidate
+Arbitrage,Most Matched,SPCXUSDT,"Long 5x
+6",2920.78,9.73,3d 7h 14m,3.29,272.41,4,411,7.45,2.9574,1.306,Emerging,Candidate
+Spot Grid,Most Matched,QNTUSDT,"Short 10x
+1",1573.58,12.58,5d 18h 12m,5.75,6823.31,1304,27826,19.03,2.1878,0.6611,Emerging,Candidate
+Futures Grid,Most Matched,QNTUSDT,"Short 10x
+1",1573.58,12.58,5d 18h 12m,5.75,6820.31,1304,27826,19.03,2.1878,0.6611,Emerging,Candidate
+Futures DCA,Most Matched,QNTUSDT,"Short 10x
+1",1573.58,12.58,5d 18h 12m,5.75,6825.31,1304,27826,19.03,2.1878,0.6611,Emerging,Candidate
+Arbitrage,Most Matched,QNTUSDT,"Short 10x
+1",1573.58,12.58,5d 18h 12m,5.75,6825.98,1304,27826,19.03,2.1878,0.6611,Emerging,Candidate
+Spot Grid,Most Matched,BTCUSDC,"Neutral 10x
+0",2734.72,0.54,3d 19h 34m,3.79,10322.9,103,2310,0.94,0.1425,0.5745,Emerging,Candidate
+Futures Grid,Most Matched,BTCUSDC,"Neutral 10x
+0",2734.72,0.54,3d 19h 34m,3.79,10322.9,103,2310,0.94,0.1425,0.5745,Emerging,Candidate
+Futures DCA,Most Matched,BTCUSDC,"Neutral 10x
+0",2734.72,0.54,3d 19h 34m,3.79,10322.9,103,2310,0.94,0.1425,0.5745,Emerging,Candidate
+Arbitrage,Most Matched,BTCUSDC,"Neutral 10x
+0",2734.72,0.54,3d 19h 34m,3.79,10322.9,103,2310,0.94,0.1425,0.5745,Emerging,Candidate
+Spot Grid,Most Matched,BTCUSDC,"Neutral 10x
+3",6056.76,0.6,4d 9h 53m,4.38,10010.0,78,2388,1.07,0.137,0.5607,Emerging,Candidate
+Futures Grid,Most Matched,BTCUSDC,"Neutral 10x
+3",6056.76,0.6,4d 9h 53m,4.38,10010.0,78,2388,1.07,0.137,0.5607,Emerging,Candidate
+Futures DCA,Most Matched,BTCUSDC,"Neutral 10x
+3",6056.76,0.6,4d 9h 53m,4.38,10010.0,78,2388,1.07,0.137,0.5607,Emerging,Candidate
+Arbitrage,Most Matched,BTCUSDC,"Neutral 10x
+3",6056.76,0.6,4d 9h 53m,4.38,10010.0,78,2388,1.07,0.137,0.5607,Emerging,Candidate
+Spot Grid,Most Matched,QNTUSDT,"Long 5x
 Trailing Up
-133",5027.42,61.31,6d 11h 2m,536.75,15,626,50.7,1.1858800773694391,https://www.binance.com/en/trading-bots
-MONUSDT,"Long 10x
-4",1891.89,18.91,6d 2h 43m,663.48,32,355,12.54,0.9915878877400296,https://www.binance.com/en/trading-bots
-SOLUSDT,"Neutral 5x
-12",2475.7,1.23,6d 3h 52m,1805.18,187,5074,0.29,0.9534883720930232,https://www.binance.com/en/trading-bots
-SPCXUSDT,"Long 5x
-6",2920.78,9.73,3d 7h 14m,272.28,4,411,7.45,0.9465159763313611,https://www.binance.com/en/trading-bots
-ZECUSDT,"Short 10x
-419",49261.11,29.2,6d 1h 20m,126.95,13,159,10.89,0.7809587888982337,https://www.binance.com/en/trading-bots
-QNTUSDT,"Short 10x
-1",1573.58,12.58,5d 18h 12m,6830.21,1304,27826,19.03,0.6280579131303045,https://www.binance.com/en/trading-bots
-BTCUSDC,"Neutral 10x
-3",6056.76,0.6,4d 9h 53m,10010.0,78,2388,1.07,0.28985507246376807,https://www.binance.com/en/trading-bots
-BTCUSDC,"Neutral 10x
-0",2734.72,0.54,3d 19h 34m,10322.9,103,2310,0.94,0.27835051546391754,https://www.binance.com/en/trading-bots
+133",5027.42,61.31,6d 11h 2m,6.46,536.75,15,626,50.7,9.4907,1.2093,Emerging,Reject
+Futures Grid,Most Matched,QNTUSDT,"Long 5x
+Trailing Up
+133",5027.42,61.31,6d 11h 2m,6.46,536.75,15,626,50.7,9.4907,1.2093,Emerging,Reject
+Futures DCA,Most Matched,QNTUSDT,"Long 5x
+Trailing Up
+133",5027.42,61.31,6d 11h 2m,6.46,536.75,15,626,50.7,9.4907,1.2093,Emerging,Reject
+Arbitrage,Most Matched,QNTUSDT,"Long 5x
+Trailing Up
+133",5027.42,61.31,6d 11h 2m,6.46,536.75,15,626,50.7,9.4907,1.2093,Emerging,Reject

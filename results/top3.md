@@ -1,18 +1,32 @@
-# Binance Public Bot Audit
+# Refined Binance Public Bot Audit
 
-## 1. XRPUSDT — Neutral 5x
+## 1. Spot Grid — XRPUSDT Neutral 5x
 22
-- ROI: 1.78% | PNL: 3,573.48 USD
-- Runtime: 4d 8h 21m | 7D MDD: 0.17% | Trades: 8,493
-- Score: 1.521
-## 2. QNTUSDT — Long 5x
-Trailing Up
-133
-- ROI: 61.31% | PNL: 5,027.42 USD
-- Runtime: 6d 11h 2m | 7D MDD: 50.70% | Trades: 626
-- Score: 1.186
-## 3. MONUSDT — Long 10x
-4
-- ROI: 18.91% | PNL: 1,891.89 USD
-- Runtime: 6d 2h 43m | 7D MDD: 12.54% | Trades: 355
-- Score: 0.992
+ROI 1.78% | PNL $3,573.48 | MDD 0.17% | Runtime 4d 8h 21m | Trades 8,493 | Candidate
+## 2. Futures Grid — XRPUSDT Neutral 5x
+22
+ROI 1.78% | PNL $3,573.48 | MDD 0.17% | Runtime 4d 8h 21m | Trades 8,493 | Candidate
+## 3. Futures DCA — XRPUSDT Neutral 5x
+22
+ROI 1.78% | PNL $3,573.48 | MDD 0.17% | Runtime 4d 8h 21m | Trades 8,493 | Candidate
+## 4. Arbitrage — XRPUSDT Neutral 5x
+22
+ROI 1.78% | PNL $3,573.48 | MDD 0.17% | Runtime 4d 8h 21m | Trades 8,493 | Candidate
+## 5. Spot Grid — SOLUSDT Neutral 5x
+12
+ROI 1.23% | PNL $2,475.70 | MDD 0.29% | Runtime 6d 3h 52m | Trades 5,074 | Candidate
+## 6. Futures Grid — SOLUSDT Neutral 5x
+12
+ROI 1.23% | PNL $2,475.70 | MDD 0.29% | Runtime 6d 3h 52m | Trades 5,074 | Candidate
+## 7. Futures DCA — SOLUSDT Neutral 5x
+12
+ROI 1.23% | PNL $2,475.70 | MDD 0.29% | Runtime 6d 3h 52m | Trades 5,074 | Candidate
+## 8. Arbitrage — SOLUSDT Neutral 5x
+12
+ROI 1.23% | PNL $2,475.70 | MDD 0.29% | Runtime 6d 3h 52m | Trades 5,074 | Candidate
+## 9. Spot Grid — ZECUSDT Short 10x
+419
+ROI 29.20% | PNL $49,261.11 | MDD 10.89% | Runtime 6d 1h 20m | Trades 159 | Candidate
+## 10. Futures Grid — ZECUSDT Short 10x
+419
+ROI 29.20% | PNL $49,261.11 | MDD 10.89% | Runtime 6d 1h 20m | Trades 159 | Candidate
