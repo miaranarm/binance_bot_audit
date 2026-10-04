@@ -16,7 +16,13 @@ def scan(p,cat,sort):
  return a
 with sync_playwright() as w:
  b=w.chromium.launch(headless=True);p=b.new_page(viewport={"width":1440,"height":1200},locale="en-US");p.goto(URL,wait_until="domcontentloaded",timeout=60000);p.wait_for_timeout(8000)
- rows=[];dbg=[]\n api_urls=[]\n def resp(r):\n  try:\n   if r.request.resource_type in ("xhr","fetch") and ("binance.com" in r.url): api_urls.append(r.url)\n  except: pass\n p.on("response",resp)
+ rows=[];dbg=[]
+ api_urls=[]
+ def resp(r):
+  try:
+   if r.request.resource_type in ("xhr","fetch") and "binance.com" in r.url: api_urls.append(r.url)
+  except: pass
+ p.on("response",resp)
  cats=["Spot Grid","Futures Grid","Futures DCA","Arbitrage"]
  sorts=["Top PNL","Top ROI","Most Copied","Most Matched"]
  for cat in cats:
@@ -24,7 +30,7 @@ with sync_playwright() as w:
   for sort in (["3d APR","7d APR","30d APR","Next Available"] if cat=="Arbitrage" else sorts):
    ok=click(p,sort);dbg.append(f"{cat}/{sort} click={ok}")
    z=scan(p,cat,sort);dbg.append(f"rows={len(z)} first={z[0]['pair'] if z else '-'}");rows+=z
- open(f"{OUT}/debug.txt","w").write("\n".join(dbg));open(f"{OUT}/rendered.txt","w").write(p.locator("body").inner_text());b.close()
+ open(f"{OUT}/debug.txt","w").write("\n".join(dbg));open(f"{OUT}/rendered.txt","w").write(p.locator("body").inner_text());open(f"{OUT}/api_urls.txt","w").write("\n".join(dict.fromkeys(api_urls)));b.close()
 u={(x["category"],x["sort"],x["pair"],x["meta"],x["pnl_usd"]):x for x in rows};rows=list(u.values())
 def day(s):
  d=re.search(r"(\d+)d",s);h=re.search(r"(\d+)h",s);return (int(d.group(1)) if d else 0)+(int(h.group(1)) if h else 0)/24
