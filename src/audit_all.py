@@ -2,7 +2,7 @@ import csv,datetime,os
 from playwright.sync_api import sync_playwright
 OUT="results";os.makedirs(OUT,exist_ok=True)
 BASE="https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/"
-TOP=BASE+"queryTopStrategy";DCA=BASE+"queryTopUmDcaStrategy";CH=BASE+"queryRoiChart";CUT=186*86400
+TOP=BASE+"queryTopStrategy";DCA=BASE+"queryTopUmDcaStrategy";CH=BASE+"queryRoiChart";CUT=182*86400
 def num(v):
  try:return float(v)
  except:return 0
@@ -39,7 +39,10 @@ def pages(p,ep,base,cat,stream):
   if len(d)<100 or page*100>=int(j.get("total") or 0):break
  return out
 with sync_playwright() as w:
- b=w.chromium.launch(headless=True);p=b.new_page();p.goto("https://www.binance.com/en/trading-bots",wait_until="domcontentloaded",timeout=60000);p.wait_for_timeout(5000)
+ b=w.chromium.launch(headless=True);p=b.new_page();net=set()
+ p.on("request",lambda r: net.add(r.url) if "/bapi/" in r.url else None)
+ p.goto("https://www.binance.com/en/trading-bots",wait_until="domcontentloaded",timeout=60000);p.wait_for_timeout(8000)
+ open(f"{OUT}/discovered_bapi_endpoints.txt","w",encoding="utf-8").write("\n".join(sorted(net)))
  rows=pages(p,TOP,{"strategyType":1,"symbol":"","zone":"","sort":"pnl"},"Spot Grid","SPOT_GRID")
  for st in range(2,13):rows+=pages(p,TOP,{"strategyType":st,"symbol":"","zone":"","sort":"pnl"},"StrategyType "+str(st),"UNKNOWN")
  rows+=pages(p,DCA,{"market":"","zone":"","roi":"","sort":"pnl","trailingType":"","leverage":"","investmentType":False,"sevenDayMdd":"","strategyType":10,"symbol":""},"Futures DCA","UM_DCA")
