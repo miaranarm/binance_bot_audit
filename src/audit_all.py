@@ -41,7 +41,11 @@ def pages(p,ep,base,cat,stream):
 with sync_playwright() as w:
  b=w.chromium.launch(headless=True);p=b.new_page();net=set()
  p.on("request",lambda r: net.add(r.url) if "/bapi/" in r.url else None)
- p.goto("https://www.binance.com/en/trading-bots",wait_until="domcontentloaded",timeout=60000);p.wait_for_timeout(8000)
+ p.goto("https://www.binance.com/en/trading-bots",wait_until="domcontentloaded",timeout=60000);p.wait_for_timeout(7000)
+ for s in ["Spot Grid","Futures Grid","DCA","Rebalancing Bot","Auto-Invest","TWAP","VP","Position Snowball","Arbitrage"]:
+  try:
+   p.get_by_text(s,exact=False).first.click(timeout=2500);p.wait_for_timeout(2500)
+  except:pass
  open(f"{OUT}/discovered_bapi_endpoints.txt","w",encoding="utf-8").write("\n".join(sorted(net)))
  rows=pages(p,TOP,{"strategyType":1,"symbol":"","zone":"","sort":"pnl"},"Spot Grid","SPOT_GRID")
  for st in range(2,13):rows+=pages(p,TOP,{"strategyType":st,"symbol":"","zone":"","sort":"pnl"},"StrategyType "+str(st),"UNKNOWN")
