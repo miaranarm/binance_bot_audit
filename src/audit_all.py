@@ -44,7 +44,7 @@ def pages(p,ep,base,cat,stream,diag):
 with sync_playwright() as w:
  b=w.chromium.launch(headless=True);p=b.new_page();net=set();diag=[]
  p.on("request",lambda r:net.add(r.url) if "/bapi/" in r.url else None)
- for u in ["https://www.binance.com/en/trading-bots","https://www.binance.com/en/trading-bots/spot/dca-bot/BTCUSDT","https://www.binance.com/en/trading-bots/spot/rebalancing-bot/BTCUSDT","https://www.binance.com/en/trading-bots/futures/arbitrage/BTCUSDT","https://www.binance.com/en/trading-bots/futures/dca-bot/BTCUSDT","https://www.binance.com/en/trading-bots/futures/snowball/BTCUSDT"]:
+ for u in ["https://www.binance.com/en/trading-bots","https://www.binance.com/en/trading-bots/spot/grid/DOGEUSDT","https://www.binance.com/en/trading-bots/spot/dca-bot/BTCUSDT","https://www.binance.com/en/trading-bots/spot/rebalancing-bot/BTCUSDT","https://www.binance.com/en/trading-bots/futures/arbitrage/BTCUSDT","https://www.binance.com/en/trading-bots/futures/dca-bot/BTCUSDT","https://www.binance.com/en/trading-bots/futures/snowball/BTCUSDT"]:
   try:p.goto(u,wait_until="domcontentloaded",timeout=30000);p.wait_for_timeout(3000)
   except:pass
  open(f"{OUT}/discovered_bapi_endpoints.txt","w").write("\n".join(sorted(net)))
