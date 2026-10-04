@@ -42,9 +42,13 @@ with sync_playwright() as w:
  b=w.chromium.launch(headless=True);p=b.new_page();net=set()
  p.on("request",lambda r: net.add(r.url) if "/bapi/" in r.url else None)
  p.goto("https://www.binance.com/en/trading-bots",wait_until="domcontentloaded",timeout=60000);p.wait_for_timeout(7000)
- for s in ["Spot Grid","Futures Grid","DCA","Rebalancing Bot","Auto-Invest","TWAP","VP","Position Snowball","Arbitrage"]:
-  try:
-   p.get_by_text(s,exact=False).first.click(timeout=2500);p.wait_for_timeout(2500)
+ for u in [
+  "https://www.binance.com/en/trading-bots",
+  "https://www.binance.com/en/trading-bots/spot/dca-bot/BTCUSDT",
+  "https://www.binance.com/en/trading-bots/spot/rebalancing-bot/BTCUSDT",
+  "https://www.binance.com/en/trading-bots/futures/arbitrage/BTCUSDT",
+  "https://www.binance.com/en/trading-bots/futures/snowball/BTCUSDT"]:
+  try:p.goto(u,wait_until="domcontentloaded",timeout=30000);p.wait_for_timeout(3500)
   except:pass
  open(f"{OUT}/discovered_bapi_endpoints.txt","w",encoding="utf-8").write("\n".join(sorted(net)))
  rows=pages(p,TOP,{"strategyType":1,"symbol":"","zone":"","sort":"pnl"},"Spot Grid","SPOT_GRID")
