@@ -112,17 +112,17 @@
   {
     "url": "https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryRoiChart",
     "method": "POST",
-    "post_data": "{\"strategyId\":1395619,\"streamerStrategyType\":\"UM_DCA\"}"
-  },
-  {
-    "url": "https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryRoiChart",
-    "method": "POST",
     "post_data": "{\"strategyId\":1382767,\"streamerStrategyType\":\"UM_DCA\"}"
   },
   {
     "url": "https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryRoiChart",
     "method": "POST",
     "post_data": "{\"strategyId\":1403245,\"streamerStrategyType\":\"UM_DCA\"}"
+  },
+  {
+    "url": "https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryRoiChart",
+    "method": "POST",
+    "post_data": "{\"strategyId\":1395619,\"streamerStrategyType\":\"UM_DCA\"}"
   },
   {
     "url": "https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryRoiChart",
@@ -142,11 +142,11 @@
   {
     "url": "https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryRoiChart",
     "method": "POST",
-    "post_data": "{\"strategyId\":1382576,\"streamerStrategyType\":\"UM_DCA\"}"
+    "post_data": "{\"strategyId\":1390251,\"streamerStrategyType\":\"UM_DCA\"}"
   },
   {
     "url": "https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryRoiChart",
     "method": "POST",
-    "post_data": "{\"strategyId\":1390251,\"streamerStrategyType\":\"UM_DCA\"}"
+    "post_data": "{\"strategyId\":1384150,\"streamerStrategyType\":\"UM_DCA\"}"
   }
 ]

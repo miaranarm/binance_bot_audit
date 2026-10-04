@@ -1,66 +1,59 @@
-API https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryTopUmDcaStrategy BODY 6997
-API https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryTopStrategy BODY 9799
+API https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryTopUmDcaStrategy BODY 6995
 API https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryTopStrategy BODY 9319
-API https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryRoiChart BODY 4770
-API https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryRoiChart BODY 4103
-API https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryRoiChart BODY 8213
-API https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryRoiChart BODY 16792
-API https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryRoiChart BODY 18129
-API https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryRoiChart BODY 14785
-API https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryRoiChart BODY 16507
-API https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryRoiChart BODY 15726
-API https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryRoiChart BODY 9217
-API https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryRoiChart BODY 12089
-API https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryRoiChart BODY 11821
-API https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryRoiChart BODY 15588
-API https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryRoiChart BODY 18029
-API https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryRoiChart BODY 17821
-API https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryRoiChart BODY 6544
-API https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryRoiChart BODY 12611
-API https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryRoiChart BODY 17457
-API https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryRoiChart BODY 16458
-API https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryRoiChart BODY 16581
-API https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryRoiChart BODY 10413
-API https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryRoiChart BODY 11963
-API https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryRoiChart BODY 8086
-API https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryRoiChart BODY 9124
-API https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryRoiChart BODY 12165
-API https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryRoiChart BODY 16526
-API https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryRoiChart BODY 11399
-API https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryRoiChart BODY 10849
-Spot Grid click=1
-Spot Grid/Top PNL click=0
-rows=9 first=ZECUSDT
-Spot Grid/Top ROI click=0
-rows=9 first=ZECUSDT
-Spot Grid/Most Copied click=0
-rows=9 first=ZECUSDT
-Spot Grid/Most Matched click=0
-rows=9 first=ZECUSDT
-Futures Grid click=1
-Futures Grid/Top PNL click=0
-rows=9 first=ZECUSDT
-Futures Grid/Top ROI click=0
-rows=9 first=ZECUSDT
-Futures Grid/Most Copied click=0
-rows=9 first=ZECUSDT
-Futures Grid/Most Matched click=0
-rows=9 first=ZECUSDT
-Futures DCA click=1
-Futures DCA/Top PNL click=0
-rows=0 first=-
-Futures DCA/Top ROI click=0
-rows=0 first=-
-Futures DCA/Most Copied click=0
-rows=0 first=-
-Futures DCA/Most Matched click=0
-rows=0 first=-
-Arbitrage click=1
-Arbitrage/3d APR click=1
-rows=0 first=-
-Arbitrage/7d APR click=1
-rows=0 first=-
-Arbitrage/30d APR click=1
-rows=0 first=-
-Arbitrage/Next Available click=0
-rows=0 first=-
+API https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryTopStrategy BODY 9799
+API https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryRoiChart BODY 4879
+API https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryRoiChart BODY 12073
+API https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryRoiChart BODY 15835
+API https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryRoiChart BODY 4212
+API https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryRoiChart BODY 6652
+API https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryRoiChart BODY 12273
+API https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryRoiChart BODY 17567
+API https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryRoiChart BODY 16618
+API https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryRoiChart BODY 16568
+API https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryRoiChart BODY 10957
+API https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryRoiChart BODY 8193
+API https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryRoiChart BODY 9326
+API https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryRoiChart BODY 15698
+API https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryRoiChart BODY 12720
+API https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryRoiChart BODY 8322
+API https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryRoiChart BODY 16901
+API https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryRoiChart BODY 16636
+API https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryRoiChart BODY 10523
+API https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryRoiChart BODY 12196
+API https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryRoiChart BODY 16688
+API https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryRoiChart BODY 18136
+API https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryRoiChart BODY 11931
+API https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryRoiChart BODY 17928
+API https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryRoiChart BODY 17603
+API https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryRoiChart BODY 14892
+API https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryRoiChart BODY 9234
+API https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryRoiChart BODY 11506
+SPOT page=1 rows=100 total=10741
+SPOT page=2 rows=100 total=10741
+SPOT page=3 rows=100 total=10741
+SPOT page=4 rows=100 total=10741
+SPOT page=5 rows=100 total=10741
+SPOT page=6 rows=100 total=10741
+SPOT page=7 rows=100 total=10741
+SPOT page=8 rows=100 total=10741
+SPOT page=9 rows=100 total=10741
+SPOT page=10 rows=100 total=10741
+SPOT page=11 rows=100 total=10741
+SPOT page=12 rows=100 total=10741
+SPOT page=13 rows=100 total=10741
+SPOT page=14 rows=100 total=10741
+SPOT page=15 rows=100 total=10741
+SPOT page=16 rows=100 total=10741
+SPOT page=17 rows=100 total=10741
+SPOT page=18 rows=100 total=10741
+SPOT page=19 rows=100 total=10741
+SPOT page=20 rows=100 total=10741
+SPOT page=21 rows=100 total=10741
+SPOT page=22 rows=100 total=10741
+SPOT page=23 rows=100 total=10741
+SPOT page=24 rows=100 total=10741
+SPOT page=25 rows=100 total=10741
+SPOT page=26 rows=100 total=10741
+SPOT page=27 rows=100 total=10741
+SPOT page=28 rows=100 total=10741
+SPOT page=29 rows=100 total=10741
