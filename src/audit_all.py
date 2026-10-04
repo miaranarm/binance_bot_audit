@@ -9,7 +9,7 @@ def f(v):
  except:return None
 def lev(x):
  p=x.get("strategyParams") or {};v=p.get("leverage",x.get("leverage"))
- if v in (None,"","null",""):return 1.0
+ if v in (None,"","null"):return 1.0
  try:return float(v)
  except:return 99.0
 def ts(v):
@@ -32,55 +32,50 @@ def pages(p,ep,base,cat,stream,diag):
  out=[]
  for page in range(1,150):
   q=dict(base);q.update(page=page,rows=100)
-  try:
-   z=p.request.post(ep,data=q).json()
-   d=z.get("data") or []
-   if page==1:diag.append({"endpoint":ep,"category":cat,"request":base,"code":z.get("code"),"total":z.get("total"),"first_keys":sorted(d[0].keys()) if d else [],"first_strategyType":d[0].get("strategyType") if d else None})
+  try:z=p.request.post(ep,data=q).json();d=z.get("data") or []
   except Exception as e:
    if page==1:diag.append({"endpoint":ep,"category":cat,"error":str(e)})
    break
+  if page==1:diag.append({"endpoint":ep,"category":cat,"total":z.get("total"),"first_strategyType":d[0].get("strategyType") if d else None})
   for x in d:
    x=dict(x);x["_category"]=cat;x["_streamer"]=stream;x["_lev"]=lev(x);out.append(x)
   if len(d)<100 or page*100>=int(z.get("total") or 0):break
  return out
 with sync_playwright() as w:
  b=w.chromium.launch(headless=True);p=b.new_page();net=set();diag=[]
- p.on("request",lambda r: net.add(r.url) if "/bapi/" in r.url else None)
- urls=["https://www.binance.com/en/trading-bots","https://www.binance.com/en/trading-bots/spot/dca-bot/BTCUSDT","https://www.binance.com/en/trading-bots/spot/rebalancing-bot/BTCUSDT","https://www.binance.com/en/trading-bots/futures/arbitrage/BTCUSDT","https://www.binance.com/en/trading-bots/futures/dca-bot/BTCUSDT","https://www.binance.com/en/trading-bots/futures/snowball/BTCUSDT"]
- for u in urls:
+ p.on("request",lambda r:net.add(r.url) if "/bapi/" in r.url else None)
+ for u in ["https://www.binance.com/en/trading-bots","https://www.binance.com/en/trading-bots/spot/dca-bot/BTCUSDT","https://www.binance.com/en/trading-bots/spot/rebalancing-bot/BTCUSDT","https://www.binance.com/en/trading-bots/futures/arbitrage/BTCUSDT","https://www.binance.com/en/trading-bots/futures/dca-bot/BTCUSDT","https://www.binance.com/en/trading-bots/futures/snowball/BTCUSDT"]:
   try:p.goto(u,wait_until="domcontentloaded",timeout=30000);p.wait_for_timeout(3000)
   except:pass
- open(f"{OUT}/discovered_bapi_endpoints.txt","w",encoding="utf-8").write("\n".join(sorted(net)))
+ open(f"{OUT}/discovered_bapi_endpoints.txt","w").write("\n".join(sorted(net)))
  rows=pages(p,TOP,{"strategyType":1,"symbol":"","zone":"","sort":"pnl"},"Spot Grid","SPOT_GRID",diag)
- for st in range(2,21): rows+=pages(p,TOP,{"strategyType":st,"symbol":"","zone":"","sort":"pnl"},"Marketplace type "+str(st),"TYPE_"+str(st),diag)
+ for st in range(2,21):rows+=pages(p,TOP,{"strategyType":st,"symbol":"","zone":"","sort":"pnl"},"Marketplace type "+str(st),"TYPE_"+str(st),diag)
  rows+=pages(p,DCA,{"market":"","zone":"","roi":"","sort":"pnl","trailingType":"","leverage":"","investmentType":False,"sevenDayMdd":"","strategyType":10,"symbol":""},"Futures DCA","UM_DCA",diag)
  now=datetime.datetime.now(datetime.timezone.utc)
  for x in rows:
-  x["_start"]= (now-datetime.timedelta(seconds=f(x.get("runningTime")) or 0)).isoformat()
-  x["_p101"],x["_p401"],x["_p901"],x["_p930"]=[int(x["_start"][:10]<=d.strftime("%Y-%m-%d")) for d in DATES]
- # only bots satisfying all four dates AND no leverage
+  x["_start"]=(now-datetime.timedelta(seconds=f(x.get("runningTime")) or 0)).isoformat()
+  for k,d in zip(("_p101","_p401","_p901","_p930"),DATES):x[k]=int(x["_start"][:10]<=d.strftime("%Y-%m-%d"))
  keep=[x for x in rows if x["_lev"]<=1 and all(x[k] for k in ("_p101","_p401","_p901","_p930"))]
- seen=set();keep=[x for x in keep if not (x.get("strategyId") in seen or seen.add(x.get("strategyId")))]
+ seen=set();keep=[x for x in keep if not(x.get("strategyId") in seen or seen.add(x.get("strategyId")))]
  hist=[]
- for i,x in enumerate(keep,1):
+ for x in keep:
   try:
    z=p.request.post(CH,data={"strategyId":x.get("strategyId"),"streamerStrategyType":x.get("_streamer")}).json().get("data") or []
-   pts=[];walk(z,pts);r={"strategyId":x.get("strategyId"),"category":x.get("_category"),"strategyType":x.get("strategyType"),"symbol":x.get("symbol"),"leverage":x.get("_lev"),"runningTime":x.get("runningTime"),"estimated_start":x.get("_start")}
+   pts=[];walk(z,pts)
+   r={"strategyId":x.get("strategyId"),"category":x.get("_category"),"strategyType":x.get("strategyType"),"symbol":x.get("symbol"),"leverage":x.get("_lev"),"runningTime":x.get("runningTime"),"estimated_start":x.get("_start")}
    for d,label in zip(DATES,["2025_10_01","2026_04_01","2026_09_01","2026_09_30"]):
     r["roi_"+label]="";r["date_"+label]=""
     if pts:
      t,v=min(pts,key=lambda q:abs((q[0]-d).total_seconds()))
      if abs((t-d).total_seconds())<=7*86400:r["roi_"+label]=v;r["date_"+label]=t.isoformat()
-   a,bv=r["roi_2025_10_01"],r["roi_2026_09_30"]
-   r["gain_100_usdt"]=round(bv-a,8) if a!="" and bv!="" else ""
    hist.append(r)
   except:pass
- hist.sort(key=lambda x:(x["gain_100_usdt"]=="",-(x["gain_100_usdt"] or 0)))
+ hist.sort(key=lambda x:(x["roi_2026_09_30"]=="",-float(x["roi_2026_09_30"] or 0)))
  with open(f"{OUT}/all_no_leverage_4date.csv","w",newline="",encoding="utf-8") as z:
   fields=list(hist[0]) if hist else ["strategyId"];w=csv.DictWriter(z,fieldnames=fields);w.writeheader();w.writerows(hist)
  with open(f"{OUT}/type_census.json","w",encoding="utf-8") as z:json.dump({"official_types":["Spot Grid","Auto-Invest","Spot DCA","Rebalancing Bot","Futures Grid","Futures DCA","Position Snowball","Futures TWAP","Spot Algo","Futures VP","Funding Rate Arbitrage"],"endpoint_diagnostics":diag},z,ensure_ascii=False,indent=2)
  with open(f"{OUT}/summary.txt","w") as z:
-  z.write(f"RAW={len(rows)}\nNO_LEVERAGE_4_DATES={len(keep)}\nWITH_ROI_04_09={sum(x['gain_100_usdt']!='' for x in hist)}\n")
+  z.write(f"RAW={len(rows)}\nNO_LEVERAGE_4_DATES={len(keep)}\nWITH_ROI_04_09={sum(x['roi_2026_09_30']!='' for x in hist)}\nSORT=ROI_2026_09_30_DESC\n")
   z.write("NOTE=Presence is inferred from current public strategy runtime; Binance public marketplace does not expose a historical daily snapshot for every bot family.\n")
  with open(f"{OUT}/all_no_leverage_raw.csv","w",newline="",encoding="utf-8") as z:
   fields=sorted({k for x in rows for k in x});w=csv.DictWriter(z,fieldnames=fields,extrasaction="ignore");w.writeheader();w.writerows(rows)
