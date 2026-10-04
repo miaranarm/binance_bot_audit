@@ -24,3 +24,5 @@ jobs:
           git add results
           git diff --cached --quiet || git commit -m "audit: all no-leverage Binance bots"
           git push
+
+# audit v2
