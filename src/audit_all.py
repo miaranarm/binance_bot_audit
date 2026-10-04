@@ -70,6 +70,32 @@ with sync_playwright() as w:
      if abs((t-d).total_seconds())<=7*86400:r["roi_"+label]=v;r["date_"+label]=t.isoformat()
    hist.append(r)
   except:pass
+def n(x,ks):
+ for k in ks:
+  try:return float(x.get(k))
+  except:pass
+ return 0.0
+def score(x,a):
+ cfg=[(["roi","roiPct"],.30,1),(["pnl","profitLoss","totalPnl"],.25,1),(["runningTime"],.15,1),(["matchedTrades","matchedCount","totalMatchedTrades"],.15,1),(["mdd7d","sevenDayMdd","7dMdd"],.15,-1)]
+ s=0
+ for ks,w,d in cfg:
+  z=[n(y,ks) for y in a];v=n(x,ks);lo,hi=min(z),max(z);q=(v-lo)/(hi-lo) if hi>lo else .5
+  s+=w*q*d
+ return 100*s
+cur=[]
+for x in rows:
+ if x["_lev"]<=1:
+  y={"strategyId":x.get("strategyId"),"category":x.get("_category"),"strategyType":x.get("strategyType"),"symbol":x.get("symbol"),"leverage":x.get("_lev"),"runningTime":x.get("runningTime"),"roi":n(x,["roi","roiPct","roiRate"]),"pnl":n(x,["pnl","profitLoss","totalPnl"]),"matchedTrades":n(x,["matchedTrades","matchedCount","totalMatchedTrades"]),"mdd7d":n(x,["mdd7d","sevenDayMdd","7dMdd"])}
+  cur.append(y)
+cur=[x for x in cur if x["roi"] or x["pnl"] or x["matchedTrades"]]
+for x in cur:x["score"]=score(x,cur)
+cur.sort(key=lambda x:x["score"],reverse=True)
+with open(f"{OUT}/current_multicriteria.csv","w",newline="",encoding="utf-8") as z:
+ w=csv.DictWriter(z,fieldnames=["rank"]+list(cur[0]) if cur else ["rank"]);w.writeheader()
+ for i,x in enumerate(cur,1):w.writerow({"rank":i,**x})
+with open(f"{OUT}/current_multicriteria_summary.txt","w") as z:
+ z.write(f"COUNT={len(cur)}\nSCORING=ROI30 PNL25 RUNTIME15 MATCHED15 LOW_7D_MDD15\n")
+ for i,x in enumerate(cur[:20],1):z.write(f"{i}. {x['strategyId']} {x['symbol']} score={x['score']:.2f} roi={x['roi']} pnl={x['pnl']} trades={x['matchedTrades']} mdd7d={x['mdd7d']}\n")
  hist.sort(key=lambda x:(x["roi_2026_09_30"]=="",-float(x["roi_2026_09_30"] or 0)))
  with open(f"{OUT}/all_no_leverage_4date.csv","w",newline="",encoding="utf-8") as z:
   fields=list(hist[0]) if hist else ["strategyId"];w=csv.DictWriter(z,fieldnames=fields);w.writeheader();w.writerows(hist)
