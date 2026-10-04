@@ -64,11 +64,11 @@ Create
 30d APR
 810.98%
 Spread Rate
-1.2244%
+1.0854%
 Next Funding
--0.14708%
+-0.14528%
 Countdown
-00:42:36
+00:34:01
 B
 GTCUSDT
 Perp
@@ -82,11 +82,11 @@ Create
 30d APR
 37.59%
 Spread Rate
-0.5069%
+0.6517%
 Next Funding
--0.59177%
+-0.58592%
 Countdown
-02:42:36
+02:34:01
 B
 SANDUSDT
 Perp
@@ -100,11 +100,11 @@ Create
 30d APR
 46.68%
 Spread Rate
--0.8476%
+0.3826%
 Next Funding
--0.08433%
+-0.07987%
 Countdown
-02:42:36
+02:34:01
 B
 ONEUSDT
 Perp
@@ -118,11 +118,11 @@ Create
 30d APR
 892.30%
 Spread Rate
-1.7166%
+1.6152%
 Next Funding
--0.36611%
+-0.36410%
 Countdown
-02:42:36
+02:34:01
 B
 2ZUSDT
 Perp
@@ -136,11 +136,11 @@ Create
 30d APR
 54.90%
 Spread Rate
-0.1969%
+0.2844%
 Next Funding
--0.07310%
+-0.06973%
 Countdown
-02:42:36
+02:34:01
 B
 ENJUSDT
 Perp
@@ -154,11 +154,11 @@ Create
 30d APR
 8.51%
 Spread Rate
--0.1494%
+0.3567%
 Next Funding
--0.01304%
+-0.01289%
 Countdown
-02:42:36
+02:34:01
 B
 MANAUSDT
 Perp
@@ -172,11 +172,11 @@ Create
 30d APR
 6.49%
 Spread Rate
--0.5635%
+0.3248%
 Next Funding
--0.03383%
+-0.03284%
 Countdown
-02:42:36
+02:34:01
 B
 SCRUSDT
 Perp
@@ -190,11 +190,11 @@ Create
 30d APR
 2.59%
 Spread Rate
-0.2371%
+0.2354%
 Next Funding
 0.00500%
 Countdown
-02:42:36
+02:34:01
 B
 QNTUSDT
 Perp
@@ -209,11 +209,11 @@ Create
 4.74%
 30d APR = | Average (Last 720hr Funding Rate%) | / Funding Interval * 24 * 365
 Spread Rate
-0.2211%
+0.1849%
 Next Funding
--0.15705%
+-0.15625%
 Countdown
-02:42:36
+02:34:01
 1
 2
 3
@@ -301,62 +301,62 @@ Action
 AINUSDT
 Perp
 6.98
-0.0561300
-+141.93%
+0.0565900
++144.13%
 Create
 龙虾USDT
 Perp
 5.06
-0.0442600
--8.94%
+0.0442900
+-9.42%
 Create
 LSKUSDT
 Perp
 4.48
-0.267150
--4.59%
+0.266600
+-4.48%
 Create
 AKEUSDT
 Perp
 4.23
-0.0346590
-+7.65%
+0.0346760
++7.55%
 Create
 QUSDT
 Perp
 4.17
-0.0214800
--1.97%
+0.0214930
+-2.02%
 Create
 BULLAUSDT
 Perp
 4.13
-0.0837800
-+2.28%
+0.0837400
++2.03%
 Create
 ONEUSDT
 Perp
 3.69
-0.0023418
--1.68%
+0.0023402
+-3.83%
 Create
 BTWUSDT
 Perp
 3.68
-1.1772000
--19.00%
+1.1813000
+-18.69%
 Create
 BRUSDT
 Perp
 3.60
-0.4612900
--19.02%
+0.4592600
+-16.71%
 Create
 SAGAUSDT
 Perp
 3.53
-0.0227800
-+0.97%
+0.0227100
++0.62%
 Create
 1
 2

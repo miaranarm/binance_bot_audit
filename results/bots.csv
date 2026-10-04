@@ -1,6 +1,6 @@
 snapshot_utc,category,sort,pair,meta,pnl_usd,roi_pct,runtime,min_investment,trades_24h,trades_total,mdd7d_pct
 ,Spot Grid,Top PNL,ZECUSDT,"Short 10x
-421",48708.14,28.88,6d 2h 20m,127.14,12,159,10.89
+421",48708.14,28.88,6d 2h 20m,126.45,12,159,10.89
 ,Spot Grid,Top PNL,BTCUSDC,"Neutral 10x
 3",5508.52,0.55,4d 10h 53m,10010.0,79,2389,1.07
 ,Spot Grid,Top PNL,QNTUSDT,"Long 5x
@@ -9,17 +9,17 @@ Trailing Up
 ,Spot Grid,Top PNL,XRPUSDT,"Neutral 5x
 22",3578.56,1.78,4d 9h 21m,1555.29,455,8503,0.17
 ,Spot Grid,Top PNL,SPCXUSDT,"Long 5x
-7",2948.43,9.82,3d 8h 14m,272.21,4,411,7.45
+7",2948.43,9.82,3d 8h 14m,272.27,4,411,7.45
 ,Spot Grid,Top PNL,BTCUSDC,"Neutral 10x
 0",2494.78,0.49,3d 20h 34m,10322.9,104,2311,0.94
 ,Spot Grid,Top PNL,SOLUSDT,"Neutral 5x
 12",2452.77,1.22,6d 4h 52m,1805.18,186,5078,0.29
 ,Spot Grid,Top PNL,MONUSDT,"Long 10x
-4",1860.93,18.6,6d 3h 43m,661.51,32,355,12.54
+4",1860.93,18.6,6d 3h 43m,661.22,32,355,12.54
 ,Spot Grid,Top PNL,QNTUSDT,"Short 10x
-1",1602.05,12.81,5d 19h 12m,6743.39,1265,27857,19.03
+1",1602.05,12.81,5d 19h 12m,6764.85,1265,27857,19.03
 ,Spot Grid,Top ROI,ZECUSDT,"Short 10x
-421",48708.14,28.88,6d 2h 20m,127.22,12,159,10.89
+421",48708.14,28.88,6d 2h 20m,126.31,12,159,10.89
 ,Spot Grid,Top ROI,BTCUSDC,"Neutral 10x
 3",5508.52,0.55,4d 10h 53m,10010.0,79,2389,1.07
 ,Spot Grid,Top ROI,QNTUSDT,"Long 5x
@@ -28,7 +28,7 @@ Trailing Up
 ,Spot Grid,Top ROI,XRPUSDT,"Neutral 5x
 22",3578.56,1.78,4d 9h 21m,1555.29,455,8503,0.17
 ,Spot Grid,Top ROI,SPCXUSDT,"Long 5x
-7",2948.43,9.82,3d 8h 14m,272.21,4,411,7.45
+7",2948.43,9.82,3d 8h 14m,272.27,4,411,7.45
 ,Spot Grid,Top ROI,BTCUSDC,"Neutral 10x
 0",2494.78,0.49,3d 20h 34m,10322.9,104,2311,0.94
 ,Spot Grid,Top ROI,SOLUSDT,"Neutral 5x
@@ -36,9 +36,9 @@ Trailing Up
 ,Spot Grid,Top ROI,MONUSDT,"Long 10x
 4",1860.93,18.6,6d 3h 43m,661.51,32,355,12.54
 ,Spot Grid,Top ROI,QNTUSDT,"Short 10x
-1",1602.05,12.81,5d 19h 12m,6744.28,1265,27857,19.03
+1",1602.05,12.81,5d 19h 12m,6765.01,1265,27857,19.03
 ,Spot Grid,Most Copied,ZECUSDT,"Short 10x
-421",48708.14,28.88,6d 2h 20m,127.22,12,159,10.89
+421",48708.14,28.88,6d 2h 20m,126.31,12,159,10.89
 ,Spot Grid,Most Copied,BTCUSDC,"Neutral 10x
 3",5508.52,0.55,4d 10h 53m,10010.0,79,2389,1.07
 ,Spot Grid,Most Copied,QNTUSDT,"Long 5x
@@ -47,7 +47,7 @@ Trailing Up
 ,Spot Grid,Most Copied,XRPUSDT,"Neutral 5x
 22",3578.56,1.78,4d 9h 21m,1555.29,455,8503,0.17
 ,Spot Grid,Most Copied,SPCXUSDT,"Long 5x
-7",2948.43,9.82,3d 8h 14m,272.21,4,411,7.45
+7",2948.43,9.82,3d 8h 14m,272.27,4,411,7.45
 ,Spot Grid,Most Copied,BTCUSDC,"Neutral 10x
 0",2494.78,0.49,3d 20h 34m,10322.9,104,2311,0.94
 ,Spot Grid,Most Copied,SOLUSDT,"Neutral 5x
@@ -55,9 +55,9 @@ Trailing Up
 ,Spot Grid,Most Copied,MONUSDT,"Long 10x
 4",1860.93,18.6,6d 3h 43m,661.51,32,355,12.54
 ,Spot Grid,Most Copied,QNTUSDT,"Short 10x
-1",1602.05,12.81,5d 19h 12m,6744.28,1265,27857,19.03
+1",1602.05,12.81,5d 19h 12m,6765.01,1265,27857,19.03
 ,Spot Grid,Most Matched,ZECUSDT,"Short 10x
-421",48708.14,28.88,6d 2h 20m,127.22,12,159,10.89
+421",48708.14,28.88,6d 2h 20m,126.15,12,159,10.89
 ,Spot Grid,Most Matched,BTCUSDC,"Neutral 10x
 3",5508.52,0.55,4d 10h 53m,10010.0,79,2389,1.07
 ,Spot Grid,Most Matched,QNTUSDT,"Long 5x
@@ -66,17 +66,17 @@ Trailing Up
 ,Spot Grid,Most Matched,XRPUSDT,"Neutral 5x
 22",3578.56,1.78,4d 9h 21m,1555.29,455,8503,0.17
 ,Spot Grid,Most Matched,SPCXUSDT,"Long 5x
-7",2948.43,9.82,3d 8h 14m,272.21,4,411,7.45
+7",2948.43,9.82,3d 8h 14m,272.27,4,411,7.45
 ,Spot Grid,Most Matched,BTCUSDC,"Neutral 10x
 0",2494.78,0.49,3d 20h 34m,10322.9,104,2311,0.94
 ,Spot Grid,Most Matched,SOLUSDT,"Neutral 5x
 12",2452.77,1.22,6d 4h 52m,1805.18,186,5078,0.29
 ,Spot Grid,Most Matched,MONUSDT,"Long 10x
-4",1860.93,18.6,6d 3h 43m,661.51,32,355,12.54
+4",1860.93,18.6,6d 3h 43m,661.22,32,355,12.54
 ,Spot Grid,Most Matched,QNTUSDT,"Short 10x
-1",1602.05,12.81,5d 19h 12m,6743.83,1265,27857,19.03
+1",1602.05,12.81,5d 19h 12m,6763.9,1265,27857,19.03
 ,Futures Grid,Top PNL,ZECUSDT,"Short 10x
-421",48708.14,28.88,6d 2h 20m,127.23,12,159,10.89
+421",48708.14,28.88,6d 2h 20m,126.1,12,159,10.89
 ,Futures Grid,Top PNL,BTCUSDC,"Neutral 10x
 3",5508.52,0.55,4d 10h 53m,10010.0,79,2389,1.07
 ,Futures Grid,Top PNL,QNTUSDT,"Long 5x
@@ -85,17 +85,17 @@ Trailing Up
 ,Futures Grid,Top PNL,XRPUSDT,"Neutral 5x
 22",3578.56,1.78,4d 9h 21m,1555.29,455,8503,0.17
 ,Futures Grid,Top PNL,SPCXUSDT,"Long 5x
-7",2948.43,9.82,3d 8h 14m,272.21,4,411,7.45
+7",2948.43,9.82,3d 8h 14m,272.27,4,411,7.45
 ,Futures Grid,Top PNL,BTCUSDC,"Neutral 10x
 0",2494.78,0.49,3d 20h 34m,10322.9,104,2311,0.94
 ,Futures Grid,Top PNL,SOLUSDT,"Neutral 5x
 12",2452.77,1.22,6d 4h 52m,1805.18,186,5078,0.29
 ,Futures Grid,Top PNL,MONUSDT,"Long 10x
-4",1860.93,18.6,6d 3h 43m,661.51,32,355,12.54
+4",1860.93,18.6,6d 3h 43m,660.94,32,355,12.54
 ,Futures Grid,Top PNL,QNTUSDT,"Short 10x
-1",1602.05,12.81,5d 19h 12m,6742.27,1265,27857,19.03
+1",1602.05,12.81,5d 19h 12m,6763.54,1265,27857,19.03
 ,Futures Grid,Top ROI,ZECUSDT,"Short 10x
-421",48708.14,28.88,6d 2h 20m,127.23,12,159,10.89
+421",48708.14,28.88,6d 2h 20m,126.02,12,159,10.89
 ,Futures Grid,Top ROI,BTCUSDC,"Neutral 10x
 3",5508.52,0.55,4d 10h 53m,10010.0,79,2389,1.07
 ,Futures Grid,Top ROI,QNTUSDT,"Long 5x
@@ -104,17 +104,17 @@ Trailing Up
 ,Futures Grid,Top ROI,XRPUSDT,"Neutral 5x
 22",3578.56,1.78,4d 9h 21m,1555.29,455,8503,0.17
 ,Futures Grid,Top ROI,SPCXUSDT,"Long 5x
-7",2948.43,9.82,3d 8h 14m,272.21,4,411,7.45
+7",2948.43,9.82,3d 8h 14m,272.27,4,411,7.45
 ,Futures Grid,Top ROI,BTCUSDC,"Neutral 10x
 0",2494.78,0.49,3d 20h 34m,10322.9,104,2311,0.94
 ,Futures Grid,Top ROI,SOLUSDT,"Neutral 5x
 12",2452.77,1.22,6d 4h 52m,1805.18,186,5078,0.29
 ,Futures Grid,Top ROI,MONUSDT,"Long 10x
-4",1860.93,18.6,6d 3h 43m,661.51,32,355,12.54
+4",1860.93,18.6,6d 3h 43m,660.94,32,355,12.54
 ,Futures Grid,Top ROI,QNTUSDT,"Short 10x
-1",1602.05,12.81,5d 19h 12m,6742.51,1265,27857,19.03
+1",1602.05,12.81,5d 19h 12m,6763.63,1265,27857,19.03
 ,Futures Grid,Most Copied,ZECUSDT,"Short 10x
-421",48708.14,28.88,6d 2h 20m,127.23,12,159,10.89
+421",48708.14,28.88,6d 2h 20m,126.02,12,159,10.89
 ,Futures Grid,Most Copied,BTCUSDC,"Neutral 10x
 3",5508.52,0.55,4d 10h 53m,10010.0,79,2389,1.07
 ,Futures Grid,Most Copied,QNTUSDT,"Long 5x
@@ -123,17 +123,17 @@ Trailing Up
 ,Futures Grid,Most Copied,XRPUSDT,"Neutral 5x
 22",3578.56,1.78,4d 9h 21m,1555.29,455,8503,0.17
 ,Futures Grid,Most Copied,SPCXUSDT,"Long 5x
-7",2948.43,9.82,3d 8h 14m,272.21,4,411,7.45
+7",2948.43,9.82,3d 8h 14m,272.27,4,411,7.45
 ,Futures Grid,Most Copied,BTCUSDC,"Neutral 10x
 0",2494.78,0.49,3d 20h 34m,10322.9,104,2311,0.94
 ,Futures Grid,Most Copied,SOLUSDT,"Neutral 5x
 12",2452.77,1.22,6d 4h 52m,1805.18,186,5078,0.29
 ,Futures Grid,Most Copied,MONUSDT,"Long 10x
-4",1860.93,18.6,6d 3h 43m,661.51,32,355,12.54
+4",1860.93,18.6,6d 3h 43m,660.94,32,355,12.54
 ,Futures Grid,Most Copied,QNTUSDT,"Short 10x
-1",1602.05,12.81,5d 19h 12m,6742.51,1265,27857,19.03
+1",1602.05,12.81,5d 19h 12m,6763.63,1265,27857,19.03
 ,Futures Grid,Most Matched,ZECUSDT,"Short 10x
-421",48708.14,28.88,6d 2h 20m,127.23,12,159,10.89
+421",48708.14,28.88,6d 2h 20m,126.09,12,159,10.89
 ,Futures Grid,Most Matched,BTCUSDC,"Neutral 10x
 3",5508.52,0.55,4d 10h 53m,10010.0,79,2389,1.07
 ,Futures Grid,Most Matched,QNTUSDT,"Long 5x
@@ -142,12 +142,12 @@ Trailing Up
 ,Futures Grid,Most Matched,XRPUSDT,"Neutral 5x
 22",3578.56,1.78,4d 9h 21m,1555.29,455,8503,0.17
 ,Futures Grid,Most Matched,SPCXUSDT,"Long 5x
-7",2948.43,9.82,3d 8h 14m,272.21,4,411,7.45
+7",2948.43,9.82,3d 8h 14m,272.27,4,411,7.45
 ,Futures Grid,Most Matched,BTCUSDC,"Neutral 10x
 0",2494.78,0.49,3d 20h 34m,10322.9,104,2311,0.94
 ,Futures Grid,Most Matched,SOLUSDT,"Neutral 5x
 12",2452.77,1.22,6d 4h 52m,1805.18,186,5078,0.29
 ,Futures Grid,Most Matched,MONUSDT,"Long 10x
-4",1860.93,18.6,6d 3h 43m,661.51,32,355,12.54
+4",1860.93,18.6,6d 3h 43m,660.94,32,355,12.54
 ,Futures Grid,Most Matched,QNTUSDT,"Short 10x
-1",1602.05,12.81,5d 19h 12m,6747.3,1265,27857,19.03
+1",1602.05,12.81,5d 19h 12m,6764.21,1265,27857,19.03
