@@ -71,7 +71,7 @@ with sync_playwright() as w:
     if pts:
      t,v=min(pts,key=lambda q:abs((q[0]-d).total_seconds()))
      if abs((t-d).total_seconds())<=7*86400:r["roi_"+label]=v;r["date_"+label]=t.isoformat()
-   a,bv=r["roi_2026_04_01"],r["roi_2026_09_30"]
+   a,bv=r["roi_2025_10_01"],r["roi_2026_09_30"]
    r["gain_100_usdt"]=round(bv-a,8) if a!="" and bv!="" else ""
    hist.append(r)
   except:pass
