@@ -14,7 +14,7 @@ Futures DCA/Top ROI 0 https://www.binance.com/en/trading-bots
 Futures DCA/Most Copied 0 https://www.binance.com/en/trading-bots
 Futures DCA/Most Matched 0 https://www.binance.com/en/trading-bots
 Arbitrage 1 https://www.binance.com/en/trading-bots
-Arbitrage/Top PNL 0 https://www.binance.com/en/trading-bots
-Arbitrage/Top ROI 0 https://www.binance.com/en/trading-bots
-Arbitrage/Most Copied 0 https://www.binance.com/en/trading-bots
-Arbitrage/Most Matched 0 https://www.binance.com/en/trading-bots
+Arbitrage/3d APR 0 https://www.binance.com/en/trading-bots
+Arbitrage/7d APR 0 https://www.binance.com/en/trading-bots
+Arbitrage/30d APR 0 https://www.binance.com/en/trading-bots
+Arbitrage/Next Available 0 https://www.binance.com/en/trading-bots

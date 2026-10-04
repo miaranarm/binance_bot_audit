@@ -47,190 +47,361 @@ Spot Grid
 Futures Grid
 Futures DCA
 Arbitrage
-Zone
+USDⓈ-M
+Market
 Direction
-Sort By
-3d APR
-B
-ARKUSDT
+1-7 Days
+ROI
+5-10x
+7D MDD
+Top PNL
+ZECUSDT
 Perp
-S
-ARK/USDT
+Short 10x
+419
 Create
-3d APR
-1,888.94%
-7d APR
-1,915.23%
-30d APR
-809.38%
-Spread Rate
-1.4052%
-Next Funding
--0.12830%
-Countdown
-00:32:52
-B
-GTCUSDT
+PNL (USD)
++49,261.11
+ROI
++29.20%
+Runtime
+6d 1h 20m
+Min. Investment
+126.52 USDT
+24H/Total Matched Trades
+13/159
+7D MDD
+10.89%
+BTCUSDC
 Perp
-S
-GTC/USDT
+Neutral 10x
+3
 Create
-3d APR
-471.98%
-7d APR
-195.50%
-30d APR
-37.59%
-Spread Rate
-0.7315%
-Next Funding
--0.62923%
-Countdown
-03:32:52
-B
-SANDUSDT
-Perp
-S
-SAND/USDT
-Create
-3d APR
-445.02%
-7d APR
-187.24%
-30d APR
-46.68%
-Spread Rate
-0.0129%
-Next Funding
--0.10971%
-Countdown
-03:32:52
-B
-ONEUSDT
-Perp
-S
-ONE/USDT
-Create
-3d APR
-387.50%
-7d APR
-731.77%
-30d APR
-892.30%
-Spread Rate
-1.7497%
-Next Funding
--0.35959%
-Countdown
-03:32:52
-B
-2ZUSDT
-Perp
-S
-2Z/USDT
-Create
-3d APR
-298.64%
-7d APR
-134.13%
-30d APR
-54.90%
-Spread Rate
-0.2633%
-Next Funding
--0.08905%
-Countdown
-03:32:52
-B
-ENJUSDT
-Perp
-S
-ENJ/USDT
-Create
-3d APR
-183.04%
-7d APR
-72.30%
-30d APR
-8.51%
-Spread Rate
-0.1204%
-Next Funding
--0.01067%
-Countdown
-03:32:52
-B
-MANAUSDT
-Perp
-S
-MANA/USDT
-Create
-3d APR
-145.28%
-7d APR
-57.29%
-30d APR
-6.49%
-Spread Rate
-0.1425%
-Next Funding
--0.03881%
-Countdown
-03:32:52
-B
-SCRUSDT
-Perp
-S
-SCR/USDT
-Create
-3d APR
-126.22%
-7d APR
-47.09%
-30d APR
-2.59%
-Spread Rate
-0.1600%
-Next Funding
-0.00237%
-Countdown
-03:32:52
-B
+PNL (USD)
++6,056.76
+ROI
++0.60%
+Runtime
+4d 9h 53m
+Min. Investment
+10,010.00 USDC
+24H/Total Matched Trades
+78/2,388
+7D MDD
+1.07%
 QNTUSDT
 Perp
-S
-QNT/USDT
+Long 5x
+Trailing Up
+133
 Create
-3d APR
-83.71%
-7d APR
-40.64%
-30d APR
-4.74%
-Spread Rate
-0.3354%
-Next Funding
--0.15154%
-Countdown
-03:32:52
+PNL (USD)
++5,027.42
+ROI
++61.31%
+Runtime
+6d 11h 2m
+Min. Investment
+536.75 USDT
+24H/Total Matched Trades
+15/626
+7D MDD
+50.70%
+XRPUSDT
+Perp
+Neutral 5x
+22
+Create
+PNL (USD)
++3,573.48
+ROI
++1.78%
+Runtime
+4d 8h 21m
+Min. Investment
+1,555.29 USDT
+24H/Total Matched Trades
+469/8,493
+7D MDD
+0.17%
+SPCXUSDT
+Perp
+Long 5x
+6
+Create
+PNL (USD)
++2,920.78
+ROI
++9.73%
+Runtime
+3d 7h 14m
+Min. Investment
+272.35 USDT
+24H/Total Matched Trades
+4/411
+7D MDD
+7.45%
+BTCUSDC
+Perp
+Neutral 10x
+0
+Create
+PNL (USD)
++2,734.72
+ROI
++0.54%
+Runtime
+3d 19h 34m
+Min. Investment
+10,322.90 USDC
+24H/Total Matched Trades
+103/2,310
+7D MDD
+0.94%
+SOLUSDT
+Perp
+Neutral 5x
+12
+Create
+PNL (USD)
++2,475.70
+ROI
++1.23%
+Runtime
+6d 3h 52m
+Min. Investment
+1,805.18 USDT
+24H/Total Matched Trades
+187/5,074
+7D MDD
+0.29%
+MONUSDT
+Perp
+Long 10x
+4
+Create
+PNL (USD)
++1,891.89
+ROI
++18.91%
+Runtime
+6d 2h 43m
+Min. Investment
+663.78 USDT
+24H/Total Matched Trades
+32/355
+7D MDD
+12.54%
+QNTUSDT
+Perp
+Short 10x
+1
+Create
+PNL (USD)
++1,573.58
+ROI
++12.58%
+Runtime
+5d 18h 12m
+Min. Investment
+6,795.04 USDT
+24H/Total Matched Trades
+1,304/27,826
+7D MDD
+19.03%
+Last updated on 2026-10-04 11:36:30.
 1
 2
 3
 4
 5
 ...
-46
+50
 Hot Coin Leaderboard
 Trending Market Top 10
 Last updated on 2026-10-04 11:36:30.
 USDⓈ-M
 Spot Grid
 Futures Grid
+Market
+Running
+Neutral / Long / Short Ratio
+Action
+DUSKUSDT
+Perp
+13
+3 : 9 : 1
+Create
+USTCUSDT
+Perp
+13
+3 : 10 : -
+Create
+IRENUSDT
+Perp
+13
+1 : 12 : -
+Create
+QNTXUSDT
+Perp
+13
+2 : 11 : -
+Create
+PNUTUSDT
+Perp
+13
+5 : 8 : -
+Create
+RAMUSDT
+Perp
+13
+2 : 8 : 3
+Create
+BXUSDT
+Perp
+13
+1 : 12 : -
+Create
+CRDOUSDT
+Perp
+13
+- : 10 : 3
+Create
+NKEUSDT
+Perp
+13
+2 : 6 : 5
+Create
+IOUSDT
+Perp
+12
+5 : 4 : 3
+Create
+1
+...
+42
+43
+44
+45
+46
+...
+79
 Volatility Top 10
-Last updated on 2026-10-04 11:36:30.
-USDⓈ-M
+Last updated on 2026-10-04 11:35:45.
 Spot Grid
 Futures Grid
+Market
+Volatility
+Last Price
+24h%
+Action
+LINK/BTC
+0.63
+0.0001651
++0.79%
+Create
+LUNC/USDT
+0.62
+0.00005279
++1.67%
+Create
+GRAM/USDT
+0.62
+1.533
++2.54%
+Create
+ADA/ETH
+0.61
+0.0000908
+-0.43%
+Create
+LAZIO/USDT
+0.61
+0.388
++0.25%
+Create
+TURTLE/USDT
+0.60
+0.0440
++2.56%
+Create
+PSG/USDT
+0.59
+0.462
++0.87%
+Create
+ALPINE/USDT
+0.59
+0.359
++2.27%
+Create
+LINK/ETH
+0.59
+0.005204
++0.48%
+Create
+JUV/USDT
+0.59
+0.323
+-0.61%
+Create
+1
+...
+45
+46
+47
+48
+49
+...
+54
+Features
+Intuitive Automation
+Set up your algorithmic bot and automate your orders in a few clicks with TWAP, VP algos, and Grid trading.
+Trending strategies
+Replicate and customize the most profitable Grid Trading strategies across a wide range of trading pairs.
+Deep Liquidity
+Optimize order executions and reduce slippage while capturing market trends on the largest exchange.
+Bots Academy
+Trading Bot Essentials
+Spot Grid
+Futures Grid
+Position Snowball
+Futures DCA
+Arbitrage
+Rebalancing Bot
+Spot DCA
+Algo Order
+How to Use Binance's Funding Rate Arbitrage Bot
+The arbitrage bot automatically opens positions in opposite directions in both the Futures and Spot markets. This involves going short in one market and long in the other to collect the funding fee while hedging price risk.
+Learn More
+FAQ
+1
+What Is Spot Grid Trading and How Does It Work
+2
+How to Create a Spot Grid Trading Strategy on Binance
+3
+How to Use Spot Grid Trading Auto Parameters
+4
+Binance Spot Grid Trading Parameters
+5
+How to use the Strategy Trading Landing Page
+6
+What Is Futures Grid Trading
+7
+What Is Long/Short Grid Trading
+8
+Futures Grid Trading Auto Parameters Guide
+9
+How to Use TWAP Algorithm on Binance Futures
+10
+How to Use Volume Participation Algorithm on Binance Future
+11
+Strategy Trading Disclaimers
+12
+What Is Rebalancing Bot and Frequently Asked Questions
+13
+What are Algorithmic Orders? TWAP and POV Strategies Explained
+Algorithmic (Algo) Orders are intelligent orders that facilitate the execution of large or illiquid trades over a period of time in smaller blocks. They optimize execution based on your selected parameters to reduce execution costs and mitigate market impact. FAQ
 Community
 English
 USD-$
