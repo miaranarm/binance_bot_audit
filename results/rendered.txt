@@ -68,7 +68,7 @@ ROI
 Runtime
 6d 1h 20m
 Min. Investment
-127.42 USDT
+126.95 USDT
 24H/Total Matched Trades
 13/159
 7D MDD
@@ -137,7 +137,7 @@ ROI
 Runtime
 3d 7h 14m
 Min. Investment
-272.27 USDT
+272.28 USDT
 24H/Total Matched Trades
 4/411
 7D MDD
@@ -188,7 +188,7 @@ ROI
 Runtime
 6d 2h 43m
 Min. Investment
-661.31 USDT
+663.48 USDT
 24H/Total Matched Trades
 32/355
 7D MDD
@@ -205,7 +205,7 @@ ROI
 Runtime
 5d 18h 12m
 Min. Investment
-6,840.27 USDT
+6,830.21 USDT
 24H/Total Matched Trades
 1,304/27,826
 7D MDD
