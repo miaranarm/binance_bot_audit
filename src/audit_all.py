@@ -2,7 +2,7 @@ import csv,datetime,os
 from playwright.sync_api import sync_playwright
 OUT="results";os.makedirs(OUT,exist_ok=True)
 BASE="https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/"
-TOP=BASE+"queryTopStrategy";DCA=BASE+"queryTopUmDcaStrategy";CH=BASE+"queryRoiChart";CUT=368*86400
+TOP=BASE+"queryTopStrategy";DCA=BASE+"queryTopUmDcaStrategy";CH=BASE+"queryRoiChart";CUT=182*86400
 def num(v):
  try:return float(v)
  except:return 0
@@ -49,8 +49,8 @@ with sync_playwright() as w:
  for i,x in enumerate(rows,1):
   try:
    z=p.request.post(CH,data={"strategyId":x.get("strategyId"),"streamerStrategyType":x.get("streamer")}).json().get("data") or [];pts=[];walk(z,pts)
-   r=dict(strategyId=x.get("strategyId"),category=x.get("category"),symbol=x.get("symbol"),roi_now=x.get("roi"),runningTime=x.get("runningTime"),leverage=x.get("leverage_detected"),roi_2025_10_01="",roi_2026_09_30="",date_2025_10_01="",date_2026_09_30="")
-   for d,k in [(datetime.datetime(2025,10,1,tzinfo=datetime.timezone.utc),"2025_10_01"),(datetime.datetime(2026,9,30,tzinfo=datetime.timezone.utc),"2026_09_30")]:
+   r=dict(strategyId=x.get("strategyId"),category=x.get("category"),symbol=x.get("symbol"),roi_now=x.get("roi"),runningTime=x.get("runningTime"),leverage=x.get("leverage_detected"),roi_2026_04_01="",roi_2026_09_30="",date_2026_04_01="",date_2026_09_30="")
+   for d,k in [(datetime.datetime(2026,4,1,tzinfo=datetime.timezone.utc),"2025_10_01"),(datetime.datetime(2026,9,30,tzinfo=datetime.timezone.utc),"2026_09_30")]:
     if pts:
      t,v=min(pts,key=lambda q:abs((q[0]-d).total_seconds()))
      if abs((t-d).days)<=7:r["roi_"+k]=v;r["date_"+k]=t.isoformat()
