@@ -34,6 +34,3 @@ with sync_playwright() as w:
 fields=["snapshot_utc","category","sort","pair","meta","pnl_usd","roi_pct","runtime","min_investment","trades_24h","trades_total","mdd7d_pct"]
 with open(f"{OUT}/bots.csv","w",newline="",encoding="utf-8") as f:
  w=csv.DictWriter(f,fieldnames=fields);w.writeheader();w.writerows(rows)
-with open(f"{OUT}/top3.md","w",encoding="utf-8") as f:
- f.write("# Recent-weighted Binance Bot Audit\n\n")
- for i,x in enumerate(rows[:20],1):f.write("## %d. %s — %s %s\nScore %.3f | ROI %.2f%% | PNL $%s | MDD %.2f%% | Runtime %s | 24h/total %s/%s | %s\n"%(i,x["category"],x["pair"],x["meta"],x["recent_score"],x["roi_pct"],format(x["pnl_usd"],",.2f"),x["mdd7d_pct"],x["runtime"],format(x["trades_24h"],","),format(x["trades_total"],","),x["risk_class"]))
