@@ -1,20 +1,36 @@
-Spot Grid 1 https://www.binance.com/en/trading-bots
-Spot Grid/Top PNL 0 https://www.binance.com/en/trading-bots
-Spot Grid/Top ROI 0 https://www.binance.com/en/trading-bots
-Spot Grid/Most Copied 0 https://www.binance.com/en/trading-bots
-Spot Grid/Most Matched 0 https://www.binance.com/en/trading-bots
-Futures Grid 1 https://www.binance.com/en/trading-bots
-Futures Grid/Top PNL 0 https://www.binance.com/en/trading-bots
-Futures Grid/Top ROI 0 https://www.binance.com/en/trading-bots
-Futures Grid/Most Copied 0 https://www.binance.com/en/trading-bots
-Futures Grid/Most Matched 0 https://www.binance.com/en/trading-bots
-Futures DCA 1 https://www.binance.com/en/trading-bots
-Futures DCA/Top PNL 0 https://www.binance.com/en/trading-bots
-Futures DCA/Top ROI 0 https://www.binance.com/en/trading-bots
-Futures DCA/Most Copied 0 https://www.binance.com/en/trading-bots
-Futures DCA/Most Matched 0 https://www.binance.com/en/trading-bots
-Arbitrage 1 https://www.binance.com/en/trading-bots
-Arbitrage/3d APR 0 https://www.binance.com/en/trading-bots
-Arbitrage/7d APR 0 https://www.binance.com/en/trading-bots
-Arbitrage/30d APR 0 https://www.binance.com/en/trading-bots
-Arbitrage/Next Available 0 https://www.binance.com/en/trading-bots
+Spot Grid click=1
+Spot Grid/Top PNL click=0
+rows=9 first=ZECUSDT
+Spot Grid/Top ROI click=0
+rows=9 first=ZECUSDT
+Spot Grid/Most Copied click=0
+rows=9 first=ZECUSDT
+Spot Grid/Most Matched click=0
+rows=9 first=ZECUSDT
+Futures Grid click=1
+Futures Grid/Top PNL click=0
+rows=9 first=ZECUSDT
+Futures Grid/Top ROI click=0
+rows=9 first=ZECUSDT
+Futures Grid/Most Copied click=0
+rows=9 first=ZECUSDT
+Futures Grid/Most Matched click=0
+rows=9 first=ZECUSDT
+Futures DCA click=1
+Futures DCA/Top PNL click=0
+rows=0 first=-
+Futures DCA/Top ROI click=0
+rows=0 first=-
+Futures DCA/Most Copied click=0
+rows=0 first=-
+Futures DCA/Most Matched click=0
+rows=0 first=-
+Arbitrage click=1
+Arbitrage/3d APR click=1
+rows=0 first=-
+Arbitrage/7d APR click=1
+rows=0 first=-
+Arbitrage/30d APR click=1
+rows=0 first=-
+Arbitrage/Next Available click=0
+rows=0 first=-
