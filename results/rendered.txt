@@ -15,9 +15,9 @@ Active Strategies
 134,672
 Total Value
 $8.54B
-Spot Trading Bots × bStocks Trading Competition – Share 18,000 USDT Prize Pool!
-More details
-2 / 2
+Discover Our Trading Bots
+Learn More
+1 / 2
 All
 Spot
 Futures
@@ -68,7 +68,7 @@ ROI
 Runtime
 6d 1h 20m
 Min. Investment
-127.56 USDT
+127.42 USDT
 24H/Total Matched Trades
 13/159
 7D MDD
@@ -137,7 +137,7 @@ ROI
 Runtime
 3d 7h 14m
 Min. Investment
-272.12 USDT
+272.27 USDT
 24H/Total Matched Trades
 4/411
 7D MDD
@@ -188,7 +188,7 @@ ROI
 Runtime
 6d 2h 43m
 Min. Investment
-659.97 USDT
+661.31 USDT
 24H/Total Matched Trades
 32/355
 7D MDD
@@ -205,7 +205,7 @@ ROI
 Runtime
 5d 18h 12m
 Min. Investment
-6,855.13 USDT
+6,840.27 USDT
 24H/Total Matched Trades
 1,304/27,826
 7D MDD
