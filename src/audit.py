@@ -31,23 +31,7 @@ with sync_playwright() as w:
    ok=click(p,sort);dbg.append(f"{cat}/{sort} click={ok}")
    z=scan(p,cat,sort);dbg.append(f"rows={len(z)} first={z[0]['pair'] if z else '-'}");rows+=z
  open(f"{OUT}/debug.txt","w").write("\n".join(dbg));open(f"{OUT}/rendered.txt","w").write(p.locator("body").inner_text());open(f"{OUT}/api_urls.txt","w").write("\n".join(dict.fromkeys(api_urls)));b.close()
-u={(x["category"],x["sort"],x["pair"],x["meta"],x["pnl_usd"]):x for x in rows};rows=list(u.values())
-def day(s):
- d=re.search(r"(\d+)d",s);h=re.search(r"(\d+)h",s);return (int(d.group(1)) if d else 0)+(int(h.group(1)) if h else 0)/24
-for x in rows:
- x["runtime_days"]=round(day(x["runtime"]),2);x["roi_mdd"]=round(x["roi_pct"]/max(x["mdd7d_pct"],.1),4);x["roi_per_day"]=round(x["roi_pct"]/max(x["runtime_days"],.25),4);x["maturity"]="Emerging" if x["runtime_days"]<7 else ("Developing" if x["runtime_days"]<30 else "Mature");x["risk_class"]="Reject" if x["mdd7d_pct"]>40 else ("Aggressive" if x["mdd7d_pct"]>25 else "Candidate")
-hist={};hp=f"{OUT}/history.csv"
-if os.path.exists(hp):
- with open(hp,encoding="utf-8") as f:
-  for r in csv.DictReader(f):hist.setdefault((r["category"],r["pair"],r["meta"]),[]).append(r)
-for x in rows:
- h=hist.get((x["category"],x["pair"],x["meta"]),[])[-5:];q=sum(float(r["roi_mdd"]) for r in h)/len(h) if h else x["roi_mdd"];x["recent_score"]=round(.75*x["roi_mdd"]+.25*q,4);x["snapshot_utc"]=datetime.datetime.now(datetime.timezone.utc).isoformat()
-fields=["snapshot_utc","category","sort","pair","meta","pnl_usd","roi_pct","runtime","runtime_days","min_investment","trades_24h","trades_total","mdd7d_pct","roi_per_day","roi_mdd","recent_score","maturity","risk_class"]
-with open(hp,"a",newline="",encoding="utf-8") as f:
- w=csv.DictWriter(f,fieldnames=fields)
- if f.tell()==0:w.writeheader()
- w.writerows(rows)
-rows.sort(key=lambda x:(-x["recent_score"],-x["pnl_usd"]))
+fields=["snapshot_utc","category","sort","pair","meta","pnl_usd","roi_pct","runtime","min_investment","trades_24h","trades_total","mdd7d_pct"]
 with open(f"{OUT}/bots.csv","w",newline="",encoding="utf-8") as f:
  w=csv.DictWriter(f,fieldnames=fields);w.writeheader();w.writerows(rows)
 with open(f"{OUT}/top3.md","w",encoding="utf-8") as f:
