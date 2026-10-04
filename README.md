@@ -1,0 +1,1 @@
+# Binance Bot Audit\n\nSurveillance des bots publics Binance. Classement par ROI/PNL puis filtres de risque.\n\nLes données publiques ne nécessitent pas de clé API. Toute clé ajoutée plus tard doit être read-only, sans trading ni retrait.\n
