@@ -41,5 +41,5 @@ rows.sort(key=lambda x:(x["risk_class"]!="Candidate",-x["roi_mdd"],-x["pnl_usd"]
 with open(f"{OUT}/bots.csv","w",newline="",encoding="utf-8") as f: csv.DictWriter(f,fieldnames=fields).writeheader(); csv.DictWriter(f,fieldnames=fields).writerows(rows)
 with open(f"{OUT}/top3.md","w",encoding="utf-8") as f:
  f.write("# Refined Binance Public Bot Audit\n\n")
- for i,x in enumerate(rows[:10],1): f.write(f"## {i}. {x["category"]} — {x["pair"]} {x["meta"]}\nROI {x["roi_pct"]:.2f}% | PNL ${x["pnl_usd"]:,.2f} | MDD {x["mdd7d_pct"]:.2f}% | Runtime {x["runtime"]} | Trades {x["trades_total"]:,} | {x["risk_class"]}\n")
+ for i,x in enumerate(rows[:10],1): f.write("## %d. %s — %s %s\nROI %.2f%% | PNL $%s | MDD %.2f%% | Runtime %s | Trades %s | %s\n" % (i,x["category"],x["pair"],x["meta"],x["roi_pct"],format(x["pnl_usd"],",.2f"),x["mdd7d_pct"],x["runtime"],format(x["trades_total"],","),x["risk_class"]))
 print("Collected raw",len(rows))
