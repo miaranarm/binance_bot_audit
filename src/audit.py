@@ -41,7 +41,7 @@ with open(hp,"a",newline="",encoding="utf-8") as f:
  w=csv.DictWriter(f,fieldnames=fields)
  if f.tell()==0:w.writeheader()
  w.writerows(rows)
-rows.sort(key=lambda x:(x["risk_class"]!="Candidate",-x["recent_score"],-x["pnl_usd"]))
+rows.sort(key=lambda x:(-x["recent_score"],-x["pnl_usd"]))
 with open(f"{OUT}/bots.csv","w",newline="",encoding="utf-8") as f:
  w=csv.DictWriter(f,fieldnames=fields);w.writeheader();w.writerows(rows)
 with open(f"{OUT}/top3.md","w",encoding="utf-8") as f:
