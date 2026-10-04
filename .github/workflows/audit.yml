@@ -25,4 +25,4 @@ jobs:
           git diff --cached --quiet || git commit -m "audit: all no-leverage Binance bots"
           git push
 
-# audit v2
+# audit v3 — baseline 2025-10-01 to 2026-09-30
