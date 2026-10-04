@@ -1,4 +1,4 @@
-import csv,re,os,json,datetime
+import csv,re,os,json,datetime,gzip
 from playwright.sync_api import sync_playwright
 URL="https://www.binance.com/en/trading-bots";OUT="results";os.makedirs(OUT,exist_ok=True)
 PAT=re.compile(r"([A-Z0-9]{1,20}(?:/)?(?:USDT|USDC|FDUSD|BTC|ETH))\s+(?:Perp\s+)?(.{1,100}?)\s+(?:Create\s+)?PNL\s+\(USD\)\s+([+-]?[\d,]+(?:\.\d+)?)\s+ROI\s+([+-]?[\d,]+(?:\.\d+)?)%\s+Runtime\s+(.{1,40}?)\s+Min\. Investment\s+([\d,.-]+)\s+\w+\s+24H/Total Matched Trades\s+([\d,]+)/([\d,]+)\s+7D MDD\s+([\d.]+)%",re.S)
@@ -49,7 +49,7 @@ with sync_playwright() as w:
     z=r.json().get("data") or [];charts.append({"strategyId":sid,"data":z})
    except Exception as e: dbg.append(f"CHART_ERROR {sid} {e}")
  open(f"{OUT}/spot_all.json","w",encoding="utf-8").write(json.dumps(rows,ensure_ascii=False))
- open(f"{OUT}/spot_roi_charts.json","w",encoding="utf-8").write(json.dumps(charts,ensure_ascii=False))
+ gzip.open(f"{OUT}/spot_roi_charts.json.gz","wt",encoding="utf-8").write(json.dumps(charts,ensure_ascii=False))
  open(f"{OUT}/debug.txt","w").write("\n".join(dbg))
  open(f"{OUT}/api_urls.txt","w").write("\n".join(dict.fromkeys(api)))
  open(f"{OUT}/api_requests.json","w",encoding="utf-8").write(json.dumps(reqs,ensure_ascii=False,indent=2))
