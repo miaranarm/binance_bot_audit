@@ -17,7 +17,7 @@ jobs:
       - run: pip install -r requirements.txt
       - run: playwright install --with-deps chromium
       - run: python src/audit.py
-      - run: python src/history_targets.py
+      - run: python src/historical_full.py
       - name: Commit results
         run: |
           git config user.name "github-actions[bot]"
