@@ -15,14 +15,14 @@ def scan(p,cat,sort):
   a.append(dict(category=cat,sort=sort,pair=pair.replace("/",""),meta=meta.strip(),pnl_usd=float(pnl.replace(",","")),roi_pct=float(roi),runtime=run.strip(),min_investment=float(inv.replace(",","")),trades_24h=int(t24.replace(",","")),trades_total=int(tt.replace(",","")),mdd7d_pct=float(mdd)))
  return a
 with sync_playwright() as w:
- b=w.chromium.launch(headless=True);p=b.new_page(viewport={"width":1440,"height":1200},locale="en-US");p.goto(URL,wait_until="domcontentloaded",timeout=60000);p.wait_for_timeout(8000)
- rows=[];dbg=[]
+ b=w.chromium.launch(headless=True);p=b.new_page(viewport={"width":1440,"height":1200},locale="en-US");rows=[];dbg=[]
  api_urls=[]
  def resp(r):
   try:
    if r.request.resource_type in ("xhr","fetch") and "binance.com" in r.url: api_urls.append(r.url)
   except: pass
  p.on("response",resp)
+ p.goto(URL,wait_until="domcontentloaded",timeout=60000);p.wait_for_timeout(10000)
  cats=["Spot Grid","Futures Grid","Futures DCA","Arbitrage"]
  sorts=["Top PNL","Top ROI","Most Copied","Most Matched"]
  for cat in cats:
