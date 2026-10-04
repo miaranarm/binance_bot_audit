@@ -2,16 +2,20 @@ import csv,re,os,datetime
 from playwright.sync_api import sync_playwright
 URL="https://www.binance.com/en/trading-bots"; OUT="results"; os.makedirs(OUT,exist_ok=True)
 PAT=re.compile(r"([A-Z0-9]{1,20}(?:/)?(?:USDT|USDC|FDUSD|BTC|ETH))\s+(?:Perp\s+)?(.{1,100}?)\s+(?:Create\s+)?PNL\s+\(USD\)\s+([+-]?[\d,]+(?:\.\d+)?)\s+ROI\s+([+-]?[\d,]+(?:\.\d+)?)%\s+Runtime\s+(.{1,40}?)\s+Min\. Investment\s+([\d,.-]+)\s+\w+\s+24H/Total Matched Trades\s+([\d,]+)/([\d,]+)\s+7D MDD\s+([\d.]+)%",re.S)
-def click(p,s):
- for role in ("tab","button"):
-  try:
-   q=p.get_by_role(role,name=s,exact=True)
-   if q.count(): q.first.click(timeout=3000);p.wait_for_timeout(900);return 1
-  except: pass
+def click(p,s,last=True):
+ try:
+  q=p.get_by_text(s,exact=True)
+  if q.count():
+   (q.last if last else q.first).click(timeout=4000);p.wait_for_timeout(1000);return 1
+ except: pass
  return 0
+def choose_sort(p,s):
+ if not click(p,"Sort By"): return 0
+ p.wait_for_timeout(300)
+ return click(p,s)
 def scan(p,cat,sort):
  a=[]
- for n in range(50):
+ for n in range(46):
   for m in PAT.finditer(p.locator("body").inner_text()):
    pair,meta,pnl,roi,run,inv,t24,tt,mdd=m.groups()
    a.append(dict(category=cat,sort=sort,pair=pair.replace("/",""),meta=meta.strip(),pnl_usd=float(pnl.replace(",","")),roi_pct=float(roi),runtime=run.strip(),min_investment=float(inv.replace(",","")),trades_24h=int(t24.replace(",","")),trades_total=int(tt.replace(",","")),mdd7d_pct=float(mdd)))
@@ -23,8 +27,8 @@ with sync_playwright() as w:
  for cat in ["Spot Grid","Futures Grid","Futures DCA","Arbitrage"]:
   ok=click(p,cat);dbg.append(f"{cat} {ok} {p.url}")
   if cat not in p.locator("body").inner_text():continue
-  for sort in ["Top PNL","Top ROI","Most Copied","Most Matched"]:
-   ok=click(p,sort);dbg.append(f"{cat}/{sort} {ok} {p.url}");rows+=scan(p,cat,sort)
+  for sort in (["Top PNL","Top ROI","Most Copied","Most Matched"] if cat!="Arbitrage" else ["3d APR","7d APR","30d APR","Next Available"]):
+   ok=choose_sort(p,sort);dbg.append(f"{cat}/{sort} {ok} {p.url}");rows+=scan(p,cat,sort)
  open(f"{OUT}/debug.txt","w").write("\n".join(dbg));open(f"{OUT}/rendered.txt","w").write(p.locator("body").inner_text());b.close()
 u={(x["category"],x["pair"],x["meta"],x["pnl_usd"],x["roi_pct"],x["runtime"],x["trades_total"]):x for x in rows};rows=list(u.values())
 def day(s):
