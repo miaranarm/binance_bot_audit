@@ -1,0 +1,443 @@
+{
+  "official_types": [
+    "Spot Grid",
+    "Auto-Invest",
+    "Spot DCA",
+    "Rebalancing Bot",
+    "Futures Grid",
+    "Futures DCA",
+    "Position Snowball",
+    "Futures TWAP",
+    "Spot Algo",
+    "Futures VP",
+    "Funding Rate Arbitrage"
+  ],
+  "endpoint_diagnostics": [
+    {
+      "endpoint": "https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryTopStrategy",
+      "category": "Spot Grid",
+      "request": {
+        "strategyType": 1,
+        "symbol": "",
+        "zone": "",
+        "sort": "pnl"
+      },
+      "code": "000000",
+      "total": 11027,
+      "first_keys": [
+        "autoInitPos",
+        "copyCount",
+        "cps",
+        "density",
+        "direction",
+        "initialMargin",
+        "latestMatchedCount",
+        "matchedCount",
+        "minInvestment",
+        "orderCount",
+        "pnl",
+        "pnlStopTriggerType",
+        "roi",
+        "runningTime",
+        "sevenDayMdd",
+        "stopSlPnl",
+        "stopTpPnl",
+        "stopTriggerType",
+        "strategyId",
+        "strategyParams",
+        "strategyType",
+        "symbol",
+        "totalAdjustmentAmount",
+        "trailingDownLimitPrice",
+        "trailingType",
+        "trailingUpLimitPrice",
+        "userId"
+      ],
+      "first_strategyType": 1
+    },
+    {
+      "endpoint": "https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryTopStrategy",
+      "category": "Marketplace type 2",
+      "request": {
+        "strategyType": 2,
+        "symbol": "",
+        "zone": "",
+        "sort": "pnl"
+      },
+      "code": "000000",
+      "total": 13681,
+      "first_keys": [
+        "autoInitPos",
+        "copyCount",
+        "cps",
+        "density",
+        "direction",
+        "initialMargin",
+        "latestMatchedCount",
+        "matchedCount",
+        "minInvestment",
+        "orderCount",
+        "pnl",
+        "pnlStopTriggerType",
+        "roi",
+        "runningTime",
+        "sevenDayMdd",
+        "stopSlPnl",
+        "stopTpPnl",
+        "stopTriggerType",
+        "strategyId",
+        "strategyParams",
+        "strategyType",
+        "symbol",
+        "totalAdjustmentAmount",
+        "trailingDownLimitPrice",
+        "trailingType",
+        "trailingUpLimitPrice",
+        "userId"
+      ],
+      "first_strategyType": 2
+    },
+    {
+      "endpoint": "https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryTopStrategy",
+      "category": "Marketplace type 3",
+      "request": {
+        "strategyType": 3,
+        "symbol": "",
+        "zone": "",
+        "sort": "pnl"
+      },
+      "code": "000000",
+      "total": 779,
+      "first_keys": [
+        "autoInitPos",
+        "copyCount",
+        "cps",
+        "density",
+        "direction",
+        "initialMargin",
+        "latestMatchedCount",
+        "matchedCount",
+        "minInvestment",
+        "orderCount",
+        "pnl",
+        "pnlStopTriggerType",
+        "roi",
+        "runningTime",
+        "sevenDayMdd",
+        "stopSlPnl",
+        "stopTpPnl",
+        "stopTriggerType",
+        "strategyId",
+        "strategyParams",
+        "strategyType",
+        "symbol",
+        "totalAdjustmentAmount",
+        "trailingDownLimitPrice",
+        "trailingType",
+        "trailingUpLimitPrice",
+        "userId"
+      ],
+      "first_strategyType": 3
+    },
+    {
+      "endpoint": "https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryTopStrategy",
+      "category": "Marketplace type 4",
+      "request": {
+        "strategyType": 4,
+        "symbol": "",
+        "zone": "",
+        "sort": "pnl"
+      },
+      "code": "000000",
+      "total": 0,
+      "first_keys": [],
+      "first_strategyType": null
+    },
+    {
+      "endpoint": "https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryTopStrategy",
+      "category": "Marketplace type 5",
+      "request": {
+        "strategyType": 5,
+        "symbol": "",
+        "zone": "",
+        "sort": "pnl"
+      },
+      "code": "000000",
+      "total": 0,
+      "first_keys": [],
+      "first_strategyType": null
+    },
+    {
+      "endpoint": "https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryTopStrategy",
+      "category": "Marketplace type 6",
+      "request": {
+        "strategyType": 6,
+        "symbol": "",
+        "zone": "",
+        "sort": "pnl"
+      },
+      "code": "000000",
+      "total": 0,
+      "first_keys": [],
+      "first_strategyType": null
+    },
+    {
+      "endpoint": "https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryTopStrategy",
+      "category": "Marketplace type 7",
+      "request": {
+        "strategyType": 7,
+        "symbol": "",
+        "zone": "",
+        "sort": "pnl"
+      },
+      "code": "000000",
+      "total": 0,
+      "first_keys": [],
+      "first_strategyType": null
+    },
+    {
+      "endpoint": "https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryTopStrategy",
+      "category": "Marketplace type 8",
+      "request": {
+        "strategyType": 8,
+        "symbol": "",
+        "zone": "",
+        "sort": "pnl"
+      },
+      "code": "000000",
+      "total": 0,
+      "first_keys": [],
+      "first_strategyType": null
+    },
+    {
+      "endpoint": "https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryTopStrategy",
+      "category": "Marketplace type 9",
+      "request": {
+        "strategyType": 9,
+        "symbol": "",
+        "zone": "",
+        "sort": "pnl"
+      },
+      "code": "000000",
+      "total": 0,
+      "first_keys": [],
+      "first_strategyType": null
+    },
+    {
+      "endpoint": "https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryTopStrategy",
+      "category": "Marketplace type 10",
+      "request": {
+        "strategyType": 10,
+        "symbol": "",
+        "zone": "",
+        "sort": "pnl"
+      },
+      "code": "000000",
+      "total": 2100,
+      "first_keys": [
+        "autoInitPos",
+        "copyCount",
+        "cps",
+        "density",
+        "direction",
+        "initialMargin",
+        "latestMatchedCount",
+        "matchedCount",
+        "minInvestment",
+        "orderCount",
+        "pnl",
+        "pnlStopTriggerType",
+        "roi",
+        "runningTime",
+        "sevenDayMdd",
+        "stopSlPnl",
+        "stopTpPnl",
+        "stopTriggerType",
+        "strategyId",
+        "strategyParams",
+        "strategyType",
+        "symbol",
+        "totalAdjustmentAmount",
+        "trailingDownLimitPrice",
+        "trailingType",
+        "trailingUpLimitPrice",
+        "userId"
+      ],
+      "first_strategyType": 10
+    },
+    {
+      "endpoint": "https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryTopStrategy",
+      "category": "Marketplace type 11",
+      "request": {
+        "strategyType": 11,
+        "symbol": "",
+        "zone": "",
+        "sort": "pnl"
+      },
+      "code": "000000",
+      "total": 0,
+      "first_keys": [],
+      "first_strategyType": null
+    },
+    {
+      "endpoint": "https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryTopStrategy",
+      "category": "Marketplace type 12",
+      "request": {
+        "strategyType": 12,
+        "symbol": "",
+        "zone": "",
+        "sort": "pnl"
+      },
+      "code": "000000",
+      "total": 0,
+      "first_keys": [],
+      "first_strategyType": null
+    },
+    {
+      "endpoint": "https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryTopStrategy",
+      "category": "Marketplace type 13",
+      "request": {
+        "strategyType": 13,
+        "symbol": "",
+        "zone": "",
+        "sort": "pnl"
+      },
+      "code": "000000",
+      "total": 0,
+      "first_keys": [],
+      "first_strategyType": null
+    },
+    {
+      "endpoint": "https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryTopStrategy",
+      "category": "Marketplace type 14",
+      "request": {
+        "strategyType": 14,
+        "symbol": "",
+        "zone": "",
+        "sort": "pnl"
+      },
+      "code": "000000",
+      "total": 0,
+      "first_keys": [],
+      "first_strategyType": null
+    },
+    {
+      "endpoint": "https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryTopStrategy",
+      "category": "Marketplace type 15",
+      "request": {
+        "strategyType": 15,
+        "symbol": "",
+        "zone": "",
+        "sort": "pnl"
+      },
+      "code": "000000",
+      "total": 0,
+      "first_keys": [],
+      "first_strategyType": null
+    },
+    {
+      "endpoint": "https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryTopStrategy",
+      "category": "Marketplace type 16",
+      "request": {
+        "strategyType": 16,
+        "symbol": "",
+        "zone": "",
+        "sort": "pnl"
+      },
+      "code": "000000",
+      "total": 0,
+      "first_keys": [],
+      "first_strategyType": null
+    },
+    {
+      "endpoint": "https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryTopStrategy",
+      "category": "Marketplace type 17",
+      "request": {
+        "strategyType": 17,
+        "symbol": "",
+        "zone": "",
+        "sort": "pnl"
+      },
+      "code": "000000",
+      "total": 0,
+      "first_keys": [],
+      "first_strategyType": null
+    },
+    {
+      "endpoint": "https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryTopStrategy",
+      "category": "Marketplace type 18",
+      "request": {
+        "strategyType": 18,
+        "symbol": "",
+        "zone": "",
+        "sort": "pnl"
+      },
+      "code": "000000",
+      "total": 0,
+      "first_keys": [],
+      "first_strategyType": null
+    },
+    {
+      "endpoint": "https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryTopStrategy",
+      "category": "Marketplace type 19",
+      "request": {
+        "strategyType": 19,
+        "symbol": "",
+        "zone": "",
+        "sort": "pnl"
+      },
+      "code": "000000",
+      "total": 0,
+      "first_keys": [],
+      "first_strategyType": null
+    },
+    {
+      "endpoint": "https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryTopStrategy",
+      "category": "Marketplace type 20",
+      "request": {
+        "strategyType": 20,
+        "symbol": "",
+        "zone": "",
+        "sort": "pnl"
+      },
+      "code": "000000",
+      "total": 0,
+      "first_keys": [],
+      "first_strategyType": null
+    },
+    {
+      "endpoint": "https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryTopUmDcaStrategy",
+      "category": "Futures DCA",
+      "request": {
+        "market": "",
+        "zone": "",
+        "roi": "",
+        "sort": "pnl",
+        "trailingType": "",
+        "leverage": "",
+        "investmentType": false,
+        "sevenDayMdd": "",
+        "strategyType": 10,
+        "symbol": ""
+      },
+      "code": "000000",
+      "total": 2100,
+      "first_keys": [
+        "batchId",
+        "copyCount",
+        "direction",
+        "leverage",
+        "pnl",
+        "roi",
+        "runningTime",
+        "sevenDayMdd",
+        "sharingParams",
+        "strategyId",
+        "strategyType",
+        "symbol",
+        "userId"
+      ],
+      "first_strategyType": 10
+    }
+  ]
+}

@@ -8,6 +8,7 @@ https://www.binance.com/bapi/accounts/v1/public/authcenter/auth
 https://www.binance.com/bapi/accounts/v2/public/account/ip/country-city-short
 https://www.binance.com/bapi/apex/v1/friendly/apex/marketing/complianceActionCheck?requestLink=www.binance.com%2Fen%2Ftrading-bots
 https://www.binance.com/bapi/apex/v1/friendly/apex/marketing/complianceActionCheck?requestLink=www.binance.com%2Fen%2Ftrading-bots%2Ffutures%2Farbitrage%2FBTCUSDT
+https://www.binance.com/bapi/apex/v1/friendly/apex/marketing/complianceActionCheck?requestLink=www.binance.com%2Fen%2Ftrading-bots%2Ffutures%2Fdca-bot%2FBTCUSDT
 https://www.binance.com/bapi/apex/v1/friendly/apex/marketing/complianceActionCheck?requestLink=www.binance.com%2Fen%2Ftrading-bots%2Ffutures%2Fsnowball%2FBTCUSDT
 https://www.binance.com/bapi/apex/v1/friendly/apex/marketing/complianceActionCheck?requestLink=www.binance.com%2Fen%2Ftrading-bots%2Fspot%2Fdca-bot%2FBTCUSDT
 https://www.binance.com/bapi/apex/v1/friendly/apex/marketing/complianceActionCheck?requestLink=www.binance.com%2Fen%2Ftrading-bots%2Fspot%2Frebalancing-bot%2FBTCUSDT

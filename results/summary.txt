@@ -1,2 +1,4 @@
-SURVIVORS=2353
-WITH_HIST=2333
+RAW=29687
+NO_LEVERAGE_4_DATES=498
+WITH_ROI_04_09=497
+NOTE=Presence is inferred from current public strategy runtime; Binance public marketplace does not expose a historical daily snapshot for every bot family.
