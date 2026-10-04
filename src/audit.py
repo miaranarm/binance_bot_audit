@@ -16,7 +16,7 @@ def scan(p,cat,sort):
  return a
 with sync_playwright() as w:
  b=w.chromium.launch(headless=True);p=b.new_page(viewport={"width":1440,"height":1200},locale="en-US");p.goto(URL,wait_until="domcontentloaded",timeout=60000);p.wait_for_timeout(8000)
- rows=[];dbg=[]
+ rows=[];dbg=[]\n api_urls=[]\n def resp(r):\n  try:\n   if r.request.resource_type in ("xhr","fetch") and ("binance.com" in r.url): api_urls.append(r.url)\n  except: pass\n p.on("response",resp)
  cats=["Spot Grid","Futures Grid","Futures DCA","Arbitrage"]
  sorts=["Top PNL","Top ROI","Most Copied","Most Matched"]
  for cat in cats:
