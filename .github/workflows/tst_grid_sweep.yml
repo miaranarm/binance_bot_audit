@@ -24,7 +24,7 @@ jobs:
           python-version: "3.11"
 
       - name: Install dependencies
-        run: pip install pandas numpy requests
+        run: pip install pandas numpy requests tabulate
 
       - name: Run TST grid sweep
         run: python src/tst_grid_sweep.py
