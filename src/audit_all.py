@@ -51,6 +51,27 @@ with sync_playwright() as w:
  rows=pages(p,TOP,{"strategyType":1,"symbol":"","zone":"","sort":"pnl"},"Spot Grid","SPOT_GRID",diag)
  for st in range(2,21):rows+=pages(p,TOP,{"strategyType":st,"symbol":"","zone":"","sort":"pnl"},"Marketplace type "+str(st),"TYPE_"+str(st),diag)
  rows+=pages(p,DCA,{"market":"","zone":"","roi":"","sort":"pnl","trailingType":"","leverage":"","investmentType":False,"sevenDayMdd":"","strategyType":10,"symbol":""},"Futures DCA","UM_DCA",diag)
+ TARGET_STRATEGY_ID="8799020"
+ TARGET_STREAMER="SPOT_GRID"
+ target_result={"strategyId":TARGET_STRATEGY_ID,"streamerStrategyType":TARGET_STREAMER,"retrieved_utc":datetime.datetime.now(datetime.timezone.utc).isoformat(),"points":[],"status":"unknown"}
+ try:
+  tz=p.request.post(CH,data={"strategyId":TARGET_STRATEGY_ID,"streamerStrategyType":TARGET_STREAMER}).json()
+  target_result["raw_data"]=tz.get("data") or []
+  pts=[];walk(target_result["raw_data"],pts)
+  pts=sorted(set(pts),key=lambda q:q[0])
+  target_result["points"]=[{"time":t.isoformat(),"roi":v} for t,v in pts]
+  best=None;window=datetime.timedelta(days=7)
+  for i,(t,v) in enumerate(pts):
+   peak_t,peak_roi=max(((tp,vp) for tp,vp in pts[:i+1] if t-tp<=window),key=lambda q:q[1],default=(None,None))
+   if peak_roi is None or peak_roi<=-100:continue
+   draw=(peak_roi-v)/(100.0+peak_roi)*100.0
+   if best is None or draw>best["mdd7d_pct"]:
+    best={"mdd7d_pct":draw,"peak_time":peak_t.isoformat(),"peak_roi":peak_roi,"trough_time":t.isoformat(),"trough_roi":v,"window_days":7}
+  target_result["computed_mdd7d"]=best;target_result["status"]="ok"
+ except Exception as e:
+  target_result["status"]="error";target_result["error"]=str(e)
+ with open(f"{OUT}/target_8799020_roi.json","w",encoding="utf-8") as z:json.dump(target_result,z,ensure_ascii=False,indent=2)
+ with open(f"{OUT}/target_8799020_mdd7d.txt","w",encoding="utf-8") as z:z.write(json.dumps(target_result.get("computed_mdd7d"),ensure_ascii=False,indent=2))
  now=datetime.datetime.now(datetime.timezone.utc)
  for x in rows:
   x["_start"]=(now-datetime.timedelta(seconds=f(x.get("runningTime")) or 0)).isoformat()
