@@ -17,7 +17,7 @@ def load():
     s=int(datetime.fromisoformat(START).replace(tzinfo=timezone.utc).timestamp()*1000)
     rows=[]
     while True:
-        u="https://api.binance.com/api/v3/klines"
+        u="https://data-api.binance.vision/api/v3/klines"
         p={"symbol":SYMBOL,"interval":INTERVAL,"startTime":s,"limit":1000}
         x=requests.get(u,params=p,timeout=30); x.raise_for_status(); a=x.json()
         if not a: break
