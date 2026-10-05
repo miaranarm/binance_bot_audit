@@ -25,7 +25,7 @@ https://www.binance.com/bapi/asset/v1/public/asset/asset/get-asset-logo
 https://www.binance.com/bapi/asset/v2/friendly/asset-service/product/get-products
 https://www.binance.com/bapi/asset/v2/public/asset/biz-tags?bizKey=trade
 https://www.binance.com/bapi/asset/v2/public/asset/biz-tags?bizKey=trade-risky
-https://www.binance.com/bapi/bigdata/v1/friendly/bigdata/search/ai-report/check?token=DOGE&symbol=DOGEUSDT&product=web-spot&timestamp=1791187872049&clientType=WEB
+https://www.binance.com/bapi/bigdata/v1/friendly/bigdata/search/ai-report/check?token=DOGE&symbol=DOGEUSDT&product=web-spot&timestamp=1791189343068&clientType=WEB
 https://www.binance.com/bapi/compliance/v1/friendly/compliance/businessCheckV2?platform=WEB
 https://www.binance.com/bapi/compliance/v1/friendly/compliance/market/banner-compliance-check
 https://www.binance.com/bapi/compliance/v1/friendly/compliance/market/business-compliance-check?platform=WEB
