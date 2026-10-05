@@ -12,7 +12,7 @@ RANGES=[
     (0.01300,0.02000,"WIDE4"),
     (0.01250,0.02050,"WIDE5"),
 ]
-INVESTMENT=21.61783
+INVESTMENTS=[21.61783,30.0,37.5,42.5,45.0]
 START="2026-01-01"
 OUT="results/tst_grid_sweep.csv"
 
@@ -92,11 +92,12 @@ cut1=int(len(df)*.6); cut2=int(len(df)*.8)
 rows=[]
 for lo,hi,label in RANGES:
     for n in GRIDS:
-        vals=[]
-        for a,b,period in [(0,cut1,"TRAIN"),(cut1,cut2,"VALIDATION"),(cut2,len(df),"HOLDOUT")]:
-            vals.append(sim(df.iloc[a:b].copy(),lo,hi,n,INVESTMENT))
-        rows.append({
-            "investment":INVESTMENT,"range":label,"grids":n,"lower":lo,"upper":hi,
+        for investment in INVESTMENTS:
+            vals=[]
+            for a,b,period in [(0,cut1,"TRAIN"),(cut1,cut2,"VALIDATION"),(cut2,len(df),"HOLDOUT")]:
+                vals.append(sim(df.iloc[a:b].copy(),lo,hi,n,investment))
+            rows.append({
+            "investment":investment,"range":label,"grids":n,"lower":lo,"upper":hi,
             "grid_width_pct":(hi/lo-1)*100,
             "train_roi":vals[0][0],"train_mdd":vals[0][1],"train_trades":vals[0][2],"train_matched":vals[0][3],"train_final":vals[0][4],
             "validation_roi":vals[1][0],"validation_mdd":vals[1][1],"validation_trades":vals[1][2],"validation_matched":vals[1][3],"validation_final":vals[1][4],
@@ -121,7 +122,7 @@ with open("results/tst_grid_sweep_summary.md","w") as f:
     f.write("Reference: TSTUSDT, geometric 0.01500–0.01800, 16 grids, native minimum investment 21.61783 USDT. Comparative simulator only; not Binance's internal engine.
 
 ")
-    f.write("Sweep: 6 ranges × 6 grid counts = 36 configurations, investment fixed at 21.61783 USDT. Ranges widen progressively around the reference.
+    f.write("Sweep: 5 progressive ranges × 6 grid counts × 5 investment levels = 150 configurations. Investments: 21.61783 / 30 / 37.5 / 42.5 / 45 USDT. We measure the impact on ROI while enforcing validation MDD <=5% as the safety filter.
 
 ")
     f.write(f"## Best validation result
@@ -132,4 +133,6 @@ with open("results/tst_grid_sweep_summary.md","w") as f:
     beat=out[out.beats130_holdout]
     f.write(f"Configurations with validation MDD <=5%: {len(safe)} / {len(out)}.\n")
     f.write(f"Configurations with holdout ROI >130%: {len(beat)} / {len(out)}.\n\n")
-    f.write(out.to_markdown(index=False))
+    f.write("\n## Full ranking\n")
+    cols=["investment","range","grids","lower","upper","grid_width_pct","validation_roi","validation_mdd","holdout_roi","holdout_mdd","holdout_matched","safe5"]
+    f.write(out[cols].to_markdown(index=False))
