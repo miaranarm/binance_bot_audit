@@ -1,0 +1,24 @@
+{
+  "scan_utc": "2026-10-05T14:37:19.244041+00:00",
+  "raw_rows": 35075,
+  "tradable_leverage_le_1": 15118,
+  "history_retention_days": 30,
+  "snapshot": "results/history/2026/10/05/20261005T143719Z.csv.gz",
+  "old_snapshots_removed": 0,
+  "binance_marketplace_refresh": "hourly",
+  "fields": [
+    "rank",
+    "strategyId",
+    "category",
+    "strategyType",
+    "symbol",
+    "leverage",
+    "minInvestment",
+    "runningTime",
+    "roi",
+    "pnl",
+    "matchedTrades",
+    "mdd7d",
+    "score"
+  ]
+}
