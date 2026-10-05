@@ -23,9 +23,7 @@ https://www.binance.com/bapi/asset/v1/friendly/asset-service/product/get-exchang
 https://www.binance.com/bapi/asset/v1/public/asset-service/product/currency
 https://www.binance.com/bapi/asset/v1/public/asset/asset/get-asset-logo
 https://www.binance.com/bapi/asset/v2/friendly/asset-service/product/get-products
-https://www.binance.com/bapi/asset/v2/public/asset/biz-tags?bizKey=trade
-https://www.binance.com/bapi/asset/v2/public/asset/biz-tags?bizKey=trade-risky
-https://www.binance.com/bapi/bigdata/v1/friendly/bigdata/search/ai-report/check?token=DOGE&symbol=DOGEUSDT&product=web-spot&timestamp=1791171243065&clientType=WEB
+https://www.binance.com/bapi/bigdata/v1/friendly/bigdata/search/ai-report/check?token=DOGE&symbol=DOGEUSDT&product=web-spot&timestamp=1791174900441&clientType=WEB
 https://www.binance.com/bapi/compliance/v1/friendly/compliance/businessCheckV2?platform=WEB
 https://www.binance.com/bapi/compliance/v1/friendly/compliance/market/banner-compliance-check
 https://www.binance.com/bapi/compliance/v1/friendly/compliance/market/business-compliance-check?platform=WEB
@@ -34,10 +32,8 @@ https://www.binance.com/bapi/composite/v1/public/future/external/topSearchList?b
 https://www.binance.com/bapi/composite/v1/public/growth-activity/loyalty/onboarding/topBarAndTopCTA
 https://www.binance.com/bapi/fe/cms/region/language
 https://www.binance.com/bapi/futures/v1/friendly/future/common/brackets
-https://www.binance.com/bapi/futures/v1/public/delivery/common/get-funding-info
 https://www.binance.com/bapi/futures/v1/public/future/announcement/announcement-history-v2?language=en&status=RELEASED
 https://www.binance.com/bapi/futures/v1/public/future/common/get-funding-info
-https://www.binance.com/bapi/futures/v1/public/future/common/get-funding-rate-history
 https://www.binance.com/bapi/futures/v1/public/future/common/strategy/banner/queryBanners?bannerType=LANDING&platform=web
 https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/introduction
 https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryRoiChart
