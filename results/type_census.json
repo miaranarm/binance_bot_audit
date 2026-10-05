@@ -22,14 +22,14 @@
     {
       "endpoint": "https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryTopStrategy",
       "category": "Marketplace type 2",
-      "total": 16835,
-      "first_strategyType": 2
+      "total": 0,
+      "first_strategyType": null
     },
     {
       "endpoint": "https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryTopStrategy",
       "category": "Marketplace type 3",
-      "total": 923,
-      "first_strategyType": 3
+      "total": 0,
+      "first_strategyType": null
     },
     {
       "endpoint": "https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryTopStrategy",
@@ -70,8 +70,8 @@
     {
       "endpoint": "https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryTopStrategy",
       "category": "Marketplace type 10",
-      "total": 2166,
-      "first_strategyType": 10
+      "total": 0,
+      "first_strategyType": null
     },
     {
       "endpoint": "https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryTopStrategy",
@@ -136,7 +136,7 @@
     {
       "endpoint": "https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryTopUmDcaStrategy",
       "category": "Futures DCA",
-      "total": 2166,
+      "total": 2202,
       "first_strategyType": 10
     }
   ]
