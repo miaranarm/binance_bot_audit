@@ -1,9 +1,9 @@
 {
-  "scan_utc": "2026-10-05T16:33:55.876384+00:00",
-  "raw_rows": 34783,
-  "tradable_leverage_le_1": 15117,
+  "scan_utc": "2026-10-05T17:31:17.089116+00:00",
+  "raw_rows": 34677,
+  "tradable_leverage_le_1": 15119,
   "history_retention_days": 30,
-  "snapshot": "results/history/2026/10/05/20261005T163355Z.csv.gz",
+  "snapshot": "results/history/2026/10/05/20261005T173117Z.csv.gz",
   "old_snapshots_removed": 0,
   "binance_marketplace_refresh": "hourly",
   "fields": [
