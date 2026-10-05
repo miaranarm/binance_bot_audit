@@ -113,26 +113,15 @@ out.to_csv(OUT,index=False)
 
 best=out.iloc[0]
 with open("results/tst_grid_sweep_summary.md","w") as f:
-    f.write("# TST Wide-Range Grid Sweep
-
-")
-    f.write(f"Data: {datetime.fromtimestamp(df.ts.iloc[0]/1000,timezone.utc):%Y-%m-%d} → {datetime.fromtimestamp(df.ts.iloc[-1]/1000,timezone.utc):%Y-%m-%d}. {len(df):,} candles 15m.
-
-")
-    f.write("Reference: TSTUSDT, geometric 0.01500–0.01800, 16 grids, native minimum investment 21.61783 USDT. Comparative simulator only; not Binance's internal engine.
-
-")
-    f.write("Sweep: 5 progressive ranges × 6 grid counts × 5 investment levels = 150 configurations. Investments: 21.61783 / 30 / 37.5 / 42.5 / 45 USDT. We measure the impact on ROI while enforcing validation MDD <=5% as the safety filter.
-
-")
-    f.write(f"## Best validation result
-**{best['range']} / {int(best['grids'])} grids** ({best.lower:.5f}–{best.upper:.5f}) — validation ROI {best.validation_roi:.2f}%, MDD {best.validation_mdd:.2f}%; holdout ROI {best.holdout_roi:.2f}%, MDD {best.holdout_mdd:.2f}%, matched orders {int(best.holdout_matched)}.
-
-")
+    f.write("# TST Progressive Range / Investment / Grid Sweep\n\n")
+    f.write(f"Data: {datetime.fromtimestamp(df.ts.iloc[0]/1000,timezone.utc):%Y-%m-%d} → {datetime.fromtimestamp(df.ts.iloc[-1]/1000,timezone.utc):%Y-%m-%d}. {len(df):,} candles 15m.\n\n")
+    f.write("Reference: TSTUSDT, geometric 0.01500–0.01800, 16 grids, native minimum investment 21.61783 USDT. Comparative simulator only; not Binance's internal engine.\n\n")
+    f.write("Sweep: 5 progressive ranges × 6 grid counts × 5 investment levels = 150 configurations. Investments: 21.61783 / 30 / 37.5 / 42.5 / 45 USDT. Safety filter: validation MDD <=5%.\n\n")
+    f.write(f"## Best validation result\n**{best['range']} / {int(best['grids'])} grids / {best['investment']:.5f} USDT** ({best.lower:.5f}–{best.upper:.5f}) — validation ROI {best.validation_roi:.2f}%, MDD {best.validation_mdd:.2f}%; holdout ROI {best.holdout_roi:.2f}%, MDD {best.holdout_mdd:.2f}%, matched orders {int(best.holdout_matched)}.\n\n")
     safe=out[out.safe5]
     beat=out[out.beats130_holdout]
     f.write(f"Configurations with validation MDD <=5%: {len(safe)} / {len(out)}.\n")
     f.write(f"Configurations with holdout ROI >130%: {len(beat)} / {len(out)}.\n\n")
-    f.write("\n## Full ranking\n")
+    f.write("## Full ranking\n")
     cols=["investment","range","grids","lower","upper","grid_width_pct","validation_roi","validation_mdd","holdout_roi","holdout_mdd","holdout_matched","safe5"]
     f.write(out[cols].to_markdown(index=False))
