@@ -1,5 +1,5 @@
-RAW=27100
-NO_LEVERAGE_4_DATES=804
-WITH_ROI_04_09=802
+RAW=34992
+NO_LEVERAGE_4_DATES=800
+WITH_ROI_04_09=797
 SORT=ROI_2026_09_30_DESC
 NOTE=Presence is inferred from current public strategy runtime; Binance public marketplace does not expose a historical daily snapshot for every bot family.
