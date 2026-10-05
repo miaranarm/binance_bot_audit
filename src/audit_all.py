@@ -85,7 +85,7 @@ def score(x,a):
 cur=[]
 for x in rows:
  if x["_lev"]<=1:
-  y={"strategyId":x.get("strategyId"),"category":x.get("_category"),"strategyType":x.get("strategyType"),"symbol":x.get("symbol"),"leverage":x.get("_lev"),"runningTime":x.get("runningTime"),"roi":n(x,["roi","roiPct","roiRate"]),"pnl":n(x,["pnl","profitLoss","totalPnl"]),"matchedTrades":n(x,["matchedTrades","matchedCount","totalMatchedTrades"]),"mdd7d":n(x,["mdd7d","sevenDayMdd","7dMdd"])}
+  y={"strategyId":x.get("strategyId"),"category":x.get("_category"),"strategyType":x.get("strategyType"),"symbol":x.get("symbol"),"leverage":x.get("_lev"),"minInvestment":x.get("minInvestment",""),"runningTime":x.get("runningTime"),"roi":n(x,["roi","roiPct","roiRate"]),"pnl":n(x,["pnl","profitLoss","totalPnl"]),"matchedTrades":n(x,["matchedTrades","matchedCount","totalMatchedTrades"]),"mdd7d":n(x,["mdd7d","sevenDayMdd","7dMdd"])}
 
   cur.append(y)
 cur=[x for x in cur if x["roi"] or x["pnl"] or x["matchedTrades"]]
