@@ -105,5 +105,4 @@ with open(f"{OUT}/current_multicriteria_summary.txt","w") as z:
   z.write("NOTE=Presence is inferred from current public strategy runtime; Binance public marketplace does not expose a historical daily snapshot for every bot family.\n")
  with open(f"{OUT}/all_no_leverage_raw.csv","w",newline="",encoding="utf-8") as z:
   fields=sorted({k for x in rows for k in x});w=csv.DictWriter(z,fieldnames=fields,extrasaction="ignore");w.writeheader();w.writerows(rows)
- b.close()
 print("DONE",len(rows),len(keep),len(hist))
