@@ -36,4 +36,4 @@ jobs:
           git add results/tst_grid_sweep.csv results/tst_grid_sweep_summary.md
           git diff --cached --quiet || git commit -m "research: TST grid sweep results"
           git pull --rebase origin main
-git push
+          git push
