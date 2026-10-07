@@ -113,53 +113,59 @@ def grid_metrics(item):
     if lower is not None and upper is not None:
         price_range = f"{fmt_price(lower)} - {fmt_price(upper)}"
 
-    profit_grid = ""
-    if lower is not None and upper is not None and grids and grids > 0 and lower > 0:
-        try:
-            if mode in {"GEO", "GEOMETRIC"}:
-                ratio = (upper / lower) ** (1.0 / grids)
-                value = ((1 - fee) * ratio - 1 - fee) * 100
-                profit_grid = f"{value:.4f}%"
-            elif mode in {"ARITH", "ARITHMETIC"}:
-                d = (upper - lower) / grids
-                a = ((1 - fee) * d / lower - 2 * fee) * 100
-                b = (((upper * (1 - fee)) / (upper - d)) - 1 - fee) * 100
-                lo, hi = sorted((a, b))
-                profit_grid = f"{lo:.4f}% - {hi:.4f}%"
-        except (ZeroDivisionError, ValueError, OverflowError):
-            pass
+    # Prefer Binance's own Profit/Grid value when it is explicitly exposed.
+    # Only the exact Profit/Grid field is accepted as a direct Binance value.
+    direct_profit_grid = first_num(item, [
+        "profitPerGrid", "profitGrid",
+        "strategyStats.profitPerGrid", "strategyStats.profitGrid",
+        "stats.profitPerGrid", "stats.profitGrid",
+    ])
+    if direct_profit_grid is not None:
+        profit_grid = f"{direct_profit_grid:.4f}%"
+        profit_grid_source = "BINANCE"
+    else:
+        # Binance documents the following fallback calculation for Spot Grid.
+        # Arithmetic: d=(Upper-Lower)/Grids
+        # max=(1-c)*d/Lower-2c
+        # min=(Upper*(1-c))/(Lower-d)-1-c
+        # Geometric: r=(Upper/Lower)^(1/Grids)
+        # Profit/Grid=(1-c)*r-1-c
+        profit_grid = ""
+        profit_grid_source = "CALCULATED_BINANCE_FORMULA"
+        if lower is not None and upper is not None and grids and grids > 0 and lower > 0:
+            try:
+                if mode in {"GEO", "GEOMETRIC"}:
+                    ratio = (upper / lower) ** (1.0 / grids)
+                    value = ((1 - fee) * ratio - 1 - fee) * 100
+                    profit_grid = f"{value:.4f}%"
+                elif mode in {"ARITH", "ARITHMETIC"}:
+                    d = (upper - lower) / grids
+                    a = ((1 - fee) * d / lower - 2 * fee) * 100
+                    b = (((upper * (1 - fee)) / (upper - d)) - 1 - fee) * 100
+                    lo, hi = sorted((a, b))
+                    profit_grid = f"{lo:.4f}% - {hi:.4f}%"
+            except (ZeroDivisionError, ValueError, OverflowError):
+                pass
 
+    # Grid Profit and Total Profit MUST be Binance-provided values.
+    # Do not substitute generic PNL, ROI, matched PNL, or realized PNL.
+    # The ratio itself is the only calculation performed from these two values.
     grid_profit = first_num(item, [
-        "gridProfit", "gridPnl", "gridPNL", "matchedPnl", "matchedPNL",
-        "matchPnl", "matchPNL", "matchProfit", "matchedProfit",
-        "matchedProfitTotal", "matchedProfitAmount", "realizedProfit",
-        "strategyStats.gridProfit", "strategyStats.gridPnl",
-        "strategyStats.matchedPnl", "strategyStats.matchedProfit",
-        "stats.gridProfit", "stats.gridPnl", "stats.matchedPnl", "stats.matchedProfit",
+        "gridProfit",
+        "strategyStats.gridProfit",
+        "stats.gridProfit",
     ])
-    if grid_profit is None:
-        grid_profit = find_numeric_key(item, ["gridprofit", "gridpnl", "matchedpnl", "matchpnl", "matchedprofit", "matchprofit", "realizedprofit"])
-
     total_profit = first_num(item, [
-        "totalProfit", "totalPnl", "totalPNL", "pnl",
-        "strategyStats.totalProfit", "strategyStats.totalPnl",
-        "stats.totalProfit", "stats.totalPnl",
+        "totalProfit",
+        "strategyStats.totalProfit",
+        "stats.totalProfit",
     ])
-    if total_profit is None:
-        total_profit = find_numeric_key(item, ["totalprofit", "totalpnl", "totalprofitloss", "totalprofitamount"])
 
-    explicit_ratio = first_num(item, [
-        "gridProfitTotalProfitRatio", "gridProfitToTotalProfitRatio",
-        "gridProfitRatio", "gridProfitRate", "matchedProfitTotalProfitRatio",
-    ])
     ratio = ""
-    if explicit_ratio is not None:
-        ratio_value = explicit_ratio / 100.0 if abs(explicit_ratio) > 1 else explicit_ratio
-        ratio = f"{ratio_value:.6f}"
-    elif grid_profit is not None and total_profit not in (None, 0):
+    if grid_profit is not None and total_profit not in (None, 0):
         ratio = f"{grid_profit / total_profit:.6f}"
 
-    return ratio, price_range, profit_grid
+    return ratio, price_range, profit_grid, profit_grid_source
 
 
 def pages(page, endpoint, base_query, category, streamer, diagnostics):
@@ -208,7 +214,7 @@ def build_current(rows, prices):
             continue
         seen.add(sid)
 
-        ratio, price_range, profit_grid = grid_metrics(x)
+        ratio, price_range, profit_grid, profit_grid_source = grid_metrics(x)
         item = {
             "strategyId": sid,
             "category": x.get("_category", ""),
@@ -392,7 +398,7 @@ def main():
             "old_snapshots_removed": removed,
             "binance_marketplace_refresh": "hourly",
             "fields": FIELDS,
-            "grid_profit_ratio_note": "Uses explicit Grid Profit/Matched PNL and Total Profit fields when exposed by Binance; blank only when the public marketplace payload does not provide enough data to calculate the ratio.",
+            "grid_profit_ratio_note": "Grid Profit and Total Profit are accepted only from exact Binance fields. The ratio is calculated as Binance Grid Profit / Binance Total Profit. No generic PNL, ROI, matched PNL, or realized PNL substitutes are accepted.",\n            "profit_per_grid_note": "Uses Binance Profit/Grid directly when exposed as an exact field; otherwise uses only Binance documented Spot Grid formulas with c=0.1%. The source for each row is retained internally as BINANCE or CALCULATED_BINANCE_FORMULA.",
             "profit_per_grid_fee_reference": "0.1% per side, per Binance Spot Grid documentation; pair/VIP-specific fees may differ.",
         }, handle, ensure_ascii=False, indent=2)
 
