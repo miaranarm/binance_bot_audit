@@ -303,23 +303,46 @@ def fetch_prices(page, symbols):
         "https://fapi.binance.com/fapi/v1/ticker/price",
         "https://dapi.binance.com/dapi/v1/ticker/price",
     ]
+
+    def consume(payload):
+        if not isinstance(payload, list):
+            return
+        for row in payload:
+            symbol = normalize_symbol(row.get("symbol"))
+            if symbol not in wanted or symbol in prices:
+                continue
+            price = num(row.get("price"), None)
+            if price is not None:
+                prices[symbol] = price
+
     for endpoint in endpoints:
         try:
             response = page.request.get(endpoint, timeout=30000)
-            if not response.ok:
-                continue
-            payload = response.json()
-            if not isinstance(payload, list):
-                continue
-            for row in payload:
-                symbol = normalize_symbol(row.get("symbol"))
-                if symbol not in wanted or symbol in prices:
-                    continue
-                price = num(row.get("price"), None)
-                if price is not None:
-                    prices[symbol] = price
+            if response.ok:
+                consume(response.json())
         except Exception:
-            continue
+            pass
+
+        # Some Binance environments reject the very large all-symbol ticker
+        # response. Fall back to symbol-filtered batches so current price
+        # remains a direct Binance market value.
+        missing = sorted(wanted - set(prices))
+        if missing:
+            base = endpoint.split("?", 1)[0]
+            for start in range(0, len(missing), 100):
+                batch = missing[start:start + 100]
+                try:
+                    encoded = json.dumps(batch, separators=(",", ":"))
+                    response = page.request.get(
+                        base,
+                        params={"symbols": encoded},
+                        timeout=30000,
+                    )
+                    if response.ok:
+                        consume(response.json())
+                except Exception:
+                    continue
+
     return prices
 
 
