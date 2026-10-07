@@ -30,6 +30,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - uses: actions/setup-python@v5
         with:
@@ -60,15 +62,41 @@ jobs:
 
       - name: Commit results
         run: |
+          set -e
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
           git add results
-          git diff --cached --quiet || git commit -m "audit: hourly snapshot [skip ci]"
-          git push
+          if git diff --cached --quiet; then
+            echo "No result changes to commit."
+            exit 0
+          fi
+
+          git commit -m "audit: hourly snapshot [skip ci]"
+
+          # The scan can take several minutes while another maintenance/result
+          # commit may land on main. Rebase the generated snapshot onto the
+          # latest main before pushing, and retry the push if main advances.
+          for attempt in 1 2 3; do
+            git fetch origin main
+            git rebase origin/main
+
+            if git push origin HEAD:main; then
+              echo "Results pushed successfully on attempt ${attempt}."
+              exit 0
+            fi
+
+            echo "Push rejected on attempt ${attempt}; refreshing origin/main."
+            git fetch origin main
+          done
+
+          echo "Unable to push audit results after 3 attempts."
+          exit 1
 
       - name: Compact Git history monthly
         if: ${{ github.event_name == 'schedule' && startsWith(github.event.schedule, '15 0 1 * *') }}
         run: |
+          git fetch origin main
           git checkout --orphan compact-main
           git add -A
           git commit -m "maintenance: compact retained bot history [skip ci]"
