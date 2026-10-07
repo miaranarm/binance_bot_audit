@@ -1,9 +1,9 @@
 {
-  "scan_utc": "2026-10-07T17:24:11.604332+00:00",
-  "raw_rows": 31862,
-  "tradable_leverage_le_1": 13753,
+  "scan_utc": "2026-10-07T17:41:53.509177+00:00",
+  "raw_rows": 32161,
+  "tradable_leverage_le_1": 13945,
   "history_retention_days": 30,
-  "snapshot": "results/history/2026/10/07/20261007T172411Z.csv.gz",
+  "snapshot": "results/history/2026/10/07/20261007T174153Z.csv.gz",
   "old_snapshots_removed": 0,
   "binance_marketplace_refresh": "hourly",
   "fields": [
@@ -25,6 +25,7 @@
     "profitPerGridAfterFees",
     "score"
   ],
-  "grid_profit_ratio_note": "Uses explicit Grid Profit/Matched PNL and Total Profit fields when exposed by Binance; blank only when the public marketplace payload does not provide enough data to calculate the ratio.",
+  "grid_profit_ratio_note": "Grid Profit and Total Profit are accepted only from exact Binance fields. The ratio is calculated as Binance Grid Profit / Binance Total Profit. No generic PNL, ROI, matched PNL, or realized PNL substitutes are accepted.",
+  "profit_per_grid_note": "Uses Binance Profit/Grid directly when exposed as an exact field; otherwise uses only Binance documented Spot Grid formulas with c=0.1%. The source for each row is retained internally as BINANCE or CALCULATED_BINANCE_FORMULA.",
   "profit_per_grid_fee_reference": "0.1% per side, per Binance Spot Grid documentation; pair/VIP-specific fees may differ."
 }
