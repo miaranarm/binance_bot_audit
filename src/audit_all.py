@@ -131,11 +131,14 @@ def grid_metrics(item):
 
     grid_profit = first_num(item, [
         "gridProfit", "gridPnl", "gridPNL", "matchedPnl", "matchedPNL",
-        "matchedProfit", "matchedProfitTotal", "realizedProfit", "strategyStats.gridProfit",
-        "strategyStats.matchedPnl", "stats.gridProfit", "stats.matchedPnl",
+        "matchPnl", "matchPNL", "matchProfit", "matchedProfit",
+        "matchedProfitTotal", "matchedProfitAmount", "realizedProfit",
+        "strategyStats.gridProfit", "strategyStats.gridPnl",
+        "strategyStats.matchedPnl", "strategyStats.matchedProfit",
+        "stats.gridProfit", "stats.gridPnl", "stats.matchedPnl", "stats.matchedProfit",
     ])
     if grid_profit is None:
-        grid_profit = find_numeric_key(item, ["gridprofit", "gridpnl", "matchedpnl", "matchedprofit", "realizedprofit"])
+        grid_profit = find_numeric_key(item, ["gridprofit", "gridpnl", "matchedpnl", "matchpnl", "matchedprofit", "matchprofit", "realizedprofit"])
 
     total_profit = first_num(item, [
         "totalProfit", "totalPnl", "totalPNL", "pnl",
@@ -143,10 +146,17 @@ def grid_metrics(item):
         "stats.totalProfit", "stats.totalPnl",
     ])
     if total_profit is None:
-        total_profit = find_numeric_key(item, ["totalprofit", "totalpnl", "totalprofitloss"])
+        total_profit = find_numeric_key(item, ["totalprofit", "totalpnl", "totalprofitloss", "totalprofitamount"])
 
+    explicit_ratio = first_num(item, [
+        "gridProfitTotalProfitRatio", "gridProfitToTotalProfitRatio",
+        "gridProfitRatio", "gridProfitRate", "matchedProfitTotalProfitRatio",
+    ])
     ratio = ""
-    if grid_profit is not None and total_profit not in (None, 0):
+    if explicit_ratio is not None:
+        ratio_value = explicit_ratio / 100.0 if abs(explicit_ratio) > 1 else explicit_ratio
+        ratio = f"{ratio_value:.6f}"
+    elif grid_profit is not None and total_profit not in (None, 0):
         ratio = f"{grid_profit / total_profit:.6f}"
 
     return ratio, price_range, profit_grid
