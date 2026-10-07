@@ -73,6 +73,26 @@ def find_numeric_key(obj, patterns):
                 return found
     return None
 
+def find_exact_numeric_key(obj, keys):
+    wanted = {str(key).replace("_", "").replace("-", "").lower() for key in keys}
+    if isinstance(obj, dict):
+        for key, value in obj.items():
+            normalized = str(key).replace("_", "").replace("-", "").lower()
+            if normalized in wanted:
+                parsed = num(value, None)
+                if parsed is not None:
+                    return parsed
+        for value in obj.values():
+            found = find_exact_numeric_key(value, keys)
+            if found is not None:
+                return found
+    elif isinstance(obj, list):
+        for value in obj:
+            found = find_exact_numeric_key(value, keys)
+            if found is not None:
+                return found
+    return None
+
 
 def leverage(x):
     params = x.get("strategyParams") or {}
@@ -155,11 +175,16 @@ def grid_metrics(item):
         "strategyStats.gridProfit",
         "stats.gridProfit",
     ])
+    if grid_profit is None:
+        grid_profit = find_exact_numeric_key(item, ["gridProfit"])
+
     total_profit = first_num(item, [
         "totalProfit",
         "strategyStats.totalProfit",
         "stats.totalProfit",
     ])
+    if total_profit is None:
+        total_profit = find_exact_numeric_key(item, ["totalProfit"])
 
     ratio = ""
     if grid_profit is not None and total_profit not in (None, 0):
@@ -215,6 +240,10 @@ def build_current(rows, prices):
         seen.add(sid)
 
         ratio, price_range, profit_grid, profit_grid_source = grid_metrics(x)
+        direct_current_price = first_num(x, ["currentPrice", "lastPrice", "marketPrice", "price"])
+        if direct_current_price is None:
+            direct_current_price = find_exact_numeric_key(x, ["currentPrice", "lastPrice", "marketPrice"])
+        ticker_price = prices.get(normalize_symbol(symbol))
         item = {
             "strategyId": sid,
             "category": x.get("_category", ""),
@@ -228,7 +257,7 @@ def build_current(rows, prices):
             "matchedTrades": num(x.get("matchedTrades", x.get("matchedCount", x.get("totalMatchedTrades", 0)))),
             "mdd7d": num(x.get("mdd7d", x.get("sevenDayMdd", x.get("7dMdd", 0)))),
             "gridProfitTotalProfitRatio": ratio,
-            "currentPrice": fmt_price(first_num(x, ["currentPrice", "lastPrice", "marketPrice", "price"]) if first_num(x, ["currentPrice", "lastPrice", "marketPrice", "price"]) is not None else prices.get(normalize_symbol(symbol))),
+            "currentPrice": fmt_price(direct_current_price if direct_current_price is not None else ticker_price),
             "priceRange": price_range,
             "profitPerGridAfterFees": profit_grid,
         }
