@@ -40,6 +40,10 @@ def num(value, default=0.0):
         return default
 
 
+def normalize_symbol(symbol):
+    return str(symbol or "").strip().upper().replace("/", "").replace("-", "").replace("_", "")
+
+
 def fmt_price(value):
     if value is None:
         return ""
@@ -127,7 +131,7 @@ def grid_metrics(item):
 
     grid_profit = first_num(item, [
         "gridProfit", "gridPnl", "gridPNL", "matchedPnl", "matchedPNL",
-        "matchedProfit", "realizedProfit", "strategyStats.gridProfit",
+        "matchedProfit", "matchedProfitTotal", "realizedProfit", "strategyStats.gridProfit",
         "strategyStats.matchedPnl", "stats.gridProfit", "stats.matchedPnl",
     ])
     if grid_profit is None:
@@ -208,7 +212,7 @@ def build_current(rows, prices):
             "matchedTrades": num(x.get("matchedTrades", x.get("matchedCount", x.get("totalMatchedTrades", 0)))),
             "mdd7d": num(x.get("mdd7d", x.get("sevenDayMdd", x.get("7dMdd", 0)))),
             "gridProfitTotalProfitRatio": ratio,
-            "currentPrice": fmt_price(prices.get(symbol)),
+            "currentPrice": fmt_price(first_num(x, ["currentPrice", "lastPrice", "marketPrice", "price"]) if first_num(x, ["currentPrice", "lastPrice", "marketPrice", "price"]) is not None else prices.get(normalize_symbol(symbol))),
             "priceRange": price_range,
             "profitPerGridAfterFees": profit_grid,
         }
@@ -247,7 +251,7 @@ def write_current(current):
 
 
 def fetch_prices(page, symbols):
-    wanted = {str(s).strip().upper() for s in symbols if str(s).strip()}
+    wanted = {normalize_symbol(s) for s in symbols if str(s).strip()}
     prices = {}
     endpoints = [
         "https://api.binance.com/api/v3/ticker/price",
@@ -263,7 +267,7 @@ def fetch_prices(page, symbols):
             if not isinstance(payload, list):
                 continue
             for row in payload:
-                symbol = str(row.get("symbol") or "").strip().upper()
+                symbol = normalize_symbol(row.get("symbol"))
                 if symbol not in wanted or symbol in prices:
                     continue
                 price = num(row.get("price"), None)
