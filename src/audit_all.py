@@ -411,9 +411,20 @@ def capture_marketplace_detail_calls(page):
                 return
             body = response.text()
             lowered = body.lower()
-            if "gridprofit" in lowered or "totalprofit" in lowered:
-                hits.append({"url": response.url, "status": response.status, "body": body[:20000]})
-                print("GRID_METRIC_RESPONSE " + response.url + " status=" + str(response.status) + " body=" + body[:5000])
+            url = response.url
+            if "/bapi/" in url:
+                # Inventory public Trading Bots API calls. Keep this diagnostic
+                # read-only and avoid dumping unrelated payloads.
+                print("BAPI_RESPONSE url=" + url + " status=" + str(response.status) + " bytes=" + str(len(body)))
+            if (
+                "gridprofit" in lowered
+                or "totalprofit" in lowered
+                or "matchedprofit" in lowered
+                or '"strategyid":3232564' in lowered
+                or '"strategyid":"3232564"' in lowered
+            ):
+                hits.append({"url": url, "status": response.status, "body": body[:20000]})
+                print("GRID_METRIC_RESPONSE " + url + " status=" + str(response.status) + " body=" + body[:10000])
         except Exception:
             pass
     page.on("response", on_response)
