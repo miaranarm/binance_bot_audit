@@ -401,6 +401,35 @@ def write_history(current, now):
     return snapshot, removed
 
 
+def probe_strategy_detail(page):
+    candidates = [
+        "queryStrategyDetail", "queryStrategy", "getStrategyDetail",
+        "queryStrategyById", "queryTopStrategyDetail", "queryStrategyInfo",
+        "queryStrategyDetailById", "querySpotGridStrategyDetail",
+        "querySpotGridDetail", "queryGridStrategyDetail",
+    ]
+    payloads = [
+        {"strategyId": 3232564},
+        {"id": 3232564},
+        {"strategyId": "3232564"},
+    ]
+    bases = [
+        "https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/",
+        "https://www.binance.com/bapi/futures/v1/public/future/common/strategy/",
+        "https://www.binance.com/bapi/composite/v1/public/market/",
+    ]
+    for base in bases:
+        for name in candidates:
+            endpoint = base + name
+            for payload in payloads:
+                try:
+                    response = page.request.post(endpoint, data=payload, timeout=10000)
+                    text_body = response.text()
+                    if response.status != 404 and response.status != 405:
+                        print("PROBE " + endpoint + " payload=" + json.dumps(payload) + " status=" + str(response.status) + " body=" + text_body[:5000])
+                except Exception:
+                    pass
+
 def main():
     diagnostics = []
     now = dt.datetime.now(dt.timezone.utc)
@@ -409,8 +438,7 @@ def main():
         browser = playwright.chromium.launch(headless=True)
         page = browser.new_page()
 
-        rows = pages(
-            page, TOP,
+        probe_strategy_detail(page)\n\n        rows = pages(\n            page, TOP,
             {"strategyType": 1, "symbol": "", "zone": "", "sort": "pnl"},
             "Spot Grid", "SPOT_GRID", diagnostics,
         )
