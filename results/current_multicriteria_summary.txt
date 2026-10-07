@@ -1,4 +1,4 @@
-COUNT=13769
+COUNT=13631
 UNIVERSE=Binance Bot Marketplace active strategies
 FILTER=leverage<=1 and non-empty tradable symbol
 SCORING=ROI30 PNL25 RUNTIME15 MATCHED15 LOW_7D_MDD15
