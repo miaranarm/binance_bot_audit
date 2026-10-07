@@ -242,7 +242,7 @@ def build_current(rows, prices):
         ratio, price_range, profit_grid, profit_grid_source = grid_metrics(x)
         direct_current_price = first_num(x, ["currentPrice", "lastPrice", "marketPrice", "price"])
         if direct_current_price is None:
-            direct_current_price = find_exact_numeric_key(x, ["currentPrice", "lastPrice", "marketPrice"])
+            direct_current_price = find_exact_numeric_key(x, ["currentPrice", "lastPrice", "marketPrice", "latestPrice", "latestMarketPrice"])
         ticker_price = prices.get(normalize_symbol(symbol))
         item = {
             "strategyId": sid,
@@ -299,7 +299,13 @@ def fetch_prices(page, symbols):
     wanted = {normalize_symbol(s) for s in symbols if str(s).strip()}
     prices = {}
     endpoints = [
+        "https://data-api.binance.vision/api/v3/ticker/price",
+        "https://api-gcp.binance.com/api/v3/ticker/price",
         "https://api.binance.com/api/v3/ticker/price",
+        "https://api1.binance.com/api/v3/ticker/price",
+        "https://api2.binance.com/api/v3/ticker/price",
+        "https://api3.binance.com/api/v3/ticker/price",
+        "https://api4.binance.com/api/v3/ticker/price",
         "https://fapi.binance.com/fapi/v1/ticker/price",
         "https://dapi.binance.com/dapi/v1/ticker/price",
     ]
