@@ -432,7 +432,7 @@ def main():
         browser = playwright.chromium.launch(headless=True)
         page = browser.new_page()
 
-        probe_strategy_detail(page)
+        captured_detail_calls = capture_marketplace_detail_calls(page)
 
         rows = pages(
             page, TOP,
