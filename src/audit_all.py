@@ -401,34 +401,28 @@ def write_history(current, now):
     return snapshot, removed
 
 
-def probe_strategy_detail(page):
-    candidates = [
-        "queryStrategyDetail", "queryStrategy", "getStrategyDetail",
-        "queryStrategyById", "queryTopStrategyDetail", "queryStrategyInfo",
-        "queryStrategyDetailById", "querySpotGridStrategyDetail",
-        "querySpotGridDetail", "queryGridStrategyDetail",
-    ]
-    payloads = [
-        {"strategyId": 3232564},
-        {"id": 3232564},
-        {"strategyId": "3232564"},
-    ]
-    bases = [
-        "https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/",
-        "https://www.binance.com/bapi/futures/v1/public/future/common/strategy/",
-        "https://www.binance.com/bapi/composite/v1/public/market/",
-    ]
-    for base in bases:
-        for name in candidates:
-            endpoint = base + name
-            for payload in payloads:
-                try:
-                    response = page.request.post(endpoint, data=payload, timeout=10000)
-                    text_body = response.text()
-                    if response.status != 404 and response.status != 405:
-                        print("PROBE " + endpoint + " payload=" + json.dumps(payload) + " status=" + str(response.status) + " body=" + text_body[:5000])
-                except Exception:
-                    pass
+def capture_marketplace_detail_calls(page):
+    """Capture Binance Trading Bots page API responses exposing exact grid metrics."""
+    hits = []
+    def on_response(response):
+        try:
+            content_type = (response.headers.get("content-type") or "").lower()
+            if "json" not in content_type:
+                return
+            body = response.text()
+            lowered = body.lower()
+            if "gridprofit" in lowered or "totalprofit" in lowered:
+                hits.append({"url": response.url, "status": response.status, "body": body[:20000]})
+                print("GRID_METRIC_RESPONSE " + response.url + " status=" + str(response.status) + " body=" + body[:5000])
+        except Exception:
+            pass
+    page.on("response", on_response)
+    try:
+        page.goto("https://www.binance.com/en/trading-bots", wait_until="domcontentloaded", timeout=60000)
+        page.wait_for_timeout(12000)
+    except Exception as exc:
+        print("MARKETPLACE_PAGE_ERROR=" + str(exc))
+    return hits
 
 def main():
     diagnostics = []
