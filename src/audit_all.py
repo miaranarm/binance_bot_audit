@@ -215,6 +215,8 @@ def pages(page, endpoint, base_query, category, streamer, diagnostics):
             item["_category"] = category
             item["_streamer"] = streamer
             item["_lev"] = leverage(item)
+            if str(item.get("strategyId") or "").strip() == "3232564":
+                print("DEBUG_STRATEGY_3232564=" + json.dumps(item, ensure_ascii=False, sort_keys=True))
             rows.append(item)
 
         total = int(response.get("total") or 0)
