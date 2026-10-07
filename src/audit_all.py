@@ -28,9 +28,46 @@ RETENTION_DAYS = 30
 
 def num(value, default=0.0):
     try:
-        return float(value)
+        if isinstance(value, bool):
+            return default
+        if isinstance(value, (int, float)):
+            return float(value)
+        text = str(value).strip().replace(",", "")
+        if text.endswith("%"):
+            text = text[:-1].strip()
+        return float(text)
     except Exception:
         return default
+
+
+def fmt_price(value):
+    if value is None:
+        return ""
+    value = float(value)
+    if value == 0:
+        return "0"
+    if abs(value) >= 1:
+        return f"{value:.8f}".rstrip("0").rstrip(".")
+    return f"{value:.12f}".rstrip("0").rstrip(".")
+
+
+def find_numeric_key(obj, patterns):
+    if isinstance(obj, dict):
+        for key, value in obj.items():
+            normalized = str(key).replace("_", "").replace("-", "").lower()
+            if any(pattern in normalized for pattern in patterns):
+                parsed = num(value, None)
+                if parsed is not None:
+                    return parsed
+            found = find_numeric_key(value, patterns)
+            if found is not None:
+                return found
+    elif isinstance(obj, list):
+        for value in obj:
+            found = find_numeric_key(value, patterns)
+            if found is not None:
+                return found
+    return None
 
 
 def leverage(x):
@@ -62,39 +99,47 @@ def first_num(obj, paths):
 
 def grid_metrics(item):
     params = item.get("strategyParams") or {}
-    lower = first_num(params, ["lowerLimit", "lowerPrice", "gridLowerLimit"])
-    upper = first_num(params, ["upperLimit", "upperPrice", "gridUpperLimit"])
-    grids = first_num(params, ["gridCount", "gridNum", "numberOfGrids"])
-    mode = str(params.get("type") or params.get("gridType") or "").upper()
+    lower = first_num(params, ["lowerLimit", "lowerPrice", "gridLowerLimit", "gridLowerPrice", "minPrice", "lower"])
+    upper = first_num(params, ["upperLimit", "upperPrice", "gridUpperLimit", "gridUpperPrice", "maxPrice", "upper"])
+    grids = first_num(params, ["gridCount", "gridNum", "numberOfGrids", "gridNumber"])
+    mode = str(params.get("type") or params.get("gridType") or params.get("gridMode") or "").upper()
     fee = 0.001
 
     price_range = ""
     if lower is not None and upper is not None:
-        price_range = f"{lower:g}-{upper:g}"
+        price_range = f"{fmt_price(lower)} - {fmt_price(upper)}"
 
     profit_grid = ""
-    if lower is not None and upper is not None and grids and grids > 0:
+    if lower is not None and upper is not None and grids and grids > 0 and lower > 0:
         try:
             if mode in {"GEO", "GEOMETRIC"}:
                 ratio = (upper / lower) ** (1.0 / grids)
-                profit_grid = f"{((1 - fee) * ratio - 1 - fee) * 100:.4f}%"
+                value = ((1 - fee) * ratio - 1 - fee) * 100
+                profit_grid = f"{value:.4f}%"
             elif mode in {"ARITH", "ARITHMETIC"}:
                 d = (upper - lower) / grids
-                max_pg = (1 - fee) * d / lower - 2 * fee
-                min_pg = (upper * (1 - fee)) / (lower - d) - 1 - fee
-                profit_grid = f"{min_pg * 100:.4f}%–{max_pg * 100:.4f}%"
-        except (ZeroDivisionError, ValueError):
+                a = ((1 - fee) * d / lower - 2 * fee) * 100
+                b = (((upper * (1 - fee)) / (upper - d)) - 1 - fee) * 100
+                lo, hi = sorted((a, b))
+                profit_grid = f"{lo:.4f}% - {hi:.4f}%"
+        except (ZeroDivisionError, ValueError, OverflowError):
             pass
 
     grid_profit = first_num(item, [
-        "gridProfit", "gridPnl", "gridPNL", "matchedPnl",
-        "matchedPNL", "matchedProfit", "strategyStats.gridProfit",
-        "strategyStats.matchedPnl", "stats.gridProfit",
+        "gridProfit", "gridPnl", "gridPNL", "matchedPnl", "matchedPNL",
+        "matchedProfit", "realizedProfit", "strategyStats.gridProfit",
+        "strategyStats.matchedPnl", "stats.gridProfit", "stats.matchedPnl",
     ])
+    if grid_profit is None:
+        grid_profit = find_numeric_key(item, ["gridprofit", "gridpnl", "matchedpnl", "matchedprofit", "realizedprofit"])
+
     total_profit = first_num(item, [
         "totalProfit", "totalPnl", "totalPNL", "pnl",
-        "strategyStats.totalProfit", "stats.totalProfit",
+        "strategyStats.totalProfit", "strategyStats.totalPnl",
+        "stats.totalProfit", "stats.totalPnl",
     ])
+    if total_profit is None:
+        total_profit = find_numeric_key(item, ["totalprofit", "totalpnl", "totalprofitloss"])
 
     ratio = ""
     if grid_profit is not None and total_profit not in (None, 0):
@@ -163,7 +208,7 @@ def build_current(rows, prices):
             "matchedTrades": num(x.get("matchedTrades", x.get("matchedCount", x.get("totalMatchedTrades", 0)))),
             "mdd7d": num(x.get("mdd7d", x.get("sevenDayMdd", x.get("7dMdd", 0)))),
             "gridProfitTotalProfitRatio": ratio,
-            "currentPrice": prices.get(symbol, ""),
+            "currentPrice": fmt_price(prices.get(symbol)),
             "priceRange": price_range,
             "profitPerGridAfterFees": profit_grid,
         }
@@ -202,27 +247,30 @@ def write_current(current):
 
 
 def fetch_prices(page, symbols):
+    wanted = {str(s).strip().upper() for s in symbols if str(s).strip()}
     prices = {}
     endpoints = [
-        "https://api.binance.com/api/v3/ticker/price?symbol={symbol}",
-        "https://fapi.binance.com/fapi/v1/ticker/price?symbol={symbol}",
-        "https://dapi.binance.com/dapi/v1/ticker/price?symbol={symbol}",
+        "https://api.binance.com/api/v3/ticker/price",
+        "https://fapi.binance.com/fapi/v1/ticker/price",
+        "https://dapi.binance.com/dapi/v1/ticker/price",
     ]
-    for symbol in sorted(set(symbols)):
-        if not symbol:
-            continue
-        for endpoint in endpoints:
-            try:
-                response = page.request.get(endpoint.format(symbol=symbol), timeout=10000)
-                if not response.ok:
-                    continue
-                payload = response.json()
-                price = payload.get("price")
-                if price not in (None, ""):
-                    prices[symbol] = num(price)
-                    break
-            except Exception:
+    for endpoint in endpoints:
+        try:
+            response = page.request.get(endpoint, timeout=30000)
+            if not response.ok:
                 continue
+            payload = response.json()
+            if not isinstance(payload, list):
+                continue
+            for row in payload:
+                symbol = str(row.get("symbol") or "").strip().upper()
+                if symbol not in wanted or symbol in prices:
+                    continue
+                price = num(row.get("price"), None)
+                if price is not None:
+                    prices[symbol] = price
+        except Exception:
+            continue
     return prices
 
 
@@ -330,7 +378,7 @@ def main():
             "old_snapshots_removed": removed,
             "binance_marketplace_refresh": "hourly",
             "fields": FIELDS,
-            "grid_profit_ratio_note": "Blank when Binance's public marketplace payload does not expose realized Grid Profit separately from total PNL.",
+            "grid_profit_ratio_note": "Uses explicit Grid Profit/Matched PNL and Total Profit fields when exposed by Binance; blank only when the public marketplace payload does not provide enough data to calculate the ratio.",
             "profit_per_grid_fee_reference": "0.1% per side, per Binance Spot Grid documentation; pair/VIP-specific fees may differ.",
         }, handle, ensure_ascii=False, indent=2)
 
