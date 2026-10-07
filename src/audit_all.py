@@ -438,7 +438,10 @@ def main():
         browser = playwright.chromium.launch(headless=True)
         page = browser.new_page()
 
-        probe_strategy_detail(page)\n\n        rows = pages(\n            page, TOP,
+        probe_strategy_detail(page)
+
+        rows = pages(
+            page, TOP,
             {"strategyType": 1, "symbol": "", "zone": "", "sort": "pnl"},
             "Spot Grid", "SPOT_GRID", diagnostics,
         )
