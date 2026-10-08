@@ -154,7 +154,7 @@ def estimate_grid_profit_ratio(item, total_profit):
     lower = pnum(["lowerLimit", "lowerPrice", "gridLowerLimit", "gridLowerPrice", "minPrice", "lower"])
     upper = pnum(["upperLimit", "upperPrice", "gridUpperLimit", "gridUpperPrice", "maxPrice", "upper"])
     grids = pnum(["gridCount", "gridNum", "numberOfGrids", "gridNumber"])
-    current = pnum(["currentPrice", "lastPrice", "marketPrice", "price"])
+    current = pnum(["currentPrice", "lastPrice", "marketPrice", "price", "_audit_current_price"])
     matched = num(item.get("matchedTrades", item.get("matchedCount", item.get("totalMatchedTrades", 0))), 0.0)
     roi = num(item.get("roi", item.get("roiPct", item.get("roiRate", 0))), 0.0)
     fee = 0.001
@@ -403,11 +403,12 @@ def build_current(rows, prices):
             continue
         seen.add(sid)
 
-        ratio, price_range, profit_grid, profit_grid_source, ratio_source = grid_metrics(x)
         direct_current_price = first_num(x, ["currentPrice", "lastPrice", "marketPrice", "price"])
         if direct_current_price is None:
             direct_current_price = find_exact_numeric_key(x, ["currentPrice", "lastPrice", "marketPrice", "latestPrice", "latestMarketPrice"])
         ticker_price = prices.get(normalize_symbol(symbol))
+        x["_audit_current_price"] = direct_current_price if direct_current_price is not None else ticker_price
+        ratio, price_range, profit_grid, profit_grid_source, ratio_source = grid_metrics(x)
         item = {
             "strategyId": sid,
             "category": x.get("_category", ""),
