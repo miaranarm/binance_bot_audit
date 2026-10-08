@@ -122,7 +122,7 @@ def first_num(obj, paths):
     return None
 
 
-def estimate_grid_profit_ratio(item, total_profit):
+def estimate_grid_profit(item, total_profit):
     """Best-effort reconstruction when Binance exposes neither Grid Profit nor
     the ratio itself.
 
@@ -228,8 +228,7 @@ def estimate_grid_profit_ratio(item, total_profit):
             return None
 
         estimated_grid_profit = matched * (sum(cycle_profits) / len(cycle_profits))
-        ratio = estimated_grid_profit / float(total_profit)
-        return ratio
+        return estimated_grid_profit
     except (ZeroDivisionError, ValueError, OverflowError):
         return None
 
@@ -336,23 +335,27 @@ def grid_metrics(item):
 
     ratio = ""
     ratio_source = "UNAVAILABLE"
+
+    # Keep Grid Profit and Total Profit as independent values. The ratio is
+    # only a derived diagnostic: Grid Profit / Total Profit.
+    if grid_profit is None and str(item.get("_category") or "").lower() == "spot grid" and total_profit not in (None, 0):
+        estimated = estimate_grid_profit(item, total_profit)
+        if estimated is not None:
+            grid_profit = estimated
+            grid_profit_source = "ESTIMATED_FROM_MATCHED_TRADES_GRID_GEOMETRY_AND_MARKETPLACE_PNL"
+
     if grid_profit is not None and total_profit not in (None, 0):
         ratio = f"{grid_profit / total_profit:.6f}"
-        if grid_profit_source == "BINANCE_TOTAL_PROFIT_MINUS_FLOATING_PNL":
+        if grid_profit_source == "ESTIMATED_FROM_MATCHED_TRADES_GRID_GEOMETRY_AND_MARKETPLACE_PNL":
+            ratio_source = grid_profit_source
+        elif grid_profit_source == "BINANCE_TOTAL_PROFIT_MINUS_FLOATING_PNL":
             ratio_source = "BINANCE_TOTAL_PROFIT_MINUS_FLOATING_PNL_DIV_TOTAL_PROFIT"
         elif total_profit == marketplace_pnl and marketplace_pnl not in (None, 0):
             ratio_source = "BINANCE_GRID_PROFIT_DIV_MARKETPLACE_PNL"
         else:
             ratio_source = "BINANCE_GRID_PROFIT_DIV_TOTAL_PROFIT"
-    elif str(item.get("_category") or "").lower() == "spot grid" and total_profit not in (None, 0):
-        # Last-resort estimate only when Binance exposes neither Grid Profit
-        # nor Floating/Unrealized PnL. It is explicitly marked ESTIMATED.
-        estimated = estimate_grid_profit_ratio(item, total_profit)
-        if estimated is not None:
-            ratio = f"{estimated:.6f}"
-            ratio_source = "ESTIMATED_FROM_MATCHED_TRADES_GRID_GEOMETRY_AND_MARKETPLACE_PNL"
 
-    return ratio, price_range, profit_grid, profit_grid_source, ratio_source
+    return ratio, price_range, profit_grid, profit_grid_source, ratio_source, grid_profit, total_profit
 
 
 def pages(page, endpoint, base_query, category, streamer, diagnostics):
@@ -408,7 +411,7 @@ def build_current(rows, prices):
             direct_current_price = find_exact_numeric_key(x, ["currentPrice", "lastPrice", "marketPrice", "latestPrice", "latestMarketPrice"])
         ticker_price = prices.get(normalize_symbol(symbol))
         x["_audit_current_price"] = direct_current_price if direct_current_price is not None else ticker_price
-        ratio, price_range, profit_grid, profit_grid_source, ratio_source = grid_metrics(x)
+        ratio, price_range, profit_grid, profit_grid_source, ratio_source, grid_profit, total_profit = grid_metrics(x)
         item = {
             "strategyId": sid,
             "category": x.get("_category", ""),
@@ -421,6 +424,8 @@ def build_current(rows, prices):
             "pnl": num(x.get("pnl", x.get("profitLoss", x.get("totalPnl", 0)))),
             "matchedTrades": num(x.get("matchedTrades", x.get("matchedCount", x.get("totalMatchedTrades", 0)))),
             "mdd7d": num(x.get("mdd7d", x.get("sevenDayMdd", x.get("7dMdd", 0)))),
+            "gridProfit": "" if grid_profit is None else grid_profit,
+            "totalProfit": "" if total_profit is None else total_profit,
             "gridProfitTotalProfitRatio": ratio,
             "gridProfitTotalProfitRatioSource": ratio_source,
             "currentPrice": fmt_price(direct_current_price if direct_current_price is not None else ticker_price),
@@ -820,8 +825,8 @@ def main():
             "old_snapshots_removed": removed,
             "binance_marketplace_refresh": "hourly",
             "fields": FIELDS,
-            "grid_profit_ratio_note": "Priority: exact Binance Grid Profit / Total Profit. If Grid Profit is absent but Binance exposes Total Profit plus Floating/Unrealized PnL, exact Grid Profit is reconstructed as Total Profit - Floating/Unrealized PnL. Only when exact components are unavailable is an ESTIMATED ratio reconstructed from matched trades, published grid geometry, ROI/PNL-derived investment and Binance grid fee formulas; estimates are explicitly marked in gridProfitTotalProfitRatioSource and are never presented as exact Binance values.",
-            "profit_per_grid_note": "Uses Binance Profit/Grid directly when exposed as an exact field; otherwise uses only Binance documented Spot Grid formulas with c=0.1%. The source for each row is retained internally as BINANCE or CALCULATED_BINANCE_FORMULA.",
+            "grid_profit_ratio_note": "Output keeps gridProfit and totalProfit as independent columns. Priority: exact Binance Grid Profit / Total Profit. If Grid Profit is absent but Binance exposes Total Profit plus Floating/Unrealized PnL, exact Grid Profit is reconstructed as Total Profit - Floating/Unrealized PnL. Only when exact components are unavailable is an ESTIMATED gridProfit reconstructed from matched trades, published grid geometry, ROI/PNL-derived investment and Binance grid fee formulas. The ratio is always gridProfit / totalProfit and is marked by gridProfitTotalProfitRatioSource; UNAVAILABLE means one of the two required profit components cannot be obtained reliably.",
+            "profit_per_grid_note": "Uses Binance Profit/Grid directly when exposed as an exact field; otherwise uses Binance Spot Grid formulas with c=0.1%. A range is intentional for arithmetic grids because the same absolute grid step produces a different percentage return at each price level; geometric grids normally produce one percentage. The value is the net profit of one completed buy/sell grid cycle after fees, not the bot ROI.",
             "profit_per_grid_fee_reference": "0.1% per side, per Binance Spot Grid documentation; pair/VIP-specific fees may differ.",
         }, handle, ensure_ascii=False, indent=2)
 
