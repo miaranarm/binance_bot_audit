@@ -20,7 +20,7 @@ DCA = BASE + "queryTopUmDcaStrategy"
 FIELDS = [
     "rank", "strategyId", "category", "strategyType", "symbol", "leverage",
     "minInvestment", "runningTime", "roi", "pnl", "matchedTrades", "mdd7d",
-    "gridProfit", "gridProfitSource", "gridProfitEstimateLow", "gridProfitEstimateMid", "gridProfitEstimateHigh",
+    "gridProfit", "gridProfitSource", "gridMode", "gridCount", "qtyPerOrderEstimate", "qtyPerOrderSource", "gridProfitEstimateLow", "gridProfitEstimateMid", "gridProfitEstimateHigh",
     "totalProfit", "totalProfitSource", "gridProfitTotalProfitRatio", "gridProfitTotalProfitRatioSource",
     "floatingProfit", "gridProfitEstimateMethod", "gridProfitConfidence", "floatingProfitSource",
     "currentPrice", "priceRange", "profitPerGridAfterFees", "score"
@@ -262,6 +262,10 @@ def estimate_grid_profit(item, total_profit_usd, prices):
             # Per Order exact.
             "method": "BINANCE_FORMULA_RECONSTRUCTION_QTY_ESTIMATE",
             "confidence": "MEDIUM",
+            "gridMode": mode,
+            "gridCount": grids_i,
+            "qtyPerOrderEstimate": qty,
+            "qtyPerOrderSource": "RECONSTRUCTED_FROM_INVESTMENT_AND_GRID_STATE",
         }
     except (ZeroDivisionError, ValueError, OverflowError):
         return None
@@ -348,6 +352,10 @@ def grid_metrics(item, prices):
     estimate_low = estimate_high = None
     estimate_method = ""
     estimate_confidence = ""
+    estimate_grid_mode = ""
+    estimate_grid_count = None
+    estimate_qty = None
+    estimate_qty_source = ""
 
     # Best path: Binance exposes Grid Profit and Total Profit from the same
     # detail payload. Their ratio is exact and unit-independent. We scale the
@@ -397,6 +405,10 @@ def grid_metrics(item, prices):
             grid_profit_source = "RECONSTRUCTED"
             estimate_method = estimate.get("method", "BINANCE_FORMULA_RECONSTRUCTION")
             estimate_confidence = estimate.get("confidence", "MEDIUM")
+            estimate_grid_mode = estimate.get("gridMode", "")
+            estimate_grid_count = estimate.get("gridCount")
+            estimate_qty = estimate.get("qtyPerOrderEstimate")
+            estimate_qty_source = estimate.get("qtyPerOrderSource", "")
             ratio_value = grid_profit / total_profit
             ratio = f"{ratio_value:.6f}"
             ratio_source = "RECONSTRUCTED_GRID_PROFIT_DIV_BINANCE_MARKETPLACE_TOTAL_PROFIT"
@@ -421,7 +433,7 @@ def grid_metrics(item, prices):
         ratio, price_range, profit_grid, profit_grid_source, ratio_source,
         grid_profit, total_profit, grid_profit_source, estimate_low, estimate_mid,
         estimate_high, total_source, floating_profit, floating_basis,
-        estimate_method, estimate_confidence
+        estimate_method, estimate_confidence, estimate_grid_mode, estimate_grid_count, estimate_qty, estimate_qty_source
     )
 
 def pages(page, endpoint, base_query, category, streamer, diagnostics):
@@ -477,7 +489,7 @@ def build_current(rows, prices):
             direct_current_price = find_exact_numeric_key(x, ["currentPrice", "lastPrice", "marketPrice", "latestPrice", "latestMarketPrice"])
         ticker_price = prices.get(normalize_symbol(symbol))
         x["_audit_current_price"] = direct_current_price if direct_current_price is not None else ticker_price
-        ratio, price_range, profit_grid, profit_grid_source, ratio_source, grid_profit, total_profit, grid_profit_source, estimate_low, estimate_mid, estimate_high, total_source, floating_profit, floating_basis, estimate_method, estimate_confidence = grid_metrics(x, prices)
+        ratio, price_range, profit_grid, profit_grid_source, ratio_source, grid_profit, total_profit, grid_profit_source, estimate_low, estimate_mid, estimate_high, total_source, floating_profit, floating_basis, estimate_method, estimate_confidence, estimate_grid_mode, estimate_grid_count, estimate_qty, estimate_qty_source = grid_metrics(x, prices)
         item = {
             "strategyId": sid,
             "category": x.get("_category", ""),
@@ -492,6 +504,10 @@ def build_current(rows, prices):
             "mdd7d": num(x.get("mdd7d", x.get("sevenDayMdd", x.get("7dMdd", 0)))),
             "gridProfit": "" if grid_profit is None else grid_profit,
             "gridProfitSource": grid_profit_source,
+            "gridMode": estimate_grid_mode,
+            "gridCount": "" if estimate_grid_count is None else estimate_grid_count,
+            "qtyPerOrderEstimate": "" if estimate_qty is None else estimate_qty,
+            "qtyPerOrderSource": estimate_qty_source,
             "gridProfitEstimateLow": "" if estimate_low is None else estimate_low,
             "gridProfitEstimateMid": "" if estimate_mid is None else estimate_mid,
             "gridProfitEstimateHigh": "" if estimate_high is None else estimate_high,
