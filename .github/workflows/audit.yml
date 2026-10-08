@@ -16,8 +16,6 @@ concurrency:
 
 jobs:
   audit:
-    # Result commits and monthly compaction also land on main. Do not launch
-    # a second scan from those maintenance commits.
     if: >-
       github.event_name != 'push' ||
       (
@@ -43,6 +41,9 @@ jobs:
       - name: Run hourly Binance scan
         run: python src/audit_all.py
 
+      - name: Validate Grid Profit calculations
+        run: python src/validate_results.py
+
       - name: Verify strategy detail diagnostics
         run: |
           echo "PWD=$(pwd)"
@@ -61,12 +62,7 @@ jobs:
 
       - name: Keep only the lean result set
         run: |
-          find results -maxdepth 1 -type f \
-            ! -name 'current_multicriteria.csv' \
-            ! -name 'current_multicriteria_summary.txt' \
-            ! -name 'scan_meta.json' \
-            ! -name 'type_census.json' \
-            -delete
+          find results -maxdepth 1 -type f             ! -name 'current_multicriteria.csv'             ! -name 'current_multicriteria_summary.txt'             ! -name 'scan_meta.json'             ! -name 'type_census.json'             ! -name 'grid_profit_validation.json'             -delete
 
       - name: Upload 90-day archival snapshot
         uses: actions/upload-artifact@v4
@@ -90,9 +86,6 @@ jobs:
 
           git commit -m "audit: hourly snapshot [skip ci]"
 
-          # The scan can take several minutes while another maintenance/result
-          # commit may land on main. Rebase the generated snapshot onto the
-          # latest main before pushing, and retry the push if main advances.
           for attempt in 1 2 3; do
             git fetch origin main
             git rebase origin/main
