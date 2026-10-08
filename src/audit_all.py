@@ -20,7 +20,7 @@ DCA = BASE + "queryTopUmDcaStrategy"
 FIELDS = [
     "rank", "strategyId", "category", "strategyType", "symbol", "leverage",
     "minInvestment", "runningTime", "roi", "pnl", "matchedTrades", "mdd7d",
-    "gridProfitTotalProfitRatio", "gridProfitTotalProfitRatioSource", "currentPrice", "priceRange",
+    "gridProfit", "totalProfit", "gridProfitTotalProfitRatio", "gridProfitTotalProfitRatioSource", "currentPrice", "priceRange",
     "profitPerGridAfterFees", "score"
 ]
 
