@@ -889,7 +889,14 @@ def main():
         )
 
         symbols = [str(x.get("symbol") or "").strip() for x in rows]
-        prices = fetch_prices(page, symbols)
+        # Also fetch USD conversion pairs for non-USD quote assets (e.g. BTC in XRPBTC).
+        price_symbols = list(symbols)
+        for symbol in symbols:
+            quote = _quote_asset(symbol)
+            if quote and quote not in {"USDT", "USDC", "FDUSD", "TUSD", "USDP", "BUSD", "DAI"}:
+                price_symbols.append(quote + "USDT")
+                price_symbols.append("USDT" + quote)
+        prices = fetch_prices(page, price_symbols)
         browser.close()
 
     current = build_current(rows, prices)
