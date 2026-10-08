@@ -1,9 +1,9 @@
 {
   "validation": {
     "rows": 11800,
-    "reconstructed": 9915,
+    "reconstructed": 9974,
     "exact": 0,
-    "unavailable": 1885,
+    "unavailable": 1826,
     "unknownSource": 0,
     "orderingErrors": 0,
     "ratioErrors": 0,
@@ -11,7 +11,7 @@
     "sourceErrors": 0,
     "invalidNegativeEstimate": 0,
     "ratiosOver100Percent": 0,
-    "estimatedRatiosOver100Percent": 3464,
+    "estimatedRatiosOver100Percent": 3498,
     "status": "PASS"
   },
   "examples": []
