@@ -38,6 +38,17 @@ jobs:
       - run: pip install -r requirements.txt
       - run: playwright install --with-deps chromium
 
+      - name: Capture native Binance strategy detail
+        run: python tools/probe_strategy_detail.py
+
+      - name: Upload native strategy detail
+        uses: actions/upload-artifact@v4
+        with:
+          name: strategy-detail-native-${{ github.run_id }}
+          path: results/strategy_detail_raw.json
+          retention-days: 7
+          compression-level: 9
+
       - name: Run hourly Binance scan
         run: python src/audit_all.py
 
