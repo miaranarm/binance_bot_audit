@@ -771,7 +771,7 @@ def main():
             "old_snapshots_removed": removed,
             "binance_marketplace_refresh": "hourly",
             "fields": FIELDS,
-            "grid_profit_ratio_note": "Priority: exact Binance Grid Profit / Total Profit. Spot Grid fallback: Binance marketplace PNL is the Total Profit denominator; when Grid Profit is absent, an ESTIMATED ratio is reconstructed from matched trades, published grid geometry, ROI/PNL-derived investment and Binance grid fee formulas. Estimates are explicitly marked in gridProfitTotalProfitRatioSource and are never presented as exact Binance values.",
+            "grid_profit_ratio_note": "Priority: exact Binance Grid Profit / Total Profit. If Grid Profit is absent but Binance exposes Total Profit plus Floating/Unrealized PnL, exact Grid Profit is reconstructed as Total Profit - Floating/Unrealized PnL. Only when exact components are unavailable is an ESTIMATED ratio reconstructed from matched trades, published grid geometry, ROI/PNL-derived investment and Binance grid fee formulas; estimates are explicitly marked in gridProfitTotalProfitRatioSource and are never presented as exact Binance values.",
             "profit_per_grid_note": "Uses Binance Profit/Grid directly when exposed as an exact field; otherwise uses only Binance documented Spot Grid formulas with c=0.1%. The source for each row is retained internally as BINANCE or CALCULATED_BINANCE_FORMULA.",
             "profit_per_grid_fee_reference": "0.1% per side, per Binance Spot Grid documentation; pair/VIP-specific fees may differ.",
         }, handle, ensure_ascii=False, indent=2)
