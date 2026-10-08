@@ -22,6 +22,7 @@ FIELDS = [
     "minInvestment", "runningTime", "roi", "pnl", "matchedTrades", "mdd7d",
     "gridProfit", "gridProfitSource", "gridProfitEstimateLow", "gridProfitEstimateHigh",
     "totalProfit", "totalProfitSource", "gridProfitTotalProfitRatio", "gridProfitTotalProfitRatioSource",
+    "floatingProfit", "gridProfitEstimateMethod", "gridProfitConfidence",
     "currentPrice", "priceRange", "profitPerGridAfterFees", "score"
 ]
 
