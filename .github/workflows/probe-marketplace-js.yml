@@ -29,7 +29,7 @@ jobs:
           name: marketplace-js-source-${{ github.run_id }}
           path: |
             results/marketplace_js_endpoints.json
-            results/marketplace_js_3857.js
+            results/marketplace_js_*.js
           retention-days: 7
           compression-level: 9
           if-no-files-found: ignore
