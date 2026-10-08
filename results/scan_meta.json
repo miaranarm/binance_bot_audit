@@ -1,9 +1,9 @@
 {
-  "scan_utc": "2026-10-08T07:35:22.479752+00:00",
-  "raw_rows": 20163,
-  "tradable_leverage_le_1": 11941,
+  "scan_utc": "2026-10-08T08:03:27.602116+00:00",
+  "raw_rows": 29125,
+  "tradable_leverage_le_1": 12190,
   "history_retention_days": 30,
-  "snapshot": "results/history/2026/10/08/20261008T073522Z.csv.gz",
+  "snapshot": "results/history/2026/10/08/20261008T080327Z.csv.gz",
   "old_snapshots_removed": 0,
   "binance_marketplace_refresh": "hourly",
   "fields": [
@@ -19,6 +19,8 @@
     "pnl",
     "matchedTrades",
     "mdd7d",
+    "gridProfit",
+    "totalProfit",
     "gridProfitTotalProfitRatio",
     "gridProfitTotalProfitRatioSource",
     "currentPrice",
@@ -26,7 +28,7 @@
     "profitPerGridAfterFees",
     "score"
   ],
-  "grid_profit_ratio_note": "Priority: exact Binance Grid Profit / Total Profit. If Grid Profit is absent but Binance exposes Total Profit plus Floating/Unrealized PnL, exact Grid Profit is reconstructed as Total Profit - Floating/Unrealized PnL. Only when exact components are unavailable is an ESTIMATED ratio reconstructed from matched trades, published grid geometry, ROI/PNL-derived investment and Binance grid fee formulas; estimates are explicitly marked in gridProfitTotalProfitRatioSource and are never presented as exact Binance values.",
-  "profit_per_grid_note": "Uses Binance Profit/Grid directly when exposed as an exact field; otherwise uses only Binance documented Spot Grid formulas with c=0.1%. The source for each row is retained internally as BINANCE or CALCULATED_BINANCE_FORMULA.",
+  "grid_profit_ratio_note": "Output keeps gridProfit and totalProfit as independent columns. Priority: exact Binance Grid Profit / Total Profit. If Grid Profit is absent but Binance exposes Total Profit plus Floating/Unrealized PnL, exact Grid Profit is reconstructed as Total Profit - Floating/Unrealized PnL. Only when exact components are unavailable is an ESTIMATED gridProfit reconstructed from matched trades, published grid geometry, ROI/PNL-derived investment and Binance grid fee formulas. The ratio is always gridProfit / totalProfit and is marked by gridProfitTotalProfitRatioSource; UNAVAILABLE means one of the two required profit components cannot be obtained reliably.",
+  "profit_per_grid_note": "Uses Binance Profit/Grid directly when exposed as an exact field; otherwise uses Binance Spot Grid formulas with c=0.1%. A range is intentional for arithmetic grids because the same absolute grid step produces a different percentage return at each price level; geometric grids normally produce one percentage. The value is the net profit of one completed buy/sell grid cycle after fees, not the bot ROI.",
   "profit_per_grid_fee_reference": "0.1% per side, per Binance Spot Grid documentation; pair/VIP-specific fees may differ."
 }
