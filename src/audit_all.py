@@ -364,7 +364,7 @@ def grid_metrics(item, prices):
     ratio_source = "UNAVAILABLE"
     ratio_estimate_low = ratio_estimate_mid = ratio_estimate_high = None
     ratio_status = "UNAVAILABLE"
-    estimate_low = estimate_high = None
+    estimate_low = estimate_mid = estimate_high = None
     estimate_method = ""
     estimate_confidence = ""
     estimate_grid_mode = ""
