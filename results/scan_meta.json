@@ -1,9 +1,9 @@
 {
-  "scan_utc": "2026-10-08T08:27:35.761723+00:00",
-  "raw_rows": 29125,
-  "tradable_leverage_le_1": 12190,
+  "scan_utc": "2026-10-08T08:42:43.413600+00:00",
+  "raw_rows": 29670,
+  "tradable_leverage_le_1": 12476,
   "history_retention_days": 30,
-  "snapshot": "results/history/2026/10/08/20261008T082735Z.csv.gz",
+  "snapshot": "results/history/2026/10/08/20261008T084243Z.csv.gz",
   "old_snapshots_removed": 0,
   "binance_marketplace_refresh": "hourly",
   "fields": [
@@ -20,7 +20,9 @@
     "matchedTrades",
     "mdd7d",
     "gridProfit",
+    "gridProfitSource",
     "totalProfit",
+    "totalProfitSource",
     "gridProfitTotalProfitRatio",
     "gridProfitTotalProfitRatioSource",
     "currentPrice",
