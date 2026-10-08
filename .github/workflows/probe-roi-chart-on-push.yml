@@ -1,0 +1,33 @@
+name: Probe Binance ROI Chart On Push
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  probe:
+    if: "!contains(github.event.head_commit.message, 'diagnostic: ROI chart probe result')"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install playwright
+      - run: playwright install --with-deps chromium
+      - run: python tools/probe_roi_chart.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: roi-chart-probe-${{ github.run_id }}
+          path: roi_chart_probe.json
+          retention-days: 14
+      - name: Commit diagnostic
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add roi_chart_probe.json
+          git commit -m "diagnostic: ROI chart probe result [skip ci]" || exit 0
+          git push
