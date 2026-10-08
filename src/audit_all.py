@@ -738,7 +738,10 @@ def capture_marketplace_detail_calls(page, rows):
 
         # Deterministic sample of ACTIVE Grid strategies only. No symbol or
         # strategy ID is privileged.
-        candidates.sort(key=lambda item: (-item[5], -item[4], -item[6], item[2]))
+        # Prefer the newest strategy IDs. Older public marketplace rows can
+        # remain visible long after their detail page becomes a Pending Trigger
+        # placeholder, so high activity/matched-count alone is not sufficient.
+        candidates.sort(key=lambda item: (-int(item[2]) if str(item[2]).isdigit() else 0, item[2]))
         spot = [x for x in candidates if "spot grid" in str(x[3]).lower()][:8]
         futures = [x for x in candidates if "futures grid" in str(x[3]).lower()][:8]
         candidates = spot + futures
@@ -774,6 +777,13 @@ def capture_marketplace_detail_calls(page, rows):
                     visible_grid = parse_visible_metric(body_text, "Grid Profit")
                     visible_total = parse_visible_metric(body_text, "Total Profit")
                     visible_float = parse_visible_metric(body_text, "Floating Profit")
+                    pending_detail = ("Pending Trigger" in body_text or "Duration --" in body_text)
+                    if pending_detail:
+                        debug_write("DETAIL_VISIBLE_REJECTED_PENDING sid=" + str(sid))
+                        print("DETAIL_VISIBLE_REJECTED_PENDING sid=" + str(sid))
+                        visible_grid = None
+                        visible_total = None
+                        visible_float = None
                     if visible_grid is not None or visible_total is not None or visible_float is not None:
                         entry = metrics_by_sid.setdefault(sid, {})
                         if visible_grid is not None:
