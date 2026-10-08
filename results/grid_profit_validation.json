@@ -1,14 +1,16 @@
 {
   "validation": {
-    "rows": 11740,
-    "reconstructed": 10755,
+    "rows": 11741,
+    "reconstructed": 10750,
     "exact": 0,
-    "unavailable": 985,
+    "unavailable": 991,
+    "unknownSource": 0,
     "orderingErrors": 0,
     "ratioErrors": 0,
     "floatingErrors": 0,
+    "sourceErrors": 0,
     "invalidNegativeEstimate": 0,
-    "ratiosOver100Percent": 4016,
+    "ratiosOver100Percent": 4013,
     "status": "PASS"
   },
   "examples": []
