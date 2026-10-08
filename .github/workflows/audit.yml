@@ -47,7 +47,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: strategy-detail-debug-${{ github.run_id }}
-          path: results/strategy_detail_debug.log
+          path: strategy_detail_debug.log
           if-no-files-found: ignore
           retention-days: 7
           compression-level: 9
