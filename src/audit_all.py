@@ -425,7 +425,7 @@ def build_current(rows, prices):
             "gridProfit": "" if grid_profit is None else grid_profit,
             "gridProfitSource": grid_profit_source,
             "totalProfit": "" if total_profit is None else total_profit,
-            "totalProfitSource": "BINANCE_TOTAL_PROFIT" if total_profit is not None else "",
+            "totalProfitSource": ("BINANCE_TOTAL_PROFIT" if first_num(x, ["_detail_total_profit", "totalProfit", "strategyStats.totalProfit", "stats.totalProfit"]) is not None else ("BINANCE_MARKETPLACE_PNL_AS_TOTAL_PROFIT" if total_profit is not None else "")),
             "gridProfitTotalProfitRatio": ratio,
             "gridProfitTotalProfitRatioSource": ratio_source,
             "currentPrice": fmt_price(direct_current_price if direct_current_price is not None else ticker_price),
