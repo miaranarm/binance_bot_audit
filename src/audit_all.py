@@ -549,3 +549,36 @@ def main():
 
         symbols = [str(x.get("symbol") or "").strip() for x in rows]
         prices = fetch_prices(page, symbols)
+        browser.close()
+
+    current = build_current(rows, prices)
+    write_current(current)
+    write_summary(current)
+    snapshot, removed = write_history(current, now)
+
+    with (OUT / "scan_meta.json").open("w", encoding="utf-8") as handle:
+        json.dump({
+            "scan_utc": now.isoformat(),
+            "raw_rows": len(rows),
+            "tradable_leverage_le_1": len(current),
+            "history_retention_days": RETENTION_DAYS,
+            "snapshot": str(snapshot),
+            "old_snapshots_removed": removed,
+            "binance_marketplace_refresh": "hourly",
+            "fields": FIELDS,
+            "grid_profit_ratio_note": "Grid Profit and Total Profit are accepted only from exact Binance fields. The ratio is calculated as Binance Grid Profit / Binance Total Profit. No generic PNL, ROI, matched PNL, or realized PNL substitutes are accepted.",
+            "profit_per_grid_note": "Uses Binance Profit/Grid directly when exposed as an exact field; otherwise uses only Binance documented Spot Grid formulas with c=0.1%. The source for each row is retained internally as BINANCE or CALCULATED_BINANCE_FORMULA.",
+            "profit_per_grid_fee_reference": "0.1% per side, per Binance Spot Grid documentation; pair/VIP-specific fees may differ.",
+        }, handle, ensure_ascii=False, indent=2)
+
+    with (OUT / "type_census.json").open("w", encoding="utf-8") as handle:
+        json.dump({
+            "endpoint_diagnostics": diagnostics,
+            "filter": "active public Binance Bot Marketplace strategies with leverage <= 1",
+        }, handle, ensure_ascii=False, indent=2)
+
+    print(f"DONE raw={len(rows)} current={len(current)} snapshot={snapshot} removed={removed}")
+
+
+if __name__ == "__main__":
+    main()
