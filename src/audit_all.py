@@ -456,7 +456,7 @@ def capture_marketplace_detail_calls(page, rows):
                 page.wait_for_timeout(5000)
                 resources = page.evaluate("() => performance.getEntriesByType('resource').map(x => x.name).filter(Boolean)")
                 for resource_url in resources:
-                    lowered_resource = resource_url.toLowerCase()
+                    lowered_resource = str(resource_url).lower()
                     if any(token in lowered_resource for token in ("strategy", "grid", "detail", "profit")):
                         print("DETAIL_RESOURCE " + resource_url)
                 html = page.content()
