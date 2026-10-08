@@ -356,10 +356,10 @@ def grid_metrics(item, prices):
         ratio_source = "BINANCE_DETAIL_GRID_DIV_TOTAL_EXACT"
         if total_profit is not None:
             grid_profit = total_profit * ratio_value
-            grid_profit_source = "BINANCE_DETAIL_EXACT_RATIO_SCALED_TO_MARKETPLACE_USD"
+            grid_profit_source = "BINANCE_EXACT"
         else:
             grid_profit = detail_grid
-            grid_profit_source = "BINANCE_DETAIL_GRID_PROFIT"
+            grid_profit_source = "BINANCE_EXACT"
         estimate_low = estimate_high = grid_profit
         estimate_method = "BINANCE_EXACT_DETAIL"
         estimate_confidence = "HIGH"
@@ -372,10 +372,10 @@ def grid_metrics(item, prices):
             grid_profit = total_profit * ratio_value
             ratio = f"{ratio_value:.6f}"
             ratio_source = "BINANCE_DETAIL_TOTAL_MINUS_FLOATING_DIV_TOTAL_EXACT"
-            grid_profit_source = "BINANCE_DETAIL_TOTAL_MINUS_FLOATING_SCALED_TO_MARKETPLACE_USD"
+            grid_profit_source = "BINANCE_EXACT"
         else:
             grid_profit = detail_grid_reconstructed
-            grid_profit_source = "BINANCE_DETAIL_TOTAL_MINUS_FLOATING_EXACT"
+            grid_profit_source = "BINANCE_EXACT"
         estimate_low = estimate_high = grid_profit
         estimate_method = "BINANCE_EXACT_DETAIL_RECONSTRUCTION"
         estimate_confidence = "HIGH"
