@@ -20,7 +20,7 @@ DCA = BASE + "queryTopUmDcaStrategy"
 FIELDS = [
     "rank", "strategyId", "category", "strategyType", "symbol", "leverage",
     "minInvestment", "runningTime", "roi", "pnl", "matchedTrades", "mdd7d",
-    "gridProfitTotalProfitRatio", "currentPrice", "priceRange",
+    "gridProfitTotalProfitRatio", "gridProfitTotalProfitRatioSource", "currentPrice", "priceRange",
     "profitPerGridAfterFees", "score"
 ]
 
@@ -122,6 +122,108 @@ def first_num(obj, paths):
     return None
 
 
+def estimate_grid_profit_ratio(item, total_profit):
+    """Best-effort reconstruction when Binance exposes neither Grid Profit nor
+    the ratio itself.
+
+    For Spot Grid, Binance defines marketplace PNL as total profit and defines
+    Grid Profit as the sum of matched buy/sell pairs after fees.  We can
+    reconstruct an auditable estimate from the published grid geometry,
+    matched-trade count, ROI and PNL.  ROI gives the strategy investment
+    (PNL / ROI), while Binance's grid model gives the price levels.  We then
+    infer
+    the per-order quantity from the investment required by the currently
+    active buy/sell levels and multiply the average net grid profit by the
+    matched-trade count.
+
+    This is deliberately marked ESTIMATED: the public marketplace does not
+    expose the exact matched-order history/quantities, so an exact value is
+    impossible from marketplace fields alone.
+    """
+    if str(item.get("_category") or "").lower() != "spot grid":
+        return None
+
+    params = item.get("strategyParams") or {}
+
+    def pnum(paths):
+        value = first_num(params, paths)
+        if value is not None:
+            return value
+        return first_num(item, paths)
+
+    lower = pnum(["lowerLimit", "lowerPrice", "gridLowerLimit", "gridLowerPrice", "minPrice", "lower"])
+    upper = pnum(["upperLimit", "upperPrice", "gridUpperLimit", "gridUpperPrice", "maxPrice", "upper"])
+    grids = pnum(["gridCount", "gridNum", "numberOfGrids", "gridNumber"])
+    current = pnum(["currentPrice", "lastPrice", "marketPrice", "price"])
+    matched = num(item.get("matchedTrades", item.get("matchedCount", item.get("totalMatchedTrades", 0))), 0.0)
+    roi = num(item.get("roi", item.get("roiPct", item.get("roiRate", 0))), 0.0)
+
+    if (lower is None or upper is None or grids is None or current is None or
+            grids < 2 or lower <= 0 or upper <= lower or matched <= 0 or
+            total_profit in (None, 0) or roi == 0):
+        return None
+
+    try:
+        grids_i = int(round(grids))
+        if grids_i < 2:
+            return None
+
+        # Marketplace ROI = PNL / Investment. This gives the investment
+        # scale without relying on the minimum-investment field.
+        investment = float(total_profit) / (float(roi) / 100.0)
+        if investment <= 0:
+            return None
+
+        if mode := str(params.get("type") or params.get("gridType") or params.get("gridMode") or "").upper():
+            geometric = mode in {"GEO", "GEOMETRIC"}
+        else:
+            geometric = False
+
+        if geometric:
+            step = (upper / lower) ** (1.0 / grids_i)
+            levels = [lower * (step ** i) for i in range(grids_i + 1)]
+        else:
+            step = (upper - lower) / grids_i
+            levels = [lower + step * i for i in range(grids_i + 1)]
+
+        # Binance leaves the grid level immediately surrounding the current
+        # price empty; lower levels are buys and higher levels are sells.
+        below = [p for p in levels if p < current]
+        above = [p for p in levels if p > current]
+        if not below or not above:
+            return None
+
+        # If price is exactly on a grid level, do not count that level as an
+        # active order. This keeps the active order count aligned with the
+        # documented buy/sell placement model.
+        buy_prices = below
+        sell_prices = above
+        active_value_per_qty = sum(buy_prices) + len(sell_prices) * current
+        if active_value_per_qty <= 0:
+            return None
+
+        qty = investment / active_value_per_qty
+
+        cycle_profits = []
+        for i in range(grids_i):
+            buy = levels[i]
+            sell = levels[i + 1]
+            gross = (sell - buy) * qty
+            fees = fee * (sell + buy) * qty
+            net = gross - fees
+            if net > 0:
+                cycle_profits.append(net)
+
+        if not cycle_profits:
+            return None
+
+        estimated_grid_profit = matched * (sum(cycle_profits) / len(cycle_profits))
+        ratio = estimated_grid_profit / float(total_profit)
+        return ratio
+    except (ZeroDivisionError, ValueError, OverflowError):
+        return None
+
+
 def grid_metrics(item):
     params = item.get("strategyParams") or {}
     lower = first_num(params, ["lowerLimit", "lowerPrice", "gridLowerLimit", "gridLowerPrice", "minPrice", "lower"])
@@ -134,8 +236,6 @@ def grid_metrics(item):
     if lower is not None and upper is not None:
         price_range = f"{fmt_price(lower)} - {fmt_price(upper)}"
 
-    # Prefer Binance's own Profit/Grid value when it is explicitly exposed.
-    # Only the exact Profit/Grid field is accepted as a direct Binance value.
     direct_profit_grid = first_num(item, [
         "profitPerGrid", "profitGrid",
         "strategyStats.profitPerGrid", "strategyStats.profitGrid",
@@ -145,12 +245,6 @@ def grid_metrics(item):
         profit_grid = f"{direct_profit_grid:.4f}%"
         profit_grid_source = "BINANCE"
     else:
-        # Binance documents the following fallback calculation for Spot Grid.
-        # Arithmetic: d=(Upper-Lower)/Grids
-        # max=(1-c)*d/Lower-2c
-        # min=(Upper*(1-c))/(Lower-d)-1-c
-        # Geometric: r=(Upper/Lower)^(1/Grids)
-        # Profit/Grid=(1-c)*r-1-c
         profit_grid = ""
         profit_grid_source = "CALCULATED_BINANCE_FORMULA"
         if lower is not None and upper is not None and grids and grids > 0 and lower > 0:
@@ -168,9 +262,7 @@ def grid_metrics(item):
             except (ZeroDivisionError, ValueError, OverflowError):
                 pass
 
-    # Grid Profit and Total Profit MUST be Binance-provided values.
-    # Do not substitute generic PNL, ROI, matched PNL, or realized PNL.
-    # The ratio itself is the only calculation performed from these two values.
+    # First choice: exact Binance Grid Profit and Total Profit.
     grid_profit = first_num(item, [
         "_detail_grid_profit",
         "gridProfit",
@@ -190,10 +282,23 @@ def grid_metrics(item):
         total_profit = find_exact_numeric_key(item, ["totalProfit"])
 
     ratio = ""
+    ratio_source = "UNAVAILABLE"
     if grid_profit is not None and total_profit not in (None, 0):
         ratio = f"{grid_profit / total_profit:.6f}"
+        ratio_source = "BINANCE_GRID_PROFIT_DIV_TOTAL_PROFIT"
+    elif str(item.get("_category") or "").lower() == "spot grid":
+        # Binance documents Spot Grid marketplace PNL as Total Profit
+        # (Current Value - Total Investment). Therefore PNL is a valid
+        # denominator even when the detail endpoint omits totalProfit.
+        marketplace_pnl = num(item.get("pnl"), None)
+        if marketplace_pnl is not None and marketplace_pnl != 0:
+            total_profit = marketplace_pnl
+            estimated = estimate_grid_profit_ratio(item, total_profit)
+            if estimated is not None:
+                ratio = f"{estimated:.6f}"
+                ratio_source = "ESTIMATED_FROM_MATCHED_TRADES_GRID_GEOMETRY_AND_MARKETPLACE_PNL"
 
-    return ratio, price_range, profit_grid, profit_grid_source
+    return ratio, price_range, profit_grid, profit_grid_source, ratio_source
 
 
 def pages(page, endpoint, base_query, category, streamer, diagnostics):
@@ -244,7 +349,7 @@ def build_current(rows, prices):
             continue
         seen.add(sid)
 
-        ratio, price_range, profit_grid, profit_grid_source = grid_metrics(x)
+        ratio, price_range, profit_grid, profit_grid_source, ratio_source = grid_metrics(x)
         direct_current_price = first_num(x, ["currentPrice", "lastPrice", "marketPrice", "price"])
         if direct_current_price is None:
             direct_current_price = find_exact_numeric_key(x, ["currentPrice", "lastPrice", "marketPrice", "latestPrice", "latestMarketPrice"])
@@ -262,6 +367,7 @@ def build_current(rows, prices):
             "matchedTrades": num(x.get("matchedTrades", x.get("matchedCount", x.get("totalMatchedTrades", 0)))),
             "mdd7d": num(x.get("mdd7d", x.get("sevenDayMdd", x.get("7dMdd", 0)))),
             "gridProfitTotalProfitRatio": ratio,
+            "gridProfitTotalProfitRatioSource": ratio_source,
             "currentPrice": fmt_price(direct_current_price if direct_current_price is not None else ticker_price),
             "priceRange": price_range,
             "profitPerGridAfterFees": profit_grid,
@@ -618,7 +724,7 @@ def main():
             "old_snapshots_removed": removed,
             "binance_marketplace_refresh": "hourly",
             "fields": FIELDS,
-            "grid_profit_ratio_note": "Grid Profit and Total Profit are accepted only from exact Binance fields. The ratio is calculated as Binance Grid Profit / Binance Total Profit. No generic PNL, ROI, matched PNL, or realized PNL substitutes are accepted.",
+            "grid_profit_ratio_note": "Priority: exact Binance Grid Profit / Total Profit. Spot Grid fallback: Binance marketplace PNL is the Total Profit denominator; when Grid Profit is absent, an ESTIMATED ratio is reconstructed from matched trades, published grid geometry, ROI/PNL-derived investment and Binance grid fee formulas. Estimates are explicitly marked in gridProfitTotalProfitRatioSource and are never presented as exact Binance values.",
             "profit_per_grid_note": "Uses Binance Profit/Grid directly when exposed as an exact field; otherwise uses only Binance documented Spot Grid formulas with c=0.1%. The source for each row is retained internally as BINANCE or CALCULATED_BINANCE_FORMULA.",
             "profit_per_grid_fee_reference": "0.1% per side, per Binance Spot Grid documentation; pair/VIP-specific fees may differ.",
         }, handle, ensure_ascii=False, indent=2)
