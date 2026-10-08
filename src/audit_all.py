@@ -434,15 +434,18 @@ def grid_metrics(item, prices):
             ratio_status = "ESTIMATED_NOT_EXACT"
             ratio = "" if ratio_estimate_mid is None else f"{ratio_estimate_mid:.6f}"
 
-    # gridProfit remains reserved for Binance-exact detail data.
-    # The principal Grid/Total ratio remains populated from the central
-    # reconstruction and is explicitly marked ESTIMATED_NOT_EXACT.
+    # Reconstructed Grid Profit is intentionally promoted into the CSV, but
+    # remains explicitly marked RECONSTRUCTED / ESTIMATED_NOT_EXACT.
 
     floating_profit = None
     floating_basis = None
     if total_profit is not None and grid_profit is not None:
         floating_profit = total_profit - grid_profit
-        floating_basis = "BINANCE_EXACT_GRID_PROFIT"
+        floating_basis = (
+            "BINANCE_EXACT_GRID_PROFIT"
+            if grid_profit_source == "BINANCE_EXACT"
+            else "TOTAL_MINUS_RECONSTRUCTED_GRID_PROFIT"
+        )
 
     return (
         ratio, price_range, profit_grid, profit_grid_source, ratio_source,
@@ -834,15 +837,25 @@ def capture_marketplace_detail_calls(page, rows):
             seen.add(sid)
             candidates.append((path, symbol, sid, row.get("_category"), running, matched, pnl))
 
-        # Deterministic sample of ACTIVE Grid strategies only. No symbol or
-        # strategy ID is privileged.
-        # Prefer the newest strategy IDs. Older public marketplace rows can
-        # remain visible long after their detail page becomes a Pending Trigger
-        # placeholder, so high activity/matched-count alone is not sufficient.
+        # Deterministic sample of ACTIVE Grid strategies, plus a small
+        # historical probe set. New marketplace IDs frequently resolve to
+        # "Pending Trigger" placeholders even when the marketplace row has
+        # runtime/PNL. Older long-running public bots are therefore valuable
+        # diagnostic targets for discovering the real detail endpoint.
         candidates.sort(key=lambda item: (-int(item[2]) if str(item[2]).isdigit() else 0, item[2]))
         spot = [x for x in candidates if "spot grid" in str(x[3]).lower()][:8]
         futures = [x for x in candidates if "futures grid" in str(x[3]).lower()][:8]
         candidates = spot + futures
+
+        known_probe_ids = [
+            ("XRPBTC", "3232564", "Spot Grid"),
+            ("TSTUSDT", "9161957", "Spot Grid"),
+        ]
+        existing = {str(x[2]) for x in candidates}
+        for symbol, sid, category in known_probe_ids:
+            if sid not in existing:
+                candidates.append((path if "spot grid" in category.lower() else "https://www.binance.com/en/trading-bots/futures/grid/detail",
+                                   symbol, sid, category, 0, 0, 0))
 
         for path, symbol, sid, category, running, matched, pnl in candidates:
             active_sid["value"] = sid
