@@ -20,9 +20,9 @@ DCA = BASE + "queryTopUmDcaStrategy"
 FIELDS = [
     "rank", "strategyId", "category", "strategyType", "symbol", "leverage",
     "minInvestment", "runningTime", "roi", "pnl", "matchedTrades", "mdd7d",
-    "gridProfit", "gridProfitSource", "gridProfitEstimateLow", "gridProfitEstimateHigh",
+    "gridProfit", "gridProfitSource", "gridProfitEstimateLow", "gridProfitEstimateMid", "gridProfitEstimateHigh",
     "totalProfit", "totalProfitSource", "gridProfitTotalProfitRatio", "gridProfitTotalProfitRatioSource",
-    "floatingProfit", "gridProfitEstimateMethod", "gridProfitConfidence",
+    "floatingProfit", "gridProfitEstimateMethod", "gridProfitConfidence", "floatingProfitSource",
     "currentPrice", "priceRange", "profitPerGridAfterFees", "score"
 ]
 
@@ -395,14 +395,27 @@ def grid_metrics(item, prices):
             ratio = f"{ratio_value:.6f}"
             ratio_source = "RECONSTRUCTED_GRID_PROFIT_DIV_BINANCE_MARKETPLACE_TOTAL_PROFIT"
 
+    # gridProfit is reserved for Binance-exact detail data.
+    # Reconstructed values are persisted as Low/Mid/High estimates.
+    estimate_mid = grid_profit if grid_profit_source.startswith("RECONSTRUCTED_") else None
+    if grid_profit_source.startswith("RECONSTRUCTED_"):
+        grid_profit = None
+
     floating_profit = None
-    if total_profit is not None and grid_profit is not None:
-        floating_profit = total_profit - grid_profit
+    floating_basis = None
+    if total_profit is not None:
+        if grid_profit is not None:
+            floating_profit = total_profit - grid_profit
+            floating_basis = "BINANCE_EXACT_GRID_PROFIT"
+        elif estimate_mid is not None:
+            floating_profit = total_profit - estimate_mid
+            floating_basis = "RECONSTRUCTED_GRID_PROFIT_ESTIMATE_MID"
 
     return (
         ratio, price_range, profit_grid, profit_grid_source, ratio_source,
-        grid_profit, total_profit, grid_profit_source, estimate_low, estimate_high,
-        total_source, floating_profit, estimate_method, estimate_confidence
+        grid_profit, total_profit, grid_profit_source, estimate_low, estimate_mid,
+        estimate_high, total_source, floating_profit, floating_basis,
+        estimate_method, estimate_confidence
     )
 
 def pages(page, endpoint, base_query, category, streamer, diagnostics):
@@ -458,7 +471,7 @@ def build_current(rows, prices):
             direct_current_price = find_exact_numeric_key(x, ["currentPrice", "lastPrice", "marketPrice", "latestPrice", "latestMarketPrice"])
         ticker_price = prices.get(normalize_symbol(symbol))
         x["_audit_current_price"] = direct_current_price if direct_current_price is not None else ticker_price
-        ratio, price_range, profit_grid, profit_grid_source, ratio_source, grid_profit, total_profit, grid_profit_source, estimate_low, estimate_high, total_source, floating_profit, estimate_method, estimate_confidence = grid_metrics(x, prices)
+        ratio, price_range, profit_grid, profit_grid_source, ratio_source, grid_profit, total_profit, grid_profit_source, estimate_low, estimate_mid, estimate_high, total_source, floating_profit, floating_basis, estimate_method, estimate_confidence = grid_metrics(x, prices)
         item = {
             "strategyId": sid,
             "category": x.get("_category", ""),
@@ -474,12 +487,14 @@ def build_current(rows, prices):
             "gridProfit": "" if grid_profit is None else grid_profit,
             "gridProfitSource": grid_profit_source,
             "gridProfitEstimateLow": "" if estimate_low is None else estimate_low,
+            "gridProfitEstimateMid": "" if estimate_mid is None else estimate_mid,
             "gridProfitEstimateHigh": "" if estimate_high is None else estimate_high,
             "totalProfit": "" if total_profit is None else total_profit,
             "totalProfitSource": total_source,
             "gridProfitTotalProfitRatio": ratio,
             "gridProfitTotalProfitRatioSource": ratio_source,
             "floatingProfit": "" if floating_profit is None else floating_profit,
+            "floatingProfitSource": floating_basis or "",
             "gridProfitEstimateMethod": estimate_method,
             "gridProfitConfidence": estimate_confidence,
             "currentPrice": fmt_price(direct_current_price if direct_current_price is not None else ticker_price),
@@ -942,7 +957,7 @@ def main():
             "old_snapshots_removed": removed,
             "binance_marketplace_refresh": "hourly",
             "fields": FIELDS,
-            "grid_profit_ratio_note": "Canonical Total Profit for marketplace rows is Binance PNL (USD). Exact Grid Profit uses the ratio Grid Profit / Total Profit from Binance detail data and scales that ratio to marketplace USD PNL. When detail Grid Profit is absent, an auditable matched-trade/grid-geometry estimate is used and its low/high bounds are retained. Ratios above 1 are valid when floating/unrealized PnL is negative; never cap them.",
+            "grid_profit_ratio_note": "gridProfit is populated only from Binance-exact detail data. When Binance detail data is unavailable, gridProfit remains blank and gridProfitEstimateLow/Mid/High hold the reconstructed bounds and midpoint. gridProfitTotalProfitRatio uses the exact value when available, otherwise the midpoint estimate used by the audit. Ratios above 1 are valid when floating/unrealized PnL is negative; never cap them.",
             "profit_per_grid_note": "Profit/Grid is calculated exactly from Binance documented formulas with c=0.1% when the public payload does not expose it. Arithmetic grids correctly produce a minimum-maximum range because the same absolute price step is a different percentage return at the bottom and top of the range; geometric grids produce one fixed percentage. This is per matched grid cycle after fees, not bot ROI.",
             "profit_per_grid_fee_reference": "0.1% per side, per Binance Spot Grid documentation; pair/VIP-specific fees may differ.",
         }, handle, ensure_ascii=False, indent=2)
