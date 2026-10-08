@@ -432,7 +432,8 @@ def capture_marketplace_detail_calls(page, rows):
             pass
 
     page.on("response", on_response)
-    try:        page.goto("https://www.binance.com/en/trading-bots", wait_until="domcontentloaded", timeout=60000)
+    try:
+        page.goto("https://www.binance.com/en/trading-bots", wait_until="domcontentloaded", timeout=60000)
         page.wait_for_timeout(10000)
 
         candidates = []
