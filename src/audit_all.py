@@ -297,7 +297,6 @@ def write_current(current):
         for rank, item in enumerate(current, 1):
             writer.writerow({"rank": rank, **item})
 
-
 def fetch_prices(page, symbols):
     wanted = {normalize_symbol(s) for s in symbols if str(s).strip()}
     prices = {}
@@ -418,6 +417,12 @@ def capture_marketplace_detail_calls(page, rows):
                 print("BAPI_RESPONSE url=" + url + " status=" + str(response.status) + " bytes=" + str(len(body)))
             if "/api/v2/query" in url.lower() or "/api/v1/feature-gate/check" in url.lower() or "/api/v2/strategy/query" in url.lower():
                 print("DETAIL_SERVICE_BODY url=" + url + " status=" + str(response.status) + " body=" + body[:20000])
+                if "/api/v2/strategy/query" in url.lower():
+                    try:
+                        request = response.request
+                        print("DETAIL_SERVICE_REQUEST url=" + url + " method=" + str(request.method) + " post=" + str(request.post_data or ""))
+                    except Exception as exc:
+                        print("DETAIL_SERVICE_REQUEST_ERROR " + str(exc))
             if any(token in lowered for token in ("gridprofit", "totalprofit", "matchedprofit", "realizedprofit", "unrealizedpnl")):
                 hits.append({"url": url, "status": response.status, "body": body[:20000]})
                 print("GRID_METRIC_RESPONSE " + url + " status=" + str(response.status) + " body=" + body[:10000])
@@ -427,8 +432,7 @@ def capture_marketplace_detail_calls(page, rows):
             pass
 
     page.on("response", on_response)
-    try:
-        page.goto("https://www.binance.com/en/trading-bots", wait_until="domcontentloaded", timeout=60000)
+    try:        page.goto("https://www.binance.com/en/trading-bots", wait_until="domcontentloaded", timeout=60000)
         page.wait_for_timeout(10000)
 
         candidates = []
@@ -447,7 +451,7 @@ def capture_marketplace_detail_calls(page, rows):
                 continue
             seen.add(sid)
             candidates.append((path, symbol, sid, row.get("_category")))
-            if len(candidates) >= 8:
+            if len(candidates) >= 2:
                 break
 
         for path, symbol, sid, category in candidates:
@@ -518,36 +522,3 @@ def main():
 
         symbols = [str(x.get("symbol") or "").strip() for x in rows]
         prices = fetch_prices(page, symbols)
-        browser.close()
-
-    current = build_current(rows, prices)
-    write_current(current)
-    write_summary(current)
-    snapshot, removed = write_history(current, now)
-
-    with (OUT / "scan_meta.json").open("w", encoding="utf-8") as handle:
-        json.dump({
-            "scan_utc": now.isoformat(),
-            "raw_rows": len(rows),
-            "tradable_leverage_le_1": len(current),
-            "history_retention_days": RETENTION_DAYS,
-            "snapshot": str(snapshot),
-            "old_snapshots_removed": removed,
-            "binance_marketplace_refresh": "hourly",
-            "fields": FIELDS,
-            "grid_profit_ratio_note": "Grid Profit and Total Profit are accepted only from exact Binance fields. The ratio is calculated as Binance Grid Profit / Binance Total Profit. No generic PNL, ROI, matched PNL, or realized PNL substitutes are accepted.",
-            "profit_per_grid_note": "Uses Binance Profit/Grid directly when exposed as an exact field; otherwise uses only Binance documented Spot Grid formulas with c=0.1%. The source for each row is retained internally as BINANCE or CALCULATED_BINANCE_FORMULA.",
-            "profit_per_grid_fee_reference": "0.1% per side, per Binance Spot Grid documentation; pair/VIP-specific fees may differ.",
-        }, handle, ensure_ascii=False, indent=2)
-
-    with (OUT / "type_census.json").open("w", encoding="utf-8") as handle:
-        json.dump({
-            "endpoint_diagnostics": diagnostics,
-            "filter": "active public Binance Bot Marketplace strategies with leverage <= 1",
-        }, handle, ensure_ascii=False, indent=2)
-
-    print(f"DONE raw={len(rows)} current={len(current)} snapshot={snapshot} removed={removed}")
-
-
-if __name__ == "__main__":
-    main()
