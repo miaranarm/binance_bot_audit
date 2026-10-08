@@ -331,7 +331,15 @@ def grid_metrics(item):
         grid_profit = total_profit - floating_pnl
         grid_profit_source = "BINANCE_TOTAL_PROFIT_MINUS_FLOATING_PNL"
     else:
-        grid_profit_source = "BINANCE_GRID_PROFIT" if grid_profit is not None else ""
+        detail_source = str(item.get("_detail_metric_source") or "")
+        if grid_profit is not None and detail_source == "BINANCE_DETAIL_VISIBLE":
+            grid_profit_source = "BINANCE_DETAIL_VISIBLE_GRID_PROFIT"
+        elif grid_profit is not None and detail_source == "BINANCE_DETAIL_API":
+            grid_profit_source = "BINANCE_DETAIL_API_GRID_PROFIT"
+        elif grid_profit is not None and detail_source == "BINANCE_QUERY_ROI_CHART":
+            grid_profit_source = "BINANCE_QUERY_ROI_CHART_GRID_PROFIT"
+        else:
+            grid_profit_source = "BINANCE_GRID_PROFIT" if grid_profit is not None else ""
 
     ratio = ""
     ratio_source = "UNAVAILABLE"
