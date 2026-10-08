@@ -854,7 +854,9 @@ def capture_marketplace_detail_calls(page, rows):
         existing = {str(x[2]) for x in candidates}
         for symbol, sid, category in known_probe_ids:
             if sid not in existing:
-                candidates.append((path if "spot grid" in category.lower() else "https://www.binance.com/en/trading-bots/futures/grid/detail",
+                candidates.append(("https://www.binance.com/en/trading-bots/spot/grid/detail"
+                                   if "spot grid" in category.lower()
+                                   else "https://www.binance.com/en/trading-bots/futures/grid/detail",
                                    symbol, sid, category, 0, 0, 0))
 
         for path, symbol, sid, category, running, matched, pnl in candidates:
