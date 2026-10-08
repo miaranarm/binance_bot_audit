@@ -38,6 +38,19 @@ jobs:
       - run: pip install -r requirements.txt
       - run: playwright install --with-deps chromium
 
+      - name: Capture full Binance Marketplace network
+        continue-on-error: true
+        run: python tools/probe_marketplace_network.py
+
+      - name: Upload Marketplace network capture
+        uses: actions/upload-artifact@v4
+        with:
+          name: marketplace-network-${{ github.run_id }}
+          path: results/marketplace_network_raw.json
+          retention-days: 7
+          compression-level: 9
+          if-no-files-found: ignore
+
       - name: Capture native Binance strategy detail
         continue-on-error: true
         run: python tools/probe_strategy_detail.py
@@ -75,7 +88,7 @@ jobs:
 
       - name: Keep only the lean result set
         run: |
-          find results -maxdepth 1 -type f             ! -name 'current_multicriteria.csv'             ! -name 'current_multicriteria_summary.txt'             ! -name 'scan_meta.json'             ! -name 'type_census.json'             ! -name 'grid_profit_validation.json'             ! -name 'strategy_detail_raw.json'             -delete
+          find results -maxdepth 1 -type f             ! -name 'current_multicriteria.csv'             ! -name 'current_multicriteria_summary.txt'             ! -name 'scan_meta.json'             ! -name 'type_census.json'             ! -name 'grid_profit_validation.json'             ! -name 'strategy_detail_raw.json'             ! -name 'marketplace_network_raw.json'             -delete
 
       - name: Upload 90-day archival snapshot
         uses: actions/upload-artifact@v4
