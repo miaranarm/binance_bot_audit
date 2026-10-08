@@ -4,6 +4,7 @@ import gzip
 import json
 import os
 from pathlib import Path
+from urllib.parse import quote
 
 from playwright.sync_api import sync_playwright
 
@@ -473,16 +474,6 @@ def main():
             "Spot Grid", "SPOT_GRID", diagnostics,
         )
 
-        rows.extend(
-            pages(
-                page, TOP,
-                {"strategyType": 2, "symbol": "", "zone": "", "sort": "pnl"},
-                "Futures Grid", "FUTURES_GRID", diagnostics,
-            )
-        )
-
-        captured_detail_calls = capture_marketplace_detail_calls(page, rows)
-
         # Binance currently exposes multiple bot families through this
         # landing-page endpoint. Keep only strategies that actually appear
         # in the active public marketplace and pass the <=1x filter below.
@@ -494,6 +485,8 @@ def main():
                     f"Marketplace type {strategy_type}", f"TYPE_{strategy_type}", diagnostics,
                 )
             )
+
+        captured_detail_calls = capture_marketplace_detail_calls(page, rows)
 
         rows.extend(
             pages(
