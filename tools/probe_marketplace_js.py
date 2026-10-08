@@ -3,7 +3,7 @@ from pathlib import Path
 from playwright.async_api import async_playwright
 
 URL="https://www.binance.com/en/trading-bots/spot/grid/XRPBTC"
-TERMS=("strategy/detail","gridProfit","totalProfit","floatingProfit","floatingPnl","matchedProfit","profitPerGrid","queryTopStrategy","queryRoiChart")
+TERMS=("strategy/detail","gridProfit","totalProfit","floatingProfit","floatingPnl","matchedProfit","profitPerGrid","queryTopStrategy","queryRoiChart","SpotGridMatchedInfo","SpotGridMatchedList","SPOT_GRID_MATCHED_INFO","SPOT_GRID_MATCHED_LIST","matched-info","matched-list")
 
 async def main():
     out=Path("results/marketplace_js_endpoints.json"); out.parent.mkdir(parents=True,exist_ok=True)
@@ -24,11 +24,11 @@ async def main():
             snippets=[]
             for t in found:
                 for m in list(re.finditer(re.escape(t),b,re.I))[:20]:
-                    snippets.append({"term":t,"snippet":b[max(0,m.start()-1200):m.end()+4000]})
-            item={"url":u,"size":len(b),"terms":found,"snippets":snippets[:100]}
-            if "3857." in u:
-                full_sources["3857"]=b
-            hits.append(item)
+                    snippets.append({"term":t,"snippet":b[max(0,m.start()-1500):m.end()+5000]})
+            hits.append({"url":u,"size":len(b),"terms":found,"snippets":snippets[:120]})
+            if any(t.lower() in low for t in ("spotgridmatchedinfo","spotgridmatchedlist","spot_grid_matched_info","spot_grid_matched_list","gridprofit","totalprofit","floatingprofit","matchedprofit","strategy/detail")):
+                key=re.sub(r"[^A-Za-z0-9]+","_",u.rsplit("/",1)[-1])[:80]
+                full_sources[key]=b
         page.on("response",resp)
         nav={}
         try:
@@ -37,10 +37,9 @@ async def main():
         except Exception as e: nav={"error":repr(e)}
         await page.wait_for_timeout(30000)
         resources=await page.evaluate("""() => performance.getEntriesByType('resource').filter(e=>e.initiatorType==='script').map(e=>e.name)""")
-        result={"navigation":nav,"script_count":len(scripts),"scripts":scripts,"hits":hits,"performance_scripts":resources}
-        out.write_text(json.dumps(result,ensure_ascii=False,indent=2),encoding="utf-8")
+        out.write_text(json.dumps({"navigation":nav,"script_count":len(scripts),"scripts":scripts,"hits":hits,"performance_scripts":resources},ensure_ascii=False,indent=2),encoding="utf-8")
         for key,src in full_sources.items():
-            Path(f"results/marketplace_js_{key}.js").write_text(src,encoding="utf-8")
+            Path(f"results/marketplace_js_hit_{key}.js").write_text(src,encoding="utf-8")
         await browser.close()
     print(json.dumps({"output":str(out),"scripts":len(scripts),"hits":len(hits),"full_sources":list(full_sources)},ensure_ascii=False))
 if __name__=="__main__": asyncio.run(main())
