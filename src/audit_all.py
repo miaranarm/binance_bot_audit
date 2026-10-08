@@ -719,3 +719,286 @@ def capture_marketplace_detail_calls(page, rows):
             if "/api/v2/query" in url.lower() or "/api/v1/feature-gate/check" in url.lower() or "/api/v2/strategy/query" in url.lower():
                 debug_write("DETAIL_SERVICE_BODY url=" + url + " status=" + str(response.status) + " body=" + body[:50000])
                 print("DETAIL_SERVICE_BODY url=" + url + " status=" + str(response.status) + " bytes=" + str(len(body)))
+                if "/api/v2/strategy/query" in url.lower():
+                    try:
+                        request = response.request
+                        debug_write("DETAIL_SERVICE_REQUEST url=" + url + " method=" + str(request.method) + " post=" + str(request.post_data or ""))
+                        print("DETAIL_SERVICE_REQUEST url=" + url + " method=" + str(request.method))
+                    except Exception as exc:
+                        debug_write("DETAIL_SERVICE_REQUEST_ERROR " + str(exc))
+
+            # queryRoiChart is a public Binance landing-page endpoint that is
+            # called with the real marketplace strategyId. Capture its complete
+            # payload for diagnostics and extract any exact profit fields if
+            # Binance exposes them there.
+            if "/strategy/landing-page/queryroichart" in url.lower():
+                debug_write("ROI_CHART_BODY sid=" + str(active_sid["value"]) +
+                            " url=" + url + " body=" + body[:50000])
+                try:
+                    payload = json.loads(body)
+                    roi_grid = find_exact_numeric_key(payload, ["gridProfit"])
+                    roi_total = find_exact_numeric_key(payload, ["totalProfit"])
+                    roi_float = find_exact_numeric_key(
+                        payload, ["floatingPnl", "unrealizedPnl", "floatProfit", "floatingProfit"]
+                    )
+                    if roi_grid is not None or roi_total is not None or roi_float is not None:
+                        entry = metrics_by_sid.setdefault(active_sid["value"], {})
+                        if roi_grid is not None:
+                            entry["gridProfit"] = roi_grid
+                        if roi_total is not None:
+                            entry["totalProfit"] = roi_total
+                        if roi_float is not None:
+                            entry["floatingPnl"] = roi_float
+                        entry["source"] = "BINANCE_QUERY_ROI_CHART"
+                        entry["url"] = url
+                        debug_write("ROI_CHART_EXACT sid=" + str(active_sid["value"]) +
+                                    " gridProfit=" + str(roi_grid) +
+                                    " totalProfit=" + str(roi_total) +
+                                    " floatingPnl=" + str(roi_float))
+                except Exception as exc:
+                    debug_write("ROI_CHART_PARSE_ERROR sid=" + str(active_sid["value"]) + " " + str(exc))
+            # Only accept exact Binance fields. Never infer metrics from PNL/ROI.
+            if active_sid["value"] and any(token in lowered for token in (
+                "gridprofit", "totalprofit", "floatingpnl", "unrealizedpnl", "floatprofit", "floatingprofit"
+            )):
+                try:
+                    payload = json.loads(body)
+                    grid_profit = find_exact_numeric_key(payload, ["gridProfit"])
+                    total_profit = find_exact_numeric_key(payload, ["totalProfit"])
+                    floating_pnl = find_exact_numeric_key(
+                        payload, ["floatingPnl", "unrealizedPnl", "floatProfit", "floatingProfit"]
+                    )
+                    if grid_profit is not None or total_profit is not None or floating_pnl is not None:
+                        entry = metrics_by_sid.setdefault(active_sid["value"], {})
+                        if grid_profit is not None:
+                            entry["gridProfit"] = grid_profit
+                        if total_profit is not None:
+                            entry["totalProfit"] = total_profit
+                        if floating_pnl is not None:
+                            entry["floatingPnl"] = floating_pnl
+                        entry["source"] = "BINANCE_DETAIL_API"
+                        entry["url"] = url
+                        debug_write("EXACT_GRID_METRICS sid=" + str(active_sid["value"]) +
+                                    " gridProfit=" + str(grid_profit) +
+                                    " totalProfit=" + str(total_profit) +
+                                    " floatingPnl=" + str(floating_pnl) +
+                                    " url=" + url)
+                        print("EXACT_GRID_METRICS sid=" + str(active_sid["value"]) +
+                              " gridProfit=" + str(grid_profit) +
+                              " totalProfit=" + str(total_profit) +
+                              " floatingPnl=" + str(floating_pnl))
+                except Exception:
+                    pass
+            if any(token in url.lower() for token in ("/grid/", "strategy/detail", "strategy/info", "strategy/landing-page/")):
+                print("DETAIL_API_RESPONSE " + url + " status=" + str(response.status) + " body=" + body[:12000])
+        except Exception:
+            pass
+
+    page.on("response", on_response)
+    def on_request(request):
+        try:
+            url = request.url
+            low = url.lower()
+            if any(token in low for token in ("strategy", "detail", "grid")):
+                debug_write("DETAIL_REQUEST url=" + url + " method=" + str(request.method) + " post=" + str(request.post_data or ""))
+        except Exception as exc:
+            debug_write("DETAIL_REQUEST_ERROR " + str(exc))
+    page.on("request", on_request)
+    try:
+        page.goto("https://www.binance.com/en/trading-bots", wait_until="domcontentloaded", timeout=60000)
+        page.wait_for_timeout(10000)
+
+        candidates = []
+        seen = set()
+        for row in rows:
+            sid = str(row.get("strategyId") or "").strip()
+            symbol = str(row.get("symbol") or "").strip()
+            category = str(row.get("_category") or "").lower()
+            if not sid or not symbol or sid in seen:
+                continue
+            if "spot grid" in category:
+                path = "https://www.binance.com/en/trading-bots/spot/grid/detail"
+            elif "futures grid" in category:
+                path = "https://www.binance.com/en/trading-bots/futures/grid/detail"
+            else:
+                continue
+
+            # Exclude pending/placeholder strategies. Their detail page is
+            # rendered as "Pending Trigger" and reports 0/-- by design.
+            running = num(row.get("runningTime"), 0.0)
+            matched = num(row.get("matchedCount", row.get("latestMatchedCount", 0)), 0.0)
+            pnl = num(row.get("pnl"), 0.0)
+            if running <= 0 or matched <= 0 or pnl == 0:
+                continue
+
+            seen.add(sid)
+            candidates.append((path, symbol, sid, row.get("_category"), running, matched, pnl))
+
+        # Deterministic sample of ACTIVE Grid strategies only. No symbol or
+        # strategy ID is privileged.
+        # Prefer the newest strategy IDs. Older public marketplace rows can
+        # remain visible long after their detail page becomes a Pending Trigger
+        # placeholder, so high activity/matched-count alone is not sufficient.
+        candidates.sort(key=lambda item: (-int(item[2]) if str(item[2]).isdigit() else 0, item[2]))
+        spot = [x for x in candidates if "spot grid" in str(x[3]).lower()][:8]
+        futures = [x for x in candidates if "futures grid" in str(x[3]).lower()][:8]
+        candidates = spot + futures
+
+        for path, symbol, sid, category, running, matched, pnl in candidates:
+            active_sid["value"] = sid
+            url = path + "?symbol=" + quote(str(symbol)) + "&strategyId=" + quote(str(sid))
+            print("DETAIL_PAGE " + str(category) + " " + url)
+            debug_write("DETAIL_PAGE " + str(category) + " " + url)
+            try:
+                page.goto(url, wait_until="domcontentloaded", timeout=60000)
+                page.wait_for_timeout(5000)
+                resources = page.evaluate("() => performance.getEntriesByType('resource').map(x => x.name).filter(Boolean)")
+                for resource_url in resources:
+                    lowered_resource = str(resource_url).lower()
+                    if any(token in lowered_resource for token in ("strategy", "grid", "detail", "profit")):
+                        print("DETAIL_RESOURCE " + resource_url)
+                html = page.content()
+                lowered_html = html.lower()
+                metric_tokens = ("gridprofit", "totalprofit", "matchedprofit", "realizedprofit", "unrealizedpnl", "floatingprofit")
+                if any(token in lowered_html for token in metric_tokens):
+                    print("DETAIL_HTML_METRICS " + url)
+                    for token in metric_tokens:
+                        pos = lowered_html.find(token)
+                        if pos >= 0:
+                            print("DETAIL_HTML_CONTEXT " + token + " " + html[max(0, pos-800):pos+1800])
+                # The detail page may expose Grid Profit / Total Profit only as
+                # rendered text rather than JSON fields. Capture the visible
+                # text around those labels so we can bind exact values without
+                # substituting marketplace PNL/ROI.
+                try:
+                    body_text = page.locator("body").inner_text(timeout=10000)
+                    visible_grid = parse_visible_metric(body_text, "Grid Profit")
+                    visible_total = parse_visible_metric(body_text, "Total Profit")
+                    visible_float = parse_visible_metric(body_text, "Floating Profit")
+                    pending_detail = ("Pending Trigger" in body_text or "Duration --" in body_text)
+                    if pending_detail:
+                        debug_write("DETAIL_VISIBLE_REJECTED_PENDING sid=" + str(sid))
+                        print("DETAIL_VISIBLE_REJECTED_PENDING sid=" + str(sid))
+                        visible_grid = None
+                        visible_total = None
+                        visible_float = None
+                    if visible_grid is not None or visible_total is not None or visible_float is not None:
+                        entry = metrics_by_sid.setdefault(sid, {})
+                        if visible_grid is not None:
+                            entry["gridProfit"] = visible_grid
+                        if visible_total is not None:
+                            entry["totalProfit"] = visible_total
+                        if visible_float is not None:
+                            entry["floatingPnl"] = visible_float
+                        entry["source"] = "BINANCE_DETAIL_VISIBLE"
+                        entry["url"] = url
+                        debug_write("DETAIL_VISIBLE_EXACT sid=" + str(sid) +
+                                    " gridProfit=" + str(visible_grid) +
+                                    " totalProfit=" + str(visible_total) +
+                                    " floatingPnl=" + str(visible_float))
+                        print("DETAIL_VISIBLE_EXACT sid=" + str(sid) +
+                              " gridProfit=" + str(visible_grid) +
+                              " totalProfit=" + str(visible_total) +
+                              " floatingPnl=" + str(visible_float))
+                    for label in ("Grid Profit", "Total Profit", "Floating Profit"):
+                        pos = body_text.lower().find(label.lower())
+                        if pos >= 0:
+                            context = body_text[max(0, pos-300):pos+700].replace("\n", " | ")
+                            debug_write("DETAIL_VISIBLE_METRIC sid=" + str(sid) + " label=" + label + " context=" + context)
+                            print("DETAIL_VISIBLE_METRIC sid=" + str(sid) + " label=" + label + " context=" + context)
+                except Exception as exc:
+                    debug_write("DETAIL_VISIBLE_METRIC_ERROR sid=" + str(sid) + " " + str(exc))
+            except Exception as exc:
+                print("DETAIL_PAGE_ERROR " + url + " " + str(exc))
+    except Exception as exc:
+        print("MARKETPLACE_PAGE_ERROR=" + str(exc))
+    active_sid["value"] = None
+    return metrics_by_sid
+
+def main():
+    diagnostics = []
+    now = dt.datetime.now(dt.timezone.utc)
+
+    with sync_playwright() as playwright:
+        browser = playwright.chromium.launch(headless=True)
+        page = browser.new_page()
+
+        rows = pages(
+            page, TOP,
+            {"strategyType": 1, "symbol": "", "zone": "", "sort": "pnl"},
+            "Spot Grid", "SPOT_GRID", diagnostics,
+        )
+
+        # Binance currently exposes multiple bot families through this
+        # landing-page endpoint. Keep only strategies that actually appear
+        # in the active public marketplace and pass the <=1x filter below.
+        for strategy_type in range(2, 21):
+            rows.extend(
+                pages(
+                    page, TOP,
+                    {"strategyType": strategy_type, "symbol": "", "zone": "", "sort": "pnl"},
+                    f"Marketplace type {strategy_type}", f"TYPE_{strategy_type}", diagnostics,
+                )
+            )
+
+        debug_root = Path(__file__).resolve().parent.parent / "strategy_detail_debug.log"
+        debug_root.write_text("MAIN_REACHED_DETAIL_CALL\\n", encoding="utf-8")
+        print("MAIN_REACHED_DETAIL_CALL " + str(debug_root))
+        captured_detail_metrics = capture_marketplace_detail_calls(page, rows)
+        if captured_detail_metrics:
+            for row in rows:
+                sid = str(row.get("strategyId") or "").strip()
+                metrics = captured_detail_metrics.get(sid)
+                if metrics:
+                    row["_detail_grid_profit"] = metrics.get("gridProfit")
+                    row["_detail_total_profit"] = metrics.get("totalProfit")
+                    row["_detail_floating_pnl"] = metrics.get("floatingPnl")
+                    row["_detail_metric_source"] = metrics.get("source", "")
+
+        rows.extend(
+            pages(
+                page, DCA,
+                {
+                    "market": "", "zone": "", "roi": "", "sort": "pnl",
+                    "trailingType": "", "leverage": "", "investmentType": False,
+                    "sevenDayMdd": "", "strategyType": 10, "symbol": "",
+                },
+                "Futures DCA", "UM_DCA", diagnostics,
+            )
+        )
+
+        symbols = [str(x.get("symbol") or "").strip() for x in rows]
+        prices = fetch_prices(page, symbols)
+        browser.close()
+
+    current = build_current(rows, prices)
+    write_current(current)
+    write_summary(current)
+    snapshot, removed = write_history(current, now)
+
+    with (OUT / "scan_meta.json").open("w", encoding="utf-8") as handle:
+        json.dump({
+            "scan_utc": now.isoformat(),
+            "raw_rows": len(rows),
+            "tradable_leverage_le_1": len(current),
+            "history_retention_days": RETENTION_DAYS,
+            "snapshot": str(snapshot),
+            "old_snapshots_removed": removed,
+            "binance_marketplace_refresh": "hourly",
+            "fields": FIELDS,
+            "grid_profit_ratio_note": "Priority is exact Binance detail data: visible Detail-page Grid Profit/Total Profit, detail API fields, then the public ROI-chart payload. If Binance exposes Total Profit plus Floating/Unrealized PnL but omits Grid Profit, exact Grid Profit is reconstructed as Total Profit - Floating/Unrealized PnL. No ratio is capped at 100%; a ratio above 1 can be mathematically valid when Floating/Unrealized PnL is negative. No geometry/matched-trade estimate is used as the official metric.",
+            "profit_per_grid_note": "Uses Binance Profit/Grid directly when exposed as an exact field; otherwise uses Binance Spot Grid formulas with c=0.1%. A range is intentional for arithmetic grids because the same absolute grid step produces a different percentage return at each price level; geometric grids normally produce one percentage. The value is the net profit of one completed buy/sell grid cycle after fees, not the bot ROI.",
+            "profit_per_grid_fee_reference": "0.1% per side, per Binance Spot Grid documentation; pair/VIP-specific fees may differ.",
+        }, handle, ensure_ascii=False, indent=2)
+
+    with (OUT / "type_census.json").open("w", encoding="utf-8") as handle:
+        json.dump({
+            "endpoint_diagnostics": diagnostics,
+            "filter": "active public Binance Bot Marketplace strategies with leverage <= 1",
+        }, handle, ensure_ascii=False, indent=2)
+
+    print(f"DONE raw={len(rows)} current={len(current)} snapshot={snapshot} removed={removed}")
+
+
+if __name__ == "__main__":
+    main()
