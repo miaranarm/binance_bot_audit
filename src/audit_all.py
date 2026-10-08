@@ -501,7 +501,9 @@ def capture_marketplace_detail_calls(page, rows):
         # Always probe the current top-ranked XRPBTC strategy when present,
         # then a wider sample of grid strategies. This makes exact-metric
         # diagnostics reproducible instead of depending on row ordering.
-        candidates.sort(key=lambda item: (0 if item[2] == "3232564" else 1, item[2]))
+        # Probe a deterministic sample of active Grid strategies only.
+        # No strategy ID is privileged; any row may serve as the diagnostic sample.
+        candidates.sort(key=lambda item: (item[2], item[0], item[1]))
         candidates = candidates[:12]
 
         for path, symbol, sid, category in candidates:
