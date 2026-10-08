@@ -404,9 +404,10 @@ def write_history(current, now):
 def capture_marketplace_detail_calls(page, rows):
     """Capture public Binance detail APIs using generic marketplace strategies."""
     hits = []
-    debug_path = OUT / "strategy_detail_debug.log"
+    debug_path = Path("strategy_detail_debug.log")
     debug_path.parent.mkdir(parents=True, exist_ok=True)
-    debug_path.write_text("", encoding="utf-8")
+    debug_path.write_text("DETAIL_CAPTURE_START\n", encoding="utf-8")
+    print("DETAIL_CAPTURE_START")
 
     def debug_write(line):
         try:
@@ -479,6 +480,7 @@ def capture_marketplace_detail_calls(page, rows):
         for path, symbol, sid, category in candidates:
             url = path + "?symbol=" + quote(str(symbol)) + "&strategyId=" + quote(str(sid))
             print("DETAIL_PAGE " + str(category) + " " + url)
+            debug_write("DETAIL_PAGE " + str(category) + " " + url)
             try:
                 page.goto(url, wait_until="domcontentloaded", timeout=60000)
                 page.wait_for_timeout(5000)
