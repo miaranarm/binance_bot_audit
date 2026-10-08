@@ -592,6 +592,37 @@ def capture_marketplace_detail_calls(page, rows):
                         print("DETAIL_SERVICE_REQUEST url=" + url + " method=" + str(request.method))
                     except Exception as exc:
                         debug_write("DETAIL_SERVICE_REQUEST_ERROR " + str(exc))
+
+            # queryRoiChart is a public Binance landing-page endpoint that is
+            # called with the real marketplace strategyId. Capture its complete
+            # payload for diagnostics and extract any exact profit fields if
+            # Binance exposes them there.
+            if "/strategy/landing-page/queryroichart" in url.lower():
+                debug_write("ROI_CHART_BODY sid=" + str(active_sid["value"]) +
+                            " url=" + url + " body=" + body[:50000])
+                try:
+                    payload = json.loads(body)
+                    roi_grid = find_exact_numeric_key(payload, ["gridProfit"])
+                    roi_total = find_exact_numeric_key(payload, ["totalProfit"])
+                    roi_float = find_exact_numeric_key(
+                        payload, ["floatingPnl", "unrealizedPnl", "floatProfit", "floatingProfit"]
+                    )
+                    if roi_grid is not None or roi_total is not None or roi_float is not None:
+                        entry = metrics_by_sid.setdefault(active_sid["value"], {})
+                        if roi_grid is not None:
+                            entry["gridProfit"] = roi_grid
+                        if roi_total is not None:
+                            entry["totalProfit"] = roi_total
+                        if roi_float is not None:
+                            entry["floatingPnl"] = roi_float
+                        entry["source"] = "BINANCE_QUERY_ROI_CHART"
+                        entry["url"] = url
+                        debug_write("ROI_CHART_EXACT sid=" + str(active_sid["value"]) +
+                                    " gridProfit=" + str(roi_grid) +
+                                    " totalProfit=" + str(roi_total) +
+                                    " floatingPnl=" + str(roi_float))
+                except Exception as exc:
+                    debug_write("ROI_CHART_PARSE_ERROR sid=" + str(active_sid["value"]) + " " + str(exc))
             # Only accept exact Binance fields. Never infer metrics from PNL/ROI.
             if active_sid["value"] and any(token in lowered for token in (
                 "gridprofit", "totalprofit", "floatingpnl", "unrealizedpnl", "floatprofit", "floatingprofit"
