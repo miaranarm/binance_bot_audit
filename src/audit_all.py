@@ -433,7 +433,13 @@ def build_current(rows, prices):
             "gridProfit": "" if grid_profit is None else grid_profit,
             "gridProfitSource": grid_profit_source,
             "totalProfit": "" if total_profit is None else total_profit,
-            "totalProfitSource": ("BINANCE_TOTAL_PROFIT" if first_num(x, ["_detail_total_profit", "totalProfit", "strategyStats.totalProfit", "stats.totalProfit"]) is not None else ("BINANCE_MARKETPLACE_PNL_AS_TOTAL_PROFIT" if total_profit is not None else "")),
+            "totalProfitSource": (
+                "BINANCE_DETAIL_VISIBLE_TOTAL_PROFIT" if x.get("_detail_metric_source") == "BINANCE_DETAIL_VISIBLE" and total_profit is not None
+                else "BINANCE_DETAIL_API_TOTAL_PROFIT" if x.get("_detail_metric_source") == "BINANCE_DETAIL_API" and total_profit is not None
+                else "BINANCE_QUERY_ROI_CHART_TOTAL_PROFIT" if x.get("_detail_metric_source") == "BINANCE_QUERY_ROI_CHART" and total_profit is not None
+                else "BINANCE_TOTAL_PROFIT" if first_num(x, ["_detail_total_profit", "totalProfit", "strategyStats.totalProfit", "stats.totalProfit"]) is not None
+                else "BINANCE_MARKETPLACE_PNL_AS_TOTAL_PROFIT" if total_profit is not None else ""
+            ),
             "gridProfitTotalProfitRatio": ratio,
             "gridProfitTotalProfitRatioSource": ratio_source,
             "currentPrice": fmt_price(direct_current_price if direct_current_price is not None else ticker_price),
@@ -593,6 +599,15 @@ def capture_marketplace_detail_calls(page, rows):
         except Exception:
             pass
 
+    def parse_visible_metric(body_text, label):
+        import re
+        text_value = str(body_text or "").replace("\n", " | ")
+        pattern = str(label) + r"\s*\|\s*(-?\d[\d,]*(?:\.\d+)?)"
+        match = re.search(pattern, text_value, flags=re.IGNORECASE)
+        if not match:
+            return None
+        return num(match.group(1).replace(",", ""), None)
+
     def on_response(response):
         try:
             content_type = (response.headers.get("content-type") or "").lower()
@@ -709,18 +724,26 @@ def capture_marketplace_detail_calls(page, rows):
                 path = "https://www.binance.com/en/trading-bots/futures/grid/detail"
             else:
                 continue
+
+            # Exclude pending/placeholder strategies. Their detail page is
+            # rendered as "Pending Trigger" and reports 0/-- by design.
+            running = num(row.get("runningTime"), 0.0)
+            matched = num(row.get("matchedCount", row.get("latestMatchedCount", 0)), 0.0)
+            pnl = num(row.get("pnl"), 0.0)
+            if running <= 0 or matched <= 0 or pnl == 0:
+                continue
+
             seen.add(sid)
-            candidates.append((path, symbol, sid, row.get("_category")))
+            candidates.append((path, symbol, sid, row.get("_category"), running, matched, pnl))
 
-        # Always probe the current top-ranked XRPBTC strategy when present,
-        # then a wider sample of grid strategies. This makes exact-metric
-        # diagnostics reproducible instead of depending on row ordering.
-        # Probe a deterministic sample of active Grid strategies only.
-        # No strategy ID is privileged; any row may serve as the diagnostic sample.
-        candidates.sort(key=lambda item: (item[2], item[0], item[1]))
-        candidates = candidates[:12]
+        # Deterministic sample of ACTIVE Grid strategies only. No symbol or
+        # strategy ID is privileged.
+        candidates.sort(key=lambda item: (-item[5], -item[4], -item[6], item[2]))
+        spot = [x for x in candidates if "spot grid" in str(x[3]).lower()][:8]
+        futures = [x for x in candidates if "futures grid" in str(x[3]).lower()][:8]
+        candidates = spot + futures
 
-        for path, symbol, sid, category in candidates:
+        for path, symbol, sid, category, running, matched, pnl in candidates:
             active_sid["value"] = sid
             url = path + "?symbol=" + quote(str(symbol)) + "&strategyId=" + quote(str(sid))
             print("DETAIL_PAGE " + str(category) + " " + url)
@@ -748,8 +771,29 @@ def capture_marketplace_detail_calls(page, rows):
                 # substituting marketplace PNL/ROI.
                 try:
                     body_text = page.locator("body").inner_text(timeout=10000)
-                    for label in ("Grid Profit", "Total Profit", "Grid profit", "Total profit"):
-                        pos = body_text.find(label)
+                    visible_grid = parse_visible_metric(body_text, "Grid Profit")
+                    visible_total = parse_visible_metric(body_text, "Total Profit")
+                    visible_float = parse_visible_metric(body_text, "Floating Profit")
+                    if visible_grid is not None or visible_total is not None or visible_float is not None:
+                        entry = metrics_by_sid.setdefault(sid, {})
+                        if visible_grid is not None:
+                            entry["gridProfit"] = visible_grid
+                        if visible_total is not None:
+                            entry["totalProfit"] = visible_total
+                        if visible_float is not None:
+                            entry["floatingPnl"] = visible_float
+                        entry["source"] = "BINANCE_DETAIL_VISIBLE"
+                        entry["url"] = url
+                        debug_write("DETAIL_VISIBLE_EXACT sid=" + str(sid) +
+                                    " gridProfit=" + str(visible_grid) +
+                                    " totalProfit=" + str(visible_total) +
+                                    " floatingPnl=" + str(visible_float))
+                        print("DETAIL_VISIBLE_EXACT sid=" + str(sid) +
+                              " gridProfit=" + str(visible_grid) +
+                              " totalProfit=" + str(visible_total) +
+                              " floatingPnl=" + str(visible_float))
+                    for label in ("Grid Profit", "Total Profit", "Floating Profit"):
+                        pos = body_text.lower().find(label.lower())
                         if pos >= 0:
                             context = body_text[max(0, pos-300):pos+700].replace("\n", " | ")
                             debug_write("DETAIL_VISIBLE_METRIC sid=" + str(sid) + " label=" + label + " context=" + context)
@@ -801,6 +845,7 @@ def main():
                     row["_detail_grid_profit"] = metrics.get("gridProfit")
                     row["_detail_total_profit"] = metrics.get("totalProfit")
                     row["_detail_floating_pnl"] = metrics.get("floatingPnl")
+                    row["_detail_metric_source"] = metrics.get("source", "")
 
         rows.extend(
             pages(
@@ -833,7 +878,7 @@ def main():
             "old_snapshots_removed": removed,
             "binance_marketplace_refresh": "hourly",
             "fields": FIELDS,
-            "grid_profit_ratio_note": "Output keeps gridProfit and totalProfit as independent columns. Priority: exact Binance Grid Profit / Total Profit. If Grid Profit is absent but Binance exposes Total Profit plus Floating/Unrealized PnL, exact Grid Profit is reconstructed as Total Profit - Floating/Unrealized PnL. Only when exact components are unavailable is an ESTIMATED gridProfit reconstructed from matched trades, published grid geometry, ROI/PNL-derived investment and Binance grid fee formulas; estimated Grid Profit is rejected when it exceeds Total Profit. The contribution ratio is published only when 0 <= gridProfit / totalProfit <= 1; otherwise it is UNAVAILABLE_INCONSISTENT_PROFIT_COMPONENTS rather than being capped or fabricated.",
+            "grid_profit_ratio_note": "Priority is exact Binance detail data: visible Detail-page Grid Profit/Total Profit, detail API fields, then the public ROI-chart payload. If Binance exposes Total Profit plus Floating/Unrealized PnL but omits Grid Profit, exact Grid Profit is reconstructed as Total Profit - Floating/Unrealized PnL. No ratio is capped at 100%; a ratio above 1 can be mathematically valid when Floating/Unrealized PnL is negative. No geometry/matched-trade estimate is used as the official metric.",
             "profit_per_grid_note": "Uses Binance Profit/Grid directly when exposed as an exact field; otherwise uses Binance Spot Grid formulas with c=0.1%. A range is intentional for arithmetic grids because the same absolute grid step produces a different percentage return at each price level; geometric grids normally produce one percentage. The value is the net profit of one completed buy/sell grid cycle after fees, not the bot ROI.",
             "profit_per_grid_fee_reference": "0.1% per side, per Binance Spot Grid documentation; pair/VIP-specific fees may differ.",
         }, handle, ensure_ascii=False, indent=2)
