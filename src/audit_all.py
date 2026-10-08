@@ -20,7 +20,7 @@ DCA = BASE + "queryTopUmDcaStrategy"
 FIELDS = [
     "rank", "strategyId", "category", "strategyType", "symbol", "leverage",
     "minInvestment", "runningTime", "roi", "pnl", "matchedTrades", "mdd7d",
-    "gridProfit", "totalProfit", "gridProfitTotalProfitRatio", "gridProfitTotalProfitRatioSource", "currentPrice", "priceRange",
+    "gridProfit", "gridProfitSource", "totalProfit", "totalProfitSource", "gridProfitTotalProfitRatio", "gridProfitTotalProfitRatioSource", "currentPrice", "priceRange",
     "profitPerGridAfterFees", "score"
 ]
 
@@ -336,41 +336,22 @@ def grid_metrics(item):
     ratio = ""
     ratio_source = "UNAVAILABLE"
 
-    # Keep Grid Profit and Total Profit as independent values. The ratio is
-    # only a derived diagnostic: Grid Profit / Total Profit.
-    if grid_profit is None and str(item.get("_category") or "").lower() == "spot grid" and total_profit not in (None, 0):
-        estimated = estimate_grid_profit(item, total_profit)
-        if estimated is not None:
-            # An estimated Grid Profit is only accepted when it can be a
-            # genuine component of the marketplace Total Profit. Otherwise
-            # the reconstruction is too uncertain and must not create an
-            # artificial >100% contribution ratio.
-            if estimated >= 0 and estimated <= total_profit:
-                grid_profit = estimated
-                grid_profit_source = "ESTIMATED_FROM_MATCHED_TRADES_GRID_GEOMETRY_AND_MARKETPLACE_PNL"
-
-    # This ratio is a contribution ratio: Grid Profit must be a component of
-    # Total Profit. Never publish a value above 100%. If the available fields
-    # imply Grid Profit > Total Profit, the inputs are not compatible enough
-    # to support a bounded contribution ratio (typically because the Grid
-    # Profit is estimated or because Total Profit includes a different PnL
-    # basis). Keep the two profit amounts visible, but mark the ratio
-    # UNAVAILABLE instead of fabricating/capping it.
-    if grid_profit is not None and total_profit not in (None, 0) and total_profit > 0:
-        candidate_ratio = grid_profit / total_profit
-        if 0 <= candidate_ratio <= 1:
-            ratio = f"{candidate_ratio:.6f}"
-            if grid_profit_source == "ESTIMATED_FROM_MATCHED_TRADES_GRID_GEOMETRY_AND_MARKETPLACE_PNL":
-                ratio_source = grid_profit_source
-            elif grid_profit_source == "BINANCE_TOTAL_PROFIT_MINUS_FLOATING_PNL":
-                ratio_source = "BINANCE_TOTAL_PROFIT_MINUS_FLOATING_PNL_DIV_TOTAL_PROFIT"
-            elif total_profit == marketplace_pnl and marketplace_pnl not in (None, 0):
-                ratio_source = "BINANCE_GRID_PROFIT_DIV_MARKETPLACE_PNL"
-            else:
-                ratio_source = "BINANCE_GRID_PROFIT_DIV_TOTAL_PROFIT"
+    # Do not use the geometry/matched-trade reconstruction as the official
+    # Grid Profit. Binance calculates Grid Profit from the actual matched
+    # buy/sell executions and their fees; marketplace aggregates do not expose
+    # those executions. Keep that estimator for research only.
+    #
+    # Exact Grid Profit may legitimately exceed Total Profit when the
+    # Floating/Unrealized PnL is negative because Binance defines:
+    # Total Profit = Grid Profit + Unrealized PnL.
+    if grid_profit is not None and total_profit not in (None, 0):
+        ratio = f"{grid_profit / total_profit:.6f}"
+        if grid_profit_source == "BINANCE_TOTAL_PROFIT_MINUS_FLOATING_PNL":
+            ratio_source = "BINANCE_TOTAL_PROFIT_MINUS_FLOATING_PNL_DIV_TOTAL_PROFIT"
+        elif total_profit == marketplace_pnl and marketplace_pnl not in (None, 0):
+            ratio_source = "BINANCE_GRID_PROFIT_DIV_MARKETPLACE_PNL"
         else:
-            ratio = ""
-            ratio_source = "UNAVAILABLE_INCONSISTENT_PROFIT_COMPONENTS"
+            ratio_source = "BINANCE_GRID_PROFIT_DIV_TOTAL_PROFIT"
 
     return ratio, price_range, profit_grid, profit_grid_source, ratio_source, grid_profit, total_profit
 
@@ -442,7 +423,9 @@ def build_current(rows, prices):
             "matchedTrades": num(x.get("matchedTrades", x.get("matchedCount", x.get("totalMatchedTrades", 0)))),
             "mdd7d": num(x.get("mdd7d", x.get("sevenDayMdd", x.get("7dMdd", 0)))),
             "gridProfit": "" if grid_profit is None else grid_profit,
+            "gridProfitSource": grid_profit_source,
             "totalProfit": "" if total_profit is None else total_profit,
+            "totalProfitSource": "BINANCE_TOTAL_PROFIT" if total_profit is not None else "",
             "gridProfitTotalProfitRatio": ratio,
             "gridProfitTotalProfitRatioSource": ratio_source,
             "currentPrice": fmt_price(direct_current_price if direct_current_price is not None else ticker_price),
