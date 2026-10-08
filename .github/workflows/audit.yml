@@ -43,6 +43,12 @@ jobs:
       - name: Run hourly Binance scan
         run: python src/audit_all.py
 
+      - name: Verify strategy detail diagnostics
+        run: |
+          echo "PWD=$(pwd)"
+          find . -maxdepth 3 -name "strategy_detail_debug.log" -print -exec wc -c {} \\;
+          ls -la
+
       - name: Upload strategy detail diagnostics
         uses: actions/upload-artifact@v4
         with:
