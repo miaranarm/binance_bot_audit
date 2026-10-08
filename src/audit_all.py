@@ -432,6 +432,15 @@ def capture_marketplace_detail_calls(page, rows):
             pass
 
     page.on("response", on_response)
+    def on_request(request):
+        try:
+            url = request.url
+            low = url.lower()
+            if any(token in low for token in ("strategy", "detail", "grid")):
+                print("DETAIL_REQUEST url=" + url + " method=" + str(request.method) + " post=" + str(request.post_data or ""))
+        except Exception as exc:
+            print("DETAIL_REQUEST_ERROR " + str(exc))
+    page.on("request", on_request)
     try:
         page.goto("https://www.binance.com/en/trading-bots", wait_until="domcontentloaded", timeout=60000)
         page.wait_for_timeout(10000)
@@ -452,7 +461,7 @@ def capture_marketplace_detail_calls(page, rows):
                 continue
             seen.add(sid)
             candidates.append((path, symbol, sid, row.get("_category")))
-            if len(candidates) >= 2:
+            if len(candidates) >= 4:
                 break
 
         for path, symbol, sid, category in candidates:
