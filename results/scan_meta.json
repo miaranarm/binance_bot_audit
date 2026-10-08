@@ -1,9 +1,9 @@
 {
-  "scan_utc": "2026-10-08T09:08:20.932632+00:00",
+  "scan_utc": "2026-10-08T09:19:18.402141+00:00",
   "raw_rows": 29670,
   "tradable_leverage_le_1": 12476,
   "history_retention_days": 30,
-  "snapshot": "results/history/2026/10/08/20261008T090820Z.csv.gz",
+  "snapshot": "results/history/2026/10/08/20261008T091918Z.csv.gz",
   "old_snapshots_removed": 0,
   "binance_marketplace_refresh": "hourly",
   "fields": [
@@ -21,6 +21,8 @@
     "mdd7d",
     "gridProfit",
     "gridProfitSource",
+    "gridProfitEstimateLow",
+    "gridProfitEstimateHigh",
     "totalProfit",
     "totalProfitSource",
     "gridProfitTotalProfitRatio",
@@ -30,7 +32,7 @@
     "profitPerGridAfterFees",
     "score"
   ],
-  "grid_profit_ratio_note": "Priority is exact Binance detail data: visible Detail-page Grid Profit/Total Profit, detail API fields, then the public ROI-chart payload. If Binance exposes Total Profit plus Floating/Unrealized PnL but omits Grid Profit, exact Grid Profit is reconstructed as Total Profit - Floating/Unrealized PnL. No ratio is capped at 100%; a ratio above 1 can be mathematically valid when Floating/Unrealized PnL is negative. No geometry/matched-trade estimate is used as the official metric.",
-  "profit_per_grid_note": "Uses Binance Profit/Grid directly when exposed as an exact field; otherwise uses Binance Spot Grid formulas with c=0.1%. A range is intentional for arithmetic grids because the same absolute grid step produces a different percentage return at each price level; geometric grids normally produce one percentage. The value is the net profit of one completed buy/sell grid cycle after fees, not the bot ROI.",
+  "grid_profit_ratio_note": "Canonical Total Profit for marketplace rows is Binance PNL (USD). Exact Grid Profit uses the ratio Grid Profit / Total Profit from Binance detail data and scales that ratio to marketplace USD PNL. When detail Grid Profit is absent, an auditable matched-trade/grid-geometry estimate is used and its low/high bounds are retained. Ratios above 1 are valid when floating/unrealized PnL is negative; never cap them.",
+  "profit_per_grid_note": "Profit/Grid is calculated exactly from Binance documented formulas with c=0.1% when the public payload does not expose it. Arithmetic grids correctly produce a minimum-maximum range because the same absolute price step is a different percentage return at the bottom and top of the range; geometric grids produce one fixed percentage. This is per matched grid cycle after fees, not bot ROI.",
   "profit_per_grid_fee_reference": "0.1% per side, per Binance Spot Grid documentation; pair/VIP-specific fees may differ."
 }
