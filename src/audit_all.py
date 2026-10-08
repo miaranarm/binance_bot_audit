@@ -416,7 +416,7 @@ def capture_marketplace_detail_calls(page, rows):
             url = response.url
             if "/bapi/" in url:
                 print("BAPI_RESPONSE url=" + url + " status=" + str(response.status) + " bytes=" + str(len(body)))
-            if "/api/v2/query" in url.lower() or "/api/v1/feature-gate/check" in url.lower():
+            if "/api/v2/query" in url.lower() or "/api/v1/feature-gate/check" in url.lower() or "/api/v2/strategy/query" in url.lower():
                 print("DETAIL_SERVICE_BODY url=" + url + " status=" + str(response.status) + " body=" + body[:20000])
             if any(token in lowered for token in ("gridprofit", "totalprofit", "matchedprofit", "realizedprofit", "unrealizedpnl")):
                 hits.append({"url": url, "status": response.status, "body": body[:20000]})
