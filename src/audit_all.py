@@ -172,6 +172,7 @@ def grid_metrics(item):
     # Do not substitute generic PNL, ROI, matched PNL, or realized PNL.
     # The ratio itself is the only calculation performed from these two values.
     grid_profit = first_num(item, [
+        "_detail_grid_profit",
         "gridProfit",
         "strategyStats.gridProfit",
         "stats.gridProfit",
@@ -180,6 +181,7 @@ def grid_metrics(item):
         grid_profit = find_exact_numeric_key(item, ["gridProfit"])
 
     total_profit = first_num(item, [
+        "_detail_total_profit",
         "totalProfit",
         "strategyStats.totalProfit",
         "stats.totalProfit",
@@ -402,8 +404,9 @@ def write_history(current, now):
 
 
 def capture_marketplace_detail_calls(page, rows):
-    """Capture public Binance detail APIs using generic marketplace strategies."""
-    hits = []
+    """Capture exact Binance Grid Profit/Total Profit from public detail APIs."""
+    metrics_by_sid = {}
+    active_sid = {"value": None}
     debug_path = Path(__file__).resolve().parent.parent / "strategy_detail_debug.log"
     debug_path.parent.mkdir(parents=True, exist_ok=True)
     debug_path.write_text("DETAIL_CAPTURE_START\n", encoding="utf-8")
@@ -436,9 +439,29 @@ def capture_marketplace_detail_calls(page, rows):
                         print("DETAIL_SERVICE_REQUEST url=" + url + " method=" + str(request.method))
                     except Exception as exc:
                         debug_write("DETAIL_SERVICE_REQUEST_ERROR " + str(exc))
-            if any(token in lowered for token in ("gridprofit", "totalprofit", "matchedprofit", "realizedprofit", "unrealizedpnl")):
-                hits.append({"url": url, "status": response.status, "body": body[:20000]})
-                print("GRID_METRIC_RESPONSE " + url + " status=" + str(response.status) + " body=" + body[:10000])
+            # Only accept exact Binance fields. Never infer metrics from PNL/ROI.
+            if active_sid["value"] and any(token in lowered for token in ("gridprofit", "totalprofit")):
+                try:
+                    payload = json.loads(body)
+                    grid_profit = find_exact_numeric_key(payload, ["gridProfit"])
+                    total_profit = find_exact_numeric_key(payload, ["totalProfit"])
+                    if grid_profit is not None or total_profit is not None:
+                        entry = metrics_by_sid.setdefault(active_sid["value"], {})
+                        if grid_profit is not None:
+                            entry["gridProfit"] = grid_profit
+                        if total_profit is not None:
+                            entry["totalProfit"] = total_profit
+                        entry["source"] = "BINANCE_DETAIL_API"
+                        entry["url"] = url
+                        debug_write("EXACT_GRID_METRICS sid=" + str(active_sid["value"]) +
+                                    " gridProfit=" + str(grid_profit) +
+                                    " totalProfit=" + str(total_profit) +
+                                    " url=" + url)
+                        print("EXACT_GRID_METRICS sid=" + str(active_sid["value"]) +
+                              " gridProfit=" + str(grid_profit) +
+                              " totalProfit=" + str(total_profit))
+                except Exception:
+                    pass
             if any(token in url.lower() for token in ("/grid/", "strategy/detail", "strategy/info", "strategy/landing-page/")):
                 print("DETAIL_API_RESPONSE " + url + " status=" + str(response.status) + " body=" + body[:12000])
         except Exception:
@@ -478,6 +501,7 @@ def capture_marketplace_detail_calls(page, rows):
                 break
 
         for path, symbol, sid, category in candidates:
+            active_sid["value"] = sid
             url = path + "?symbol=" + quote(str(symbol)) + "&strategyId=" + quote(str(sid))
             print("DETAIL_PAGE " + str(category) + " " + url)
             debug_write("DETAIL_PAGE " + str(category) + " " + url)
@@ -502,7 +526,8 @@ def capture_marketplace_detail_calls(page, rows):
                 print("DETAIL_PAGE_ERROR " + url + " " + str(exc))
     except Exception as exc:
         print("MARKETPLACE_PAGE_ERROR=" + str(exc))
-    return hits
+    active_sid["value"] = None
+    return metrics_by_sid
 
 def main():
     diagnostics = []
@@ -533,7 +558,14 @@ def main():
         debug_root = Path(__file__).resolve().parent.parent / "strategy_detail_debug.log"
         debug_root.write_text("MAIN_REACHED_DETAIL_CALL\\n", encoding="utf-8")
         print("MAIN_REACHED_DETAIL_CALL " + str(debug_root))
-        captured_detail_calls = capture_marketplace_detail_calls(page, rows)
+        captured_detail_metrics = capture_marketplace_detail_calls(page, rows)
+        if captured_detail_metrics:
+            for row in rows:
+                sid = str(row.get("strategyId") or "").strip()
+                metrics = captured_detail_metrics.get(sid)
+                if metrics:
+                    row["_detail_grid_profit"] = metrics.get("gridProfit")
+                    row["_detail_total_profit"] = metrics.get("totalProfit")
 
         rows.extend(
             pages(
