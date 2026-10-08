@@ -755,14 +755,21 @@ def capture_marketplace_detail_calls(page, rows):
             seen.add(sid)
             candidates.append((path, symbol, sid, row.get("_category"), running, matched, pnl))
 
-        # Deterministic sample of ACTIVE Grid strategies only. No symbol or
-        # strategy ID is privileged.
-        # Prefer the newest strategy IDs. Older public marketplace rows can
-        # remain visible long after their detail page becomes a Pending Trigger
-        # placeholder, so high activity/matched-count alone is not sufficient.
-        candidates.sort(key=lambda item: (-int(item[2]) if str(item[2]).isdigit() else 0, item[2]))
-        spot = [x for x in candidates if "spot grid" in str(x[3]).lower()][:8]
-        futures = [x for x in candidates if "futures grid" in str(x[3]).lower()][:8]
+        # Deterministic validation sample across the ACTIVE marketplace.
+        # The newest IDs are often still "Pending Trigger" on the public detail
+        # route. Rank by actual runtime and matched trades instead, then inspect
+        # a sufficiently broad sample so exact Grid Profit/Total Profit can be
+        # found when Binance exposes them. No symbol or strategy ID is privileged.
+        candidates.sort(
+            key=lambda item: (
+                -num(item[4], 0.0),
+                -num(item[5], 0.0),
+                -num(item[6], 0.0),
+                str(item[2]),
+            )
+        )
+        spot = [x for x in candidates if "spot grid" in str(x[3]).lower()][:40]
+        futures = [x for x in candidates if "futures grid" in str(x[3]).lower()][:20]
         candidates = spot + futures
 
         for path, symbol, sid, category, running, matched, pnl in candidates:
