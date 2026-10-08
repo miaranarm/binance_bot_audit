@@ -208,6 +208,7 @@ def estimate_grid_profit(item, total_profit_usd, prices):
         if grids_i < 2 or not mode:
             return None
 
+        # Binance documents ROI = PNL / Investment for Spot Grid.
         investment_usd = float(total_profit_usd) / (float(roi) / 100.0)
         quote_usd = _quote_usd_price(str(item.get("symbol") or ""), prices)
         if investment_usd <= 0 or quote_usd is None or quote_usd <= 0:
@@ -220,13 +221,15 @@ def estimate_grid_profit(item, total_profit_usd, prices):
         if not below or not above:
             return None
 
-        # Binance's Spot Grid balance model uses all open buy levels and all
-        # open sell levels valued at Last Price. This gives a defensible
-        # reconstruction of Qty Per Order without using minInvestment.
+        # Reconstruct Qty Per Order from the documented investment model.
+        # Reserve the standard 0.1% fee budget on both sides to avoid
+        # systematically overstating the order quantity.
         allocation_per_qty = sum(below) + len(above) * current
-        if allocation_per_qty <= 0:
+        fee_reserve_per_qty = 0.001 * allocation_per_qty
+        denominator = allocation_per_qty + fee_reserve_per_qty
+        if denominator <= 0:
             return None
-        qty = investment_quote / allocation_per_qty
+        qty = investment_quote / denominator
 
         cycle_profits = []
         for i in range(grids_i):
@@ -250,6 +253,8 @@ def estimate_grid_profit(item, total_profit_usd, prices):
             "mode": mode,
             "investmentUsd": investment_usd,
             "quoteUsd": quote_usd,
+            "method": "BINANCE_FORMULA_RECONSTRUCTION",
+            "confidence": "MEDIUM_HIGH" if mode == "GEOMETRIC" else "MEDIUM",
         }
     except (ZeroDivisionError, ValueError, OverflowError):
         return None
@@ -334,6 +339,8 @@ def grid_metrics(item, prices):
     ratio = ""
     ratio_source = "UNAVAILABLE"
     estimate_low = estimate_high = None
+    estimate_method = ""
+    estimate_confidence = ""
 
     # Best path: Binance exposes Grid Profit and Total Profit from the same
     # detail payload. Their ratio is exact and unit-independent. We scale the
@@ -353,6 +360,8 @@ def grid_metrics(item, prices):
             grid_profit = detail_grid
             grid_profit_source = "BINANCE_DETAIL_GRID_PROFIT"
         estimate_low = estimate_high = grid_profit
+        estimate_method = "BINANCE_EXACT_DETAIL"
+        estimate_confidence = "HIGH"
 
     # Second exact path: Total Profit + Floating Profit => Grid Profit.
     if grid_profit is None and detail_total not in (None, 0) and floating_pnl is not None:
@@ -367,6 +376,8 @@ def grid_metrics(item, prices):
             grid_profit = detail_grid_reconstructed
             grid_profit_source = "BINANCE_DETAIL_TOTAL_MINUS_FLOATING_EXACT"
         estimate_low = estimate_high = grid_profit
+        estimate_method = "BINANCE_EXACT_DETAIL_RECONSTRUCTION"
+        estimate_confidence = "HIGH"
 
     # No exact Grid Profit: reconstruct a bounded estimate from the documented
     # grid mechanics. This is not hidden as exact; the interval is persisted.
@@ -376,15 +387,21 @@ def grid_metrics(item, prices):
             estimate_low = estimate["low"]
             estimate_high = estimate["high"]
             grid_profit = estimate["mid"]
-            grid_profit_source = "ESTIMATED_MATCHED_TRADES_GEOMETRY_MIDPOINT"
+            grid_profit_source = "RECONSTRUCTED_BINANCE_SPOT_GRID_MODEL"
+            estimate_method = estimate.get("method", "BINANCE_FORMULA_RECONSTRUCTION")
+            estimate_confidence = estimate.get("confidence", "MEDIUM")
             ratio_value = grid_profit / total_profit
             ratio = f"{ratio_value:.6f}"
-            ratio_source = "ESTIMATED_GRID_PROFIT_DIV_MARKETPLACE_TOTAL_PROFIT"
+            ratio_source = "RECONSTRUCTED_GRID_PROFIT_DIV_BINANCE_MARKETPLACE_TOTAL_PROFIT"
+
+    floating_profit = None
+    if total_profit is not None and grid_profit is not None:
+        floating_profit = total_profit - grid_profit
 
     return (
         ratio, price_range, profit_grid, profit_grid_source, ratio_source,
         grid_profit, total_profit, grid_profit_source, estimate_low, estimate_high,
-        total_source
+        total_source, floating_profit, estimate_method, estimate_confidence
     )
 
 def pages(page, endpoint, base_query, category, streamer, diagnostics):
@@ -440,7 +457,7 @@ def build_current(rows, prices):
             direct_current_price = find_exact_numeric_key(x, ["currentPrice", "lastPrice", "marketPrice", "latestPrice", "latestMarketPrice"])
         ticker_price = prices.get(normalize_symbol(symbol))
         x["_audit_current_price"] = direct_current_price if direct_current_price is not None else ticker_price
-        ratio, price_range, profit_grid, profit_grid_source, ratio_source, grid_profit, total_profit, grid_profit_source, estimate_low, estimate_high, total_source = grid_metrics(x, prices)
+        ratio, price_range, profit_grid, profit_grid_source, ratio_source, grid_profit, total_profit, grid_profit_source, estimate_low, estimate_high, total_source, floating_profit, estimate_method, estimate_confidence = grid_metrics(x, prices)
         item = {
             "strategyId": sid,
             "category": x.get("_category", ""),
@@ -461,6 +478,9 @@ def build_current(rows, prices):
             "totalProfitSource": total_source,
             "gridProfitTotalProfitRatio": ratio,
             "gridProfitTotalProfitRatioSource": ratio_source,
+            "floatingProfit": "" if floating_profit is None else floating_profit,
+            "gridProfitEstimateMethod": estimate_method,
+            "gridProfitConfidence": estimate_confidence,
             "currentPrice": fmt_price(direct_current_price if direct_current_price is not None else ticker_price),
             "priceRange": price_range,
             "profitPerGridAfterFees": profit_grid,
