@@ -1,0 +1,23 @@
+{
+  "navigation": {
+    "status": 202,
+    "url": "https://www.binance.com/en/trading-bots/spot/grid/XRPBTC"
+  },
+  "intercepted_bapi_algo": [
+    {
+      "url": "https://www.binance.com/bapi/algo/v1/friendly/algo/public/strategy/detail",
+      "status": 403,
+      "method": "POST",
+      "body": "<html>\r\n<head><title>403 Forbidden</title></head>\r\n<body>\r\n<center><h1>403 Forbidden</h1></center>\r\n</body>\r\n</html>\r\n<!-- a padding to disable MSIE and Chrome friendly error page -->\r\n<!-- a padding to disable MSIE and Chrome friendly error page -->\r\n<!-- a padding to disable MSIE and Chrome friendly error page -->\r\n<!-- a padding to disable MSIE and Chrome friendly error page -->\r\n<!-- a padding to disable MSIE and Chrome friendly error page -->\r\n<!-- a padding to disable MSIE and Chrome friendly error page -->\r\n"
+    }
+  ],
+  "direct_fetch": {
+    "3232564": {
+      "status": 403,
+      "statusText": "",
+      "contentType": "text/html",
+      "text": "<html>\r\n<head><title>403 Forbidden</title></head>\r\n<body>\r\n<center><h1>403 Forbidden</h1></center>\r\n</body>\r\n</html>\r\n<!-- a padding to disable MSIE and Chrome friendly error page -->\r\n<!-- a padding to disable MSIE and Chrome friendly error page -->\r\n<!-- a padding to disable MSIE and Chrome friendly error page -->\r\n<!-- a padding to disable MSIE and Chrome friendly error page -->\r\n<!-- a padding to disable MSIE and Chrome friendly error page -->\r\n<!-- a padding to disable MSIE and Chrome friendly error page -->\r\n",
+      "body": null
+    }
+  }
+}
