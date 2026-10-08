@@ -454,6 +454,11 @@ def capture_marketplace_detail_calls(page, rows):
             try:
                 page.goto(url, wait_until="domcontentloaded", timeout=60000)
                 page.wait_for_timeout(5000)
+                resources = page.evaluate("() => performance.getEntriesByType('resource').map(x => x.name).filter(Boolean)")
+                for resource_url in resources:
+                    lowered_resource = resource_url.toLowerCase()
+                    if any(token in lowered_resource for token in ("strategy", "grid", "detail", "profit")):
+                        print("DETAIL_RESOURCE " + resource_url)
                 html = page.content()
                 lowered_html = html.lower()
                 metric_tokens = ("gridprofit", "totalprofit", "matchedprofit", "realizedprofit", "unrealizedpnl", "floatingprofit")
