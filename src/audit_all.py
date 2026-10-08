@@ -404,10 +404,10 @@ def write_history(current, now):
 def capture_marketplace_detail_calls(page, rows):
     """Capture public Binance detail APIs using generic marketplace strategies."""
     hits = []
-    debug_path = Path("strategy_detail_debug.log")
+    debug_path = Path(__file__).resolve().parent.parent / "strategy_detail_debug.log"
     debug_path.parent.mkdir(parents=True, exist_ok=True)
     debug_path.write_text("DETAIL_CAPTURE_START\n", encoding="utf-8")
-    print("DETAIL_CAPTURE_START")
+    print("DETAIL_CAPTURE_START " + str(debug_path))
 
     def debug_write(line):
         try:
