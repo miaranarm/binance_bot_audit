@@ -7,8 +7,7 @@ TERMS=("strategy/detail","gridProfit","totalProfit","floatingProfit","floatingPn
 
 async def main():
     out=Path("results/marketplace_js_endpoints.json"); out.parent.mkdir(parents=True,exist_ok=True)
-    hits=[]
-    scripts=[]
+    hits=[]; scripts=[]; full_sources={}
     async with async_playwright() as p:
         browser=await p.chromium.launch(headless=True,args=["--disable-blink-features=AutomationControlled","--no-sandbox"])
         context=await browser.new_context(locale="en-US",timezone_id="Africa/Nairobi")
@@ -24,9 +23,12 @@ async def main():
             if not found: return
             snippets=[]
             for t in found:
-                for m in list(re.finditer(re.escape(t),b,re.I))[:10]:
-                    snippets.append({"term":t,"snippet":b[max(0,m.start()-800):m.end()+1600]})
-            hits.append({"url":u,"size":len(b),"terms":found,"snippets":snippets[:50]})
+                for m in list(re.finditer(re.escape(t),b,re.I))[:20]:
+                    snippets.append({"term":t,"snippet":b[max(0,m.start()-1200):m.end()+4000]})
+            item={"url":u,"size":len(b),"terms":found,"snippets":snippets[:100]}
+            if "3857." in u:
+                full_sources["3857"]=b
+            hits.append(item)
         page.on("response",resp)
         nav={}
         try:
@@ -37,6 +39,8 @@ async def main():
         resources=await page.evaluate("""() => performance.getEntriesByType('resource').filter(e=>e.initiatorType==='script').map(e=>e.name)""")
         result={"navigation":nav,"script_count":len(scripts),"scripts":scripts,"hits":hits,"performance_scripts":resources}
         out.write_text(json.dumps(result,ensure_ascii=False,indent=2),encoding="utf-8")
+        for key,src in full_sources.items():
+            Path(f"results/marketplace_js_{key}.js").write_text(src,encoding="utf-8")
         await browser.close()
-    print(json.dumps({"output":str(out),"scripts":len(scripts),"hits":len(hits)},ensure_ascii=False))
+    print(json.dumps({"output":str(out),"scripts":len(scripts),"hits":len(hits),"full_sources":list(full_sources)},ensure_ascii=False))
 if __name__=="__main__": asyncio.run(main())
