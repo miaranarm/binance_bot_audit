@@ -530,6 +530,9 @@ def main():
                 )
             )
 
+        debug_root = Path(__file__).resolve().parent.parent / "strategy_detail_debug.log"
+        debug_root.write_text("MAIN_REACHED_DETAIL_CALL\\n", encoding="utf-8")
+        print("MAIN_REACHED_DETAIL_CALL " + str(debug_root))
         captured_detail_calls = capture_marketplace_detail_calls(page, rows)
 
         rows.extend(
