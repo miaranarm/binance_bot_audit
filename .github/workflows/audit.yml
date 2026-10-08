@@ -39,6 +39,7 @@ jobs:
       - run: playwright install --with-deps chromium
 
       - name: Capture native Binance strategy detail
+        continue-on-error: true
         run: python tools/probe_strategy_detail.py
 
       - name: Upload native strategy detail
@@ -48,6 +49,7 @@ jobs:
           path: results/strategy_detail_raw.json
           retention-days: 7
           compression-level: 9
+          if-no-files-found: ignore
 
       - name: Run hourly Binance scan
         run: python src/audit_all.py
@@ -73,7 +75,7 @@ jobs:
 
       - name: Keep only the lean result set
         run: |
-          find results -maxdepth 1 -type f             ! -name 'current_multicriteria.csv'             ! -name 'current_multicriteria_summary.txt'             ! -name 'scan_meta.json'             ! -name 'type_census.json'             ! -name 'grid_profit_validation.json'             -delete
+          find results -maxdepth 1 -type f             ! -name 'current_multicriteria.csv'             ! -name 'current_multicriteria_summary.txt'             ! -name 'scan_meta.json'             ! -name 'type_census.json'             ! -name 'grid_profit_validation.json'             ! -name 'strategy_detail_raw.json'             -delete
 
       - name: Upload 90-day archival snapshot
         uses: actions/upload-artifact@v4
