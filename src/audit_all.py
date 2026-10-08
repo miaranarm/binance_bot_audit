@@ -454,6 +454,15 @@ def capture_marketplace_detail_calls(page, rows):
             try:
                 page.goto(url, wait_until="domcontentloaded", timeout=60000)
                 page.wait_for_timeout(5000)
+                html = page.content()
+                lowered_html = html.lower()
+                metric_tokens = ("gridprofit", "totalprofit", "matchedprofit", "realizedprofit", "unrealizedpnl", "floatingprofit")
+                if any(token in lowered_html for token in metric_tokens):
+                    print("DETAIL_HTML_METRICS " + url)
+                    for token in metric_tokens:
+                        pos = lowered_html.find(token)
+                        if pos >= 0:
+                            print("DETAIL_HTML_CONTEXT " + token + " " + html[max(0, pos-800):pos+1800])
             except Exception as exc:
                 print("DETAIL_PAGE_ERROR " + url + " " + str(exc))
     except Exception as exc:
