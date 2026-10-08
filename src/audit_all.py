@@ -401,9 +401,10 @@ def write_history(current, now):
     return snapshot, removed
 
 
-def capture_marketplace_detail_calls(page):
-    """Capture Binance Trading Bots page API responses exposing exact grid metrics."""
+def capture_marketplace_detail_calls(page, rows):
+    """Capture public Binance detail APIs using generic marketplace strategies."""
     hits = []
+
     def on_response(response):
         try:
             content_type = (response.headers.get("content-type") or "").lower()
@@ -413,24 +414,47 @@ def capture_marketplace_detail_calls(page):
             lowered = body.lower()
             url = response.url
             if "/bapi/" in url:
-                # Inventory public Trading Bots API calls. Keep this diagnostic
-                # read-only and avoid dumping unrelated payloads.
                 print("BAPI_RESPONSE url=" + url + " status=" + str(response.status) + " bytes=" + str(len(body)))
-            if (
-                "gridprofit" in lowered
-                or "totalprofit" in lowered
-                or "matchedprofit" in lowered
-                or '"strategyid":3232564' in lowered
-                or '"strategyid":"3232564"' in lowered
-            ):
+            if any(token in lowered for token in ("gridprofit", "totalprofit", "matchedprofit", "realizedprofit", "unrealizedpnl")):
                 hits.append({"url": url, "status": response.status, "body": body[:20000]})
                 print("GRID_METRIC_RESPONSE " + url + " status=" + str(response.status) + " body=" + body[:10000])
+            if any(token in url.lower() for token in ("/grid/", "strategy/detail", "strategy/info", "strategy/landing-page/")):
+                print("DETAIL_API_RESPONSE " + url + " status=" + str(response.status) + " body=" + body[:12000])
         except Exception:
             pass
+
     page.on("response", on_response)
     try:
         page.goto("https://www.binance.com/en/trading-bots", wait_until="domcontentloaded", timeout=60000)
-        page.wait_for_timeout(12000)
+        page.wait_for_timeout(10000)
+
+        candidates = []
+        seen = set()
+        for row in rows:
+            sid = str(row.get("strategyId") or "").strip()
+            symbol = str(row.get("symbol") or "").strip()
+            category = str(row.get("_category") or "").lower()
+            if not sid or not symbol or sid in seen:
+                continue
+            if "spot grid" in category:
+                path = "https://www.binance.com/en/trading-bots/spot/grid/detail"
+            elif "futures grid" in category:
+                path = "https://www.binance.com/en/trading-bots/futures/grid/detail"
+            else:
+                continue
+            seen.add(sid)
+            candidates.append((path, symbol, sid, row.get("_category")))
+            if len(candidates) >= 8:
+                break
+
+        for path, symbol, sid, category in candidates:
+            url = path + "?symbol=" + quote(str(symbol)) + "&strategyId=" + quote(str(sid))
+            print("DETAIL_PAGE " + str(category) + " " + url)
+            try:
+                page.goto(url, wait_until="domcontentloaded", timeout=60000)
+                page.wait_for_timeout(5000)
+            except Exception as exc:
+                print("DETAIL_PAGE_ERROR " + url + " " + str(exc))
     except Exception as exc:
         print("MARKETPLACE_PAGE_ERROR=" + str(exc))
     return hits
@@ -443,13 +467,21 @@ def main():
         browser = playwright.chromium.launch(headless=True)
         page = browser.new_page()
 
-        captured_detail_calls = capture_marketplace_detail_calls(page)
-
         rows = pages(
             page, TOP,
             {"strategyType": 1, "symbol": "", "zone": "", "sort": "pnl"},
             "Spot Grid", "SPOT_GRID", diagnostics,
         )
+
+        rows.extend(
+            pages(
+                page, TOP,
+                {"strategyType": 2, "symbol": "", "zone": "", "sort": "pnl"},
+                "Futures Grid", "FUTURES_GRID", diagnostics,
+            )
+        )
+
+        captured_detail_calls = capture_marketplace_detail_calls(page, rows)
 
         # Binance currently exposes multiple bot families through this
         # landing-page endpoint. Keep only strategies that actually appear
