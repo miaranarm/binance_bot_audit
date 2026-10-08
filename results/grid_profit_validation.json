@@ -1,0 +1,15 @@
+{
+  "validation": {
+    "rows": 11740,
+    "reconstructed": 10755,
+    "exact": 0,
+    "unavailable": 985,
+    "orderingErrors": 0,
+    "ratioErrors": 0,
+    "floatingErrors": 0,
+    "invalidNegativeEstimate": 0,
+    "ratiosOver100Percent": 4016,
+    "status": "PASS"
+  },
+  "examples": []
+}
