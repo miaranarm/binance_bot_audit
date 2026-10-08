@@ -404,6 +404,16 @@ def write_history(current, now):
 def capture_marketplace_detail_calls(page, rows):
     """Capture public Binance detail APIs using generic marketplace strategies."""
     hits = []
+    debug_path = OUT / "strategy_detail_debug.log"
+    debug_path.parent.mkdir(parents=True, exist_ok=True)
+    debug_path.write_text("", encoding="utf-8")
+
+    def debug_write(line):
+        try:
+            with debug_path.open("a", encoding="utf-8") as handle:
+                handle.write(str(line)[:50000] + "\n")
+        except Exception:
+            pass
 
     def on_response(response):
         try:
@@ -416,13 +426,15 @@ def capture_marketplace_detail_calls(page, rows):
             if "/bapi/" in url:
                 print("BAPI_RESPONSE url=" + url + " status=" + str(response.status) + " bytes=" + str(len(body)))
             if "/api/v2/query" in url.lower() or "/api/v1/feature-gate/check" in url.lower() or "/api/v2/strategy/query" in url.lower():
-                print("DETAIL_SERVICE_BODY url=" + url + " status=" + str(response.status) + " body=" + body[:20000])
+                debug_write("DETAIL_SERVICE_BODY url=" + url + " status=" + str(response.status) + " body=" + body[:50000])
+                print("DETAIL_SERVICE_BODY url=" + url + " status=" + str(response.status) + " bytes=" + str(len(body)))
                 if "/api/v2/strategy/query" in url.lower():
                     try:
                         request = response.request
-                        print("DETAIL_SERVICE_REQUEST url=" + url + " method=" + str(request.method) + " post=" + str(request.post_data or ""))
+                        debug_write("DETAIL_SERVICE_REQUEST url=" + url + " method=" + str(request.method) + " post=" + str(request.post_data or ""))
+                        print("DETAIL_SERVICE_REQUEST url=" + url + " method=" + str(request.method))
                     except Exception as exc:
-                        print("DETAIL_SERVICE_REQUEST_ERROR " + str(exc))
+                        debug_write("DETAIL_SERVICE_REQUEST_ERROR " + str(exc))
             if any(token in lowered for token in ("gridprofit", "totalprofit", "matchedprofit", "realizedprofit", "unrealizedpnl")):
                 hits.append({"url": url, "status": response.status, "body": body[:20000]})
                 print("GRID_METRIC_RESPONSE " + url + " status=" + str(response.status) + " body=" + body[:10000])
@@ -437,9 +449,9 @@ def capture_marketplace_detail_calls(page, rows):
             url = request.url
             low = url.lower()
             if any(token in low for token in ("strategy", "detail", "grid")):
-                print("DETAIL_REQUEST url=" + url + " method=" + str(request.method) + " post=" + str(request.post_data or ""))
+                debug_write("DETAIL_REQUEST url=" + url + " method=" + str(request.method) + " post=" + str(request.post_data or ""))
         except Exception as exc:
-            print("DETAIL_REQUEST_ERROR " + str(exc))
+            debug_write("DETAIL_REQUEST_ERROR " + str(exc))
     page.on("request", on_request)
     try:
         page.goto("https://www.binance.com/en/trading-bots", wait_until="domcontentloaded", timeout=60000)
