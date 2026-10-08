@@ -1,9 +1,9 @@
 {
-  "scan_utc": "2026-10-08T10:40:10.312351+00:00",
+  "scan_utc": "2026-10-08T11:20:40.921411+00:00",
   "raw_rows": 30546,
   "tradable_leverage_le_1": 12866,
   "history_retention_days": 30,
-  "snapshot": "results/history/2026/10/08/20261008T104010Z.csv.gz",
+  "snapshot": "results/history/2026/10/08/20261008T112040Z.csv.gz",
   "old_snapshots_removed": 0,
   "binance_marketplace_refresh": "hourly",
   "fields": [
@@ -27,6 +27,9 @@
     "totalProfitSource",
     "gridProfitTotalProfitRatio",
     "gridProfitTotalProfitRatioSource",
+    "floatingProfit",
+    "gridProfitEstimateMethod",
+    "gridProfitConfidence",
     "currentPrice",
     "priceRange",
     "profitPerGridAfterFees",
