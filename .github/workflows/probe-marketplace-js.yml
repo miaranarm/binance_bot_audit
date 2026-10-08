@@ -1,0 +1,35 @@
+name: Probe Binance Marketplace JS
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "tools/probe_marketplace_js.py"
+      - ".github/workflows/probe-marketplace-js.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install -r requirements.txt
+      - run: playwright install --with-deps chromium
+      - name: Capture Marketplace JavaScript
+        run: python tools/probe_marketplace_js.py
+      - name: Upload captured JS and diagnostics
+        uses: actions/upload-artifact@v4
+        with:
+          name: marketplace-js-source-${{ github.run_id }}
+          path: |
+            results/marketplace_js_endpoints.json
+            results/marketplace_js_3857.js
+          retention-days: 7
+          compression-level: 9
+          if-no-files-found: ignore
