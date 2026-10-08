@@ -171,14 +171,23 @@ def estimate_grid_profit_ratio(item, total_profit):
 
         # Marketplace ROI = PNL / Investment. This gives the investment
         # scale without relying on the minimum-investment field.
+        # Binance defines marketplace ROI as PNL / Investment. The
+        # marketplace displays ROI in percent, hence the /100 conversion.
         investment = float(total_profit) / (float(roi) / 100.0)
-        if investment <= 0:
+        if investment <= 0 or not (investment == investment):
             return None
 
-        if mode := str(params.get("type") or params.get("gridType") or params.get("gridMode") or "").upper():
-            geometric = mode in {"GEO", "GEOMETRIC"}
-        else:
+        raw_mode = params.get("type", params.get("gridType", params.get("gridMode", "")))
+        mode = str(raw_mode).strip().upper()
+        # Binance payloads can encode grid mode as either a label or a
+        # numeric enum. Keep the mapping explicit; never silently treat an
+        # unknown mode as geometric.
+        if mode in {"2", "GEO", "GEOMETRIC"}:
+            geometric = True
+        elif mode in {"1", "ARITH", "ARITHMETIC"}:
             geometric = False
+        else:
+            return None
 
         if geometric:
             step = (upper / lower) ** (1.0 / grids_i)
