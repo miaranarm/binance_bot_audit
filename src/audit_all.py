@@ -323,9 +323,11 @@ def grid_metrics(item):
     ratio = ""
     ratio_source = "UNAVAILABLE"
     if grid_profit is not None and total_profit not in (None, 0):
-        ratio_source = grid_profit_source or "BINANCE_GRID_PROFIT"
         ratio = f"{grid_profit / total_profit:.6f}"
-        ratio_source = "BINANCE_GRID_PROFIT_DIV_TOTAL_PROFIT"
+        if grid_profit_source == "BINANCE_TOTAL_PROFIT_MINUS_FLOATING_PNL":
+            ratio_source = "BINANCE_TOTAL_PROFIT_MINUS_FLOATING_PNL_DIV_TOTAL_PROFIT"
+        else:
+            ratio_source = "BINANCE_GRID_PROFIT_DIV_TOTAL_PROFIT"
     elif str(item.get("_category") or "").lower() == "spot grid":
         # Binance documents Spot Grid marketplace PNL as Total Profit
         # (Current Value - Total Investment). Therefore PNL is a valid
