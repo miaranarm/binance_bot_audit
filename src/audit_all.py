@@ -593,7 +593,9 @@ def capture_marketplace_detail_calls(page, rows):
                     except Exception as exc:
                         debug_write("DETAIL_SERVICE_REQUEST_ERROR " + str(exc))
             # Only accept exact Binance fields. Never infer metrics from PNL/ROI.
-            if active_sid["value"] and any(token in lowered for token in ("gridprofit", "totalprofit")):
+            if active_sid["value"] and any(token in lowered for token in (
+                "gridprofit", "totalprofit", "floatingpnl", "unrealizedpnl", "floatprofit", "floatingprofit"
+            )):
                 try:
                     payload = json.loads(body)
                     grid_profit = find_exact_numeric_key(payload, ["gridProfit"])
