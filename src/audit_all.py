@@ -341,8 +341,13 @@ def grid_metrics(item):
     if grid_profit is None and str(item.get("_category") or "").lower() == "spot grid" and total_profit not in (None, 0):
         estimated = estimate_grid_profit(item, total_profit)
         if estimated is not None:
-            grid_profit = estimated
-            grid_profit_source = "ESTIMATED_FROM_MATCHED_TRADES_GRID_GEOMETRY_AND_MARKETPLACE_PNL"
+            # An estimated Grid Profit is only accepted when it can be a
+            # genuine component of the marketplace Total Profit. Otherwise
+            # the reconstruction is too uncertain and must not create an
+            # artificial >100% contribution ratio.
+            if estimated >= 0 and estimated <= total_profit:
+                grid_profit = estimated
+                grid_profit_source = "ESTIMATED_FROM_MATCHED_TRADES_GRID_GEOMETRY_AND_MARKETPLACE_PNL"
 
     # This ratio is a contribution ratio: Grid Profit must be a component of
     # Total Profit. Never publish a value above 100%. If the available fields
@@ -837,7 +842,7 @@ def main():
             "old_snapshots_removed": removed,
             "binance_marketplace_refresh": "hourly",
             "fields": FIELDS,
-            "grid_profit_ratio_note": "Output keeps gridProfit and totalProfit as independent columns. Priority: exact Binance Grid Profit / Total Profit. If Grid Profit is absent but Binance exposes Total Profit plus Floating/Unrealized PnL, exact Grid Profit is reconstructed as Total Profit - Floating/Unrealized PnL. Only when exact components are unavailable is an ESTIMATED gridProfit reconstructed from matched trades, published grid geometry, ROI/PNL-derived investment and Binance grid fee formulas. The ratio is always gridProfit / totalProfit and is marked by gridProfitTotalProfitRatioSource; UNAVAILABLE means one of the two required profit components cannot be obtained reliably.",
+            "grid_profit_ratio_note": "Output keeps gridProfit and totalProfit as independent columns. Priority: exact Binance Grid Profit / Total Profit. If Grid Profit is absent but Binance exposes Total Profit plus Floating/Unrealized PnL, exact Grid Profit is reconstructed as Total Profit - Floating/Unrealized PnL. Only when exact components are unavailable is an ESTIMATED gridProfit reconstructed from matched trades, published grid geometry, ROI/PNL-derived investment and Binance grid fee formulas; estimated Grid Profit is rejected when it exceeds Total Profit. The contribution ratio is published only when 0 <= gridProfit / totalProfit <= 1; otherwise it is UNAVAILABLE_INCONSISTENT_PROFIT_COMPONENTS rather than being capped or fabricated.",
             "profit_per_grid_note": "Uses Binance Profit/Grid directly when exposed as an exact field; otherwise uses Binance Spot Grid formulas with c=0.1%. A range is intentional for arithmetic grids because the same absolute grid step produces a different percentage return at each price level; geometric grids normally produce one percentage. The value is the net profit of one completed buy/sell grid cycle after fees, not the bot ROI.",
             "profit_per_grid_fee_reference": "0.1% per side, per Binance Spot Grid documentation; pair/VIP-specific fees may differ.",
         }, handle, ensure_ascii=False, indent=2)
