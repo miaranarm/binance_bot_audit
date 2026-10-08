@@ -497,8 +497,12 @@ def capture_marketplace_detail_calls(page, rows):
                 continue
             seen.add(sid)
             candidates.append((path, symbol, sid, row.get("_category")))
-            if len(candidates) >= 4:
-                break
+
+        # Always probe the current top-ranked XRPBTC strategy when present,
+        # then a wider sample of grid strategies. This makes exact-metric
+        # diagnostics reproducible instead of depending on row ordering.
+        candidates.sort(key=lambda item: (0 if item[2] == "3232564" else 1, item[2]))
+        candidates = candidates[:12]
 
         for path, symbol, sid, category in candidates:
             active_sid["value"] = sid
@@ -522,6 +526,20 @@ def capture_marketplace_detail_calls(page, rows):
                         pos = lowered_html.find(token)
                         if pos >= 0:
                             print("DETAIL_HTML_CONTEXT " + token + " " + html[max(0, pos-800):pos+1800])
+                # The detail page may expose Grid Profit / Total Profit only as
+                # rendered text rather than JSON fields. Capture the visible
+                # text around those labels so we can bind exact values without
+                # substituting marketplace PNL/ROI.
+                try:
+                    body_text = page.locator("body").inner_text(timeout=10000)
+                    for label in ("Grid Profit", "Total Profit", "Grid profit", "Total profit"):
+                        pos = body_text.find(label)
+                        if pos >= 0:
+                            context = body_text[max(0, pos-300):pos+700].replace("\n", " | ")
+                            debug_write("DETAIL_VISIBLE_METRIC sid=" + str(sid) + " label=" + label + " context=" + context)
+                            print("DETAIL_VISIBLE_METRIC sid=" + str(sid) + " label=" + label + " context=" + context)
+                except Exception as exc:
+                    debug_write("DETAIL_VISIBLE_METRIC_ERROR sid=" + str(sid) + " " + str(exc))
             except Exception as exc:
                 print("DETAIL_PAGE_ERROR " + url + " " + str(exc))
     except Exception as exc:
