@@ -353,7 +353,7 @@ def grid_metrics(item):
         else:
             ratio_source = "BINANCE_GRID_PROFIT_DIV_TOTAL_PROFIT"
 
-    return ratio, price_range, profit_grid, profit_grid_source, ratio_source, grid_profit, total_profit
+    return ratio, price_range, profit_grid, profit_grid_source, ratio_source, grid_profit, total_profit, grid_profit_source
 
 
 def pages(page, endpoint, base_query, category, streamer, diagnostics):
@@ -409,7 +409,7 @@ def build_current(rows, prices):
             direct_current_price = find_exact_numeric_key(x, ["currentPrice", "lastPrice", "marketPrice", "latestPrice", "latestMarketPrice"])
         ticker_price = prices.get(normalize_symbol(symbol))
         x["_audit_current_price"] = direct_current_price if direct_current_price is not None else ticker_price
-        ratio, price_range, profit_grid, profit_grid_source, ratio_source, grid_profit, total_profit = grid_metrics(x)
+        ratio, price_range, profit_grid, profit_grid_source, ratio_source, grid_profit, total_profit, grid_profit_source = grid_metrics(x)
         item = {
             "strategyId": sid,
             "category": x.get("_category", ""),
