@@ -46,7 +46,8 @@ jobs:
       - name: Verify strategy detail diagnostics
         run: |
           echo "PWD=$(pwd)"
-          find . -maxdepth 3 -name "strategy_detail_debug.log" -print -exec wc -c {} \\;
+          find . -maxdepth 3 -name "strategy_detail_debug.log" -print
+          find . -maxdepth 3 -name "strategy_detail_debug.log" -exec wc -c {} +
           ls -la
 
       - name: Upload strategy detail diagnostics
