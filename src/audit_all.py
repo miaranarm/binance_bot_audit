@@ -344,16 +344,28 @@ def grid_metrics(item):
             grid_profit = estimated
             grid_profit_source = "ESTIMATED_FROM_MATCHED_TRADES_GRID_GEOMETRY_AND_MARKETPLACE_PNL"
 
-    if grid_profit is not None and total_profit not in (None, 0):
-        ratio = f"{grid_profit / total_profit:.6f}"
-        if grid_profit_source == "ESTIMATED_FROM_MATCHED_TRADES_GRID_GEOMETRY_AND_MARKETPLACE_PNL":
-            ratio_source = grid_profit_source
-        elif grid_profit_source == "BINANCE_TOTAL_PROFIT_MINUS_FLOATING_PNL":
-            ratio_source = "BINANCE_TOTAL_PROFIT_MINUS_FLOATING_PNL_DIV_TOTAL_PROFIT"
-        elif total_profit == marketplace_pnl and marketplace_pnl not in (None, 0):
-            ratio_source = "BINANCE_GRID_PROFIT_DIV_MARKETPLACE_PNL"
+    # This ratio is a contribution ratio: Grid Profit must be a component of
+    # Total Profit. Never publish a value above 100%. If the available fields
+    # imply Grid Profit > Total Profit, the inputs are not compatible enough
+    # to support a bounded contribution ratio (typically because the Grid
+    # Profit is estimated or because Total Profit includes a different PnL
+    # basis). Keep the two profit amounts visible, but mark the ratio
+    # UNAVAILABLE instead of fabricating/capping it.
+    if grid_profit is not None and total_profit not in (None, 0) and total_profit > 0:
+        candidate_ratio = grid_profit / total_profit
+        if 0 <= candidate_ratio <= 1:
+            ratio = f"{candidate_ratio:.6f}"
+            if grid_profit_source == "ESTIMATED_FROM_MATCHED_TRADES_GRID_GEOMETRY_AND_MARKETPLACE_PNL":
+                ratio_source = grid_profit_source
+            elif grid_profit_source == "BINANCE_TOTAL_PROFIT_MINUS_FLOATING_PNL":
+                ratio_source = "BINANCE_TOTAL_PROFIT_MINUS_FLOATING_PNL_DIV_TOTAL_PROFIT"
+            elif total_profit == marketplace_pnl and marketplace_pnl not in (None, 0):
+                ratio_source = "BINANCE_GRID_PROFIT_DIV_MARKETPLACE_PNL"
+            else:
+                ratio_source = "BINANCE_GRID_PROFIT_DIV_TOTAL_PROFIT"
         else:
-            ratio_source = "BINANCE_GRID_PROFIT_DIV_TOTAL_PROFIT"
+            ratio = ""
+            ratio_source = "UNAVAILABLE_INCONSISTENT_PROFIT_COMPONENTS"
 
     return ratio, price_range, profit_grid, profit_grid_source, ratio_source, grid_profit, total_profit
 
