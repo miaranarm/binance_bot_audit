@@ -169,21 +169,26 @@ def _grid_levels(lower, upper, grids, mode):
     return []
 
 
+def _roi_interval(raw_roi):
+    """Return (low, midpoint, high) for a displayed/rounded ROI."""
+    try:
+        raw = str(raw_roi).strip().replace(",", "")
+        value = float(raw)
+    except (TypeError, ValueError):
+        return None
+    if value == 0:
+        return None
+    if "." in raw:
+        decimals = len(raw.split(".", 1)[1])
+        step = 10 ** (-decimals)
+    else:
+        step = 1.0
+    half = step / 2.0
+    return max(value - half, 1e-12), value, value + half
+
+
 def estimate_grid_profit(item, total_profit_usd, prices):
-    """Estimate realized Grid Profit in the same USD unit as marketplace PNL.
-
-    Binance's public marketplace does not expose the matched-order history or
-    the exact Qty Per Order. We therefore calculate a bounded, auditable
-    estimate from the documented Spot Grid equations:
-      - investment = PNL / ROI;
-      - one constant Qty Per Order;
-      - each matched pair earns its grid price difference less two fees;
-      - matchedTrades is the number of completed buy/sell pairs.
-
-    The midpoint is used as gridProfit when Binance does not expose an exact
-    value. The low/high bounds are retained separately so the estimate can be
-    stress-tested instead of silently presented as exact.
-    """
+    """Estimate Grid Profit and Grid/Total ratio with explicit uncertainty."""
     if str(item.get("_category") or "").lower() != "spot grid":
         return None
 
@@ -197,11 +202,11 @@ def estimate_grid_profit(item, total_profit_usd, prices):
     grids = pnum(["gridCount", "gridNum", "numberOfGrids", "gridNumber"])
     current = pnum(["currentPrice", "lastPrice", "marketPrice", "price", "_audit_current_price"])
     matched = num(item.get("matchedTrades", item.get("matchedCount", item.get("totalMatchedTrades", 0))), 0.0)
-    roi = num(item.get("roi", item.get("roiPct", item.get("roiRate", 0))), 0.0)
+    roi_interval = _roi_interval(item.get("roi", item.get("roiPct", item.get("roiRate", 0))))
 
     if (lower is None or upper is None or grids is None or current is None or
             grids < 2 or lower <= 0 or upper <= lower or matched <= 0 or
-            total_profit_usd in (None, 0) or roi == 0):
+            total_profit_usd in (None, 0) or roi_interval is None):
         return None
 
     try:
@@ -210,63 +215,70 @@ def estimate_grid_profit(item, total_profit_usd, prices):
         if grids_i < 2 or not mode:
             return None
 
-        # Binance documents ROI = PNL / Investment for Spot Grid.
-        investment_usd = float(total_profit_usd) / (float(roi) / 100.0)
-        quote_usd = _quote_usd_price(str(item.get("symbol") or ""), prices)
-        if investment_usd <= 0 or quote_usd is None or quote_usd <= 0:
+        roi_low, roi_mid, roi_high = roi_interval
+        investment_low = float(total_profit_usd) / (roi_high / 100.0)
+        investment_mid = float(total_profit_usd) / (roi_mid / 100.0)
+        investment_high = float(total_profit_usd) / (roi_low / 100.0)
+        if min(investment_low, investment_mid, investment_high) <= 0:
             return None
 
-        investment_quote = investment_usd / quote_usd
+        quote_usd = _quote_usd_price(str(item.get("symbol") or ""), prices)
+        if quote_usd is None or quote_usd <= 0:
+            return None
+
         levels = _grid_levels(lower, upper, grids_i, mode)
         below = [p for p in levels if p < current]
         above = [p for p in levels if p > current]
         if not below or not above:
             return None
 
-        # Reconstruct Qty Per Order from the documented investment model.
-        # Reserve the standard 0.1% fee budget on both sides to avoid
-        # systematically overstating the order quantity.
         allocation_per_qty = sum(below) + len(above) * current
-        fee_reserve_per_qty = 0.001 * allocation_per_qty
-        denominator = allocation_per_qty + fee_reserve_per_qty
+        denominator = allocation_per_qty * 1.001
         if denominator <= 0:
             return None
-        qty = investment_quote / denominator
 
-        cycle_profits = []
+        def qty_for_investment(investment_usd):
+            return (investment_usd / quote_usd) / denominator
+
+        qty_low = qty_for_investment(investment_low)
+        qty_mid = qty_for_investment(investment_mid)
+        qty_high = qty_for_investment(investment_high)
+
+        cycle_low = []
+        cycle_mid = []
+        cycle_high = []
         for i in range(grids_i):
             buy, sell = levels[i], levels[i + 1]
-            gross = (sell - buy) * qty
-            fees = 0.001 * (buy + sell) * qty
-            net = gross - fees
-            if net > 0:
-                cycle_profits.append(net)
+            net_per_qty = (sell - buy) - 0.001 * (buy + sell)
+            cycle_low.append(max(0.0, net_per_qty * qty_low))
+            cycle_mid.append(max(0.0, net_per_qty * qty_mid))
+            cycle_high.append(max(0.0, net_per_qty * qty_high))
 
-        if not cycle_profits:
-            return None
+        low_quote = matched * min(cycle_low)
+        high_quote = matched * max(cycle_high)
+        mid_quote = matched * (sum(cycle_mid) / len(cycle_mid))
 
-        low_quote = matched * min(cycle_profits)
-        high_quote = matched * max(cycle_profits)
-        mid_quote = matched * (sum(cycle_profits) / len(cycle_profits))
+        raw_roi = str(item.get("roi", "")).strip()
+        precision = len(raw_roi.split(".", 1)[1]) if "." in raw_roi else 0
+        confidence = "LOW" if roi_mid < 0.1 or precision <= 1 else "MEDIUM"
+
         return {
             "low": low_quote * quote_usd,
             "high": high_quote * quote_usd,
             "mid": mid_quote * quote_usd,
             "mode": mode,
-            "investmentUsd": investment_usd,
+            "investmentUsd": investment_mid,
+            "investmentLowUsd": investment_low,
+            "investmentHighUsd": investment_high,
             "quoteUsd": quote_usd,
-            # Binance publishes the Profit/Grid formula and the Qty Per
-            # Order concept, but the public marketplace payload does not expose
-            # the historical Qty Per Order or the matched-order distribution.
-            # Therefore the result is reconstructed in both modes; geometric
-            # mode removes grid-level dispersion, but it does NOT make Qty
-            # Per Order exact.
-            "method": "BINANCE_FORMULA_RECONSTRUCTION_QTY_ESTIMATE",
-            "confidence": "MEDIUM",
+            "method": "BINANCE_FORMULA_RECONSTRUCTION_ROUNDED_ROI_AND_GRID_RANGE",
+            "confidence": confidence,
             "gridMode": mode,
             "gridCount": grids_i,
-            "qtyPerOrderEstimate": qty,
-            "qtyPerOrderSource": "RECONSTRUCTED_FROM_INVESTMENT_AND_GRID_STATE",
+            "qtyPerOrderEstimate": qty_mid,
+            "qtyPerOrderLow": qty_low,
+            "qtyPerOrderHigh": qty_high,
+            "qtyPerOrderSource": "RECONSTRUCTED_FROM_ROUNDED_ROI_AND_GRID_STATE",
         }
     except (ZeroDivisionError, ValueError, OverflowError):
         return None
@@ -405,8 +417,9 @@ def grid_metrics(item, prices):
         estimate = estimate_grid_profit(item, total_profit, prices)
         if estimate:
             estimate_low = estimate["low"]
+            estimate_mid = estimate["mid"]
             estimate_high = estimate["high"]
-            grid_profit = estimate["mid"]
+            grid_profit = estimate_mid
             grid_profit_source = "RECONSTRUCTED"
             estimate_method = estimate.get("method", "BINANCE_FORMULA_RECONSTRUCTION")
             estimate_confidence = estimate.get("confidence", "MEDIUM")
@@ -419,13 +432,11 @@ def grid_metrics(item, prices):
             ratio_estimate_high = estimate_high / total_profit if total_profit else None
             ratio_source = "RECONSTRUCTED_GRID_PROFIT_DIV_BINANCE_MARKETPLACE_TOTAL_PROFIT"
             ratio_status = "ESTIMATED_NOT_EXACT"
-            ratio = ""
+            ratio = "" if ratio_estimate_mid is None else f"{ratio_estimate_mid:.6f}"
 
-    # gridProfit is reserved for Binance-exact detail data.
-    # Reconstructed values are persisted as Low/Mid/High estimates.
-    estimate_mid = grid_profit if grid_profit_source == "RECONSTRUCTED" else None
-    if grid_profit_source == "RECONSTRUCTED":
-        grid_profit = None
+    # gridProfit remains reserved for Binance-exact detail data.
+    # The principal Grid/Total ratio remains populated from the central
+    # reconstruction and is explicitly marked ESTIMATED_NOT_EXACT.
 
     floating_profit = None
     floating_basis = None

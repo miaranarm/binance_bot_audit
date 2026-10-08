@@ -35,12 +35,18 @@ for row in rows:
 
     if source == "RECONSTRUCTED":
         stats["reconstructed"] += 1
-        if grid is not None or floating is not None or ratio is not None:
+        if grid is not None or floating is not None:
             stats["sourceErrors"] += 1
-            add_example({"strategyId": row.get("strategyId"), "type": "RECONSTRUCTED_PROMOTED_METRIC", "gridProfit": grid, "floatingProfit": floating, "ratio": ratio})
+            add_example({"strategyId": row.get("strategyId"), "type": "RECONSTRUCTED_PROMOTED_METRIC", "gridProfit": grid, "floatingProfit": floating})
         if ratio_status != "ESTIMATED_NOT_EXACT" or ratio_source != "RECONSTRUCTED_GRID_PROFIT_DIV_BINANCE_MARKETPLACE_TOTAL_PROFIT":
             stats["sourceErrors"] += 1
             add_example({"strategyId": row.get("strategyId"), "type": "BAD_RECONSTRUCTED_RATIO_PROVENANCE", "status": ratio_status, "source": ratio_source})
+        if ratio is None:
+            stats["sourceErrors"] += 1
+            add_example({"strategyId": row.get("strategyId"), "type": "MISSING_PRIMARY_ESTIMATED_RATIO"})
+        if rmid is not None and ratio is not None and abs(ratio-rmid) > 1e-6:
+            stats["ratioErrors"] += 1
+            add_example({"strategyId": row.get("strategyId"), "type": "PRIMARY_RATIO_MISMATCH", "ratio": ratio, "mid": rmid})
         if any(v is not None and v < 0 for v in (low, mid, high)):
             stats["invalidNegativeEstimate"] += 1
         if None in (low, mid, high) or not (low <= mid + TOL and mid <= high + TOL):
