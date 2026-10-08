@@ -313,7 +313,21 @@ def grid_metrics(item):
     if total_profit is None:
         total_profit = find_exact_numeric_key(item, ["totalProfit"])
 
-    # Exact reconstruction path: Total Profit = Grid Profit + Floating PnL.
+    # Binance's marketplace PNL is Total Profit for Spot Grid. Resolve that
+    # denominator BEFORE attempting the exact reconstruction so that a detail
+    # response exposing only Floating/Unrealized PnL can still yield:
+    # Grid Profit = Total Profit - Floating/Unrealized PnL.
+    marketplace_pnl = num(item.get("pnl"), None)
+    if (str(item.get("_category") or "").lower() == "spot grid"
+            and total_profit in (None, 0)
+            and marketplace_pnl not in (None, 0)):
+        total_profit = marketplace_pnl
+
+    # Exact reconstruction path:
+    # Binance defines Total Profit = Grid Profit + Unrealized PnL.
+    # Therefore, when Binance gives Total Profit (directly or via the
+    # marketplace PNL field) and Floating/Unrealized PnL, the missing
+    # Grid Profit is recovered exactly; no grid-geometry estimate is needed.
     if grid_profit is None and total_profit is not None and floating_pnl is not None:
         grid_profit = total_profit - floating_pnl
         grid_profit_source = "BINANCE_TOTAL_PROFIT_MINUS_FLOATING_PNL"
@@ -326,24 +340,17 @@ def grid_metrics(item):
         ratio = f"{grid_profit / total_profit:.6f}"
         if grid_profit_source == "BINANCE_TOTAL_PROFIT_MINUS_FLOATING_PNL":
             ratio_source = "BINANCE_TOTAL_PROFIT_MINUS_FLOATING_PNL_DIV_TOTAL_PROFIT"
+        elif total_profit == marketplace_pnl and marketplace_pnl not in (None, 0):
+            ratio_source = "BINANCE_GRID_PROFIT_DIV_MARKETPLACE_PNL"
         else:
             ratio_source = "BINANCE_GRID_PROFIT_DIV_TOTAL_PROFIT"
-    elif str(item.get("_category") or "").lower() == "spot grid":
-        # Binance documents Spot Grid marketplace PNL as Total Profit
-        # (Current Value - Total Investment). Therefore PNL is a valid
-        # denominator when the detail endpoint omits totalProfit.
-        marketplace_pnl = num(item.get("pnl"), None)
-        if total_profit in (None, 0) and marketplace_pnl not in (None, 0):
-            total_profit = marketplace_pnl
-
-        if grid_profit is not None and total_profit not in (None, 0):
-            ratio = f"{grid_profit / total_profit:.6f}"
-            ratio_source = "BINANCE_GRID_PROFIT_DIV_MARKETPLACE_PNL"
-        elif total_profit not in (None, 0):
-            estimated = estimate_grid_profit_ratio(item, total_profit)
-            if estimated is not None:
-                ratio = f"{estimated:.6f}"
-                ratio_source = "ESTIMATED_FROM_MATCHED_TRADES_GRID_GEOMETRY_AND_MARKETPLACE_PNL"
+    elif str(item.get("_category") or "").lower() == "spot grid" and total_profit not in (None, 0):
+        # Last-resort estimate only when Binance exposes neither Grid Profit
+        # nor Floating/Unrealized PnL. It is explicitly marked ESTIMATED.
+        estimated = estimate_grid_profit_ratio(item, total_profit)
+        if estimated is not None:
+            ratio = f"{estimated:.6f}"
+            ratio_source = "ESTIMATED_FROM_MATCHED_TRADES_GRID_GEOMETRY_AND_MARKETPLACE_PNL"
 
     return ratio, price_range, profit_grid, profit_grid_source, ratio_source
 
