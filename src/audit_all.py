@@ -157,6 +157,7 @@ def estimate_grid_profit_ratio(item, total_profit):
     current = pnum(["currentPrice", "lastPrice", "marketPrice", "price"])
     matched = num(item.get("matchedTrades", item.get("matchedCount", item.get("totalMatchedTrades", 0))), 0.0)
     roi = num(item.get("roi", item.get("roiPct", item.get("roiRate", 0))), 0.0)
+    fee = 0.001
 
     if (lower is None or upper is None or grids is None or current is None or
             grids < 2 or lower <= 0 or upper <= lower or matched <= 0 or
@@ -289,10 +290,15 @@ def grid_metrics(item):
     elif str(item.get("_category") or "").lower() == "spot grid":
         # Binance documents Spot Grid marketplace PNL as Total Profit
         # (Current Value - Total Investment). Therefore PNL is a valid
-        # denominator even when the detail endpoint omits totalProfit.
+        # denominator when the detail endpoint omits totalProfit.
         marketplace_pnl = num(item.get("pnl"), None)
-        if marketplace_pnl is not None and marketplace_pnl != 0:
+        if total_profit in (None, 0) and marketplace_pnl not in (None, 0):
             total_profit = marketplace_pnl
+
+        if grid_profit is not None and total_profit not in (None, 0):
+            ratio = f"{grid_profit / total_profit:.6f}"
+            ratio_source = "BINANCE_GRID_PROFIT_DIV_MARKETPLACE_PNL"
+        elif total_profit not in (None, 0):
             estimated = estimate_grid_profit_ratio(item, total_profit)
             if estimated is not None:
                 ratio = f"{estimated:.6f}"
