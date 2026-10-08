@@ -746,6 +746,7 @@ def main():
                 if metrics:
                     row["_detail_grid_profit"] = metrics.get("gridProfit")
                     row["_detail_total_profit"] = metrics.get("totalProfit")
+                    row["_detail_floating_pnl"] = metrics.get("floatingPnl")
 
         rows.extend(
             pages(
