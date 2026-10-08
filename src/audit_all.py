@@ -282,6 +282,28 @@ def grid_metrics(item):
     if grid_profit is None:
         grid_profit = find_exact_numeric_key(item, ["gridProfit"])
 
+    # Binance defines Spot Grid Total Profit = Grid Profit + Floating/Unrealized
+    # PnL. If the public payload exposes the floating component but omits
+    # Grid Profit, reconstruct Grid Profit exactly from those two published
+    # values. This is preferable to any geometry-based estimate.
+    floating_pnl = first_num(item, [
+        "_detail_floating_pnl",
+        "floatingPnl",
+        "floatingPNL",
+        "unrealizedPnl",
+        "unrealizedPNL",
+        "floatProfit",
+        "floatingProfit",
+        "strategyStats.floatingPnl",
+        "strategyStats.unrealizedPnl",
+        "stats.floatingPnl",
+        "stats.unrealizedPnl",
+    ])
+    if floating_pnl is None:
+        floating_pnl = find_exact_numeric_key(
+            item, ["floatingPnl", "unrealizedPnl", "floatProfit", "floatingProfit"]
+        )
+
     total_profit = first_num(item, [
         "_detail_total_profit",
         "totalProfit",
@@ -291,9 +313,17 @@ def grid_metrics(item):
     if total_profit is None:
         total_profit = find_exact_numeric_key(item, ["totalProfit"])
 
+    # Exact reconstruction path: Total Profit = Grid Profit + Floating PnL.
+    if grid_profit is None and total_profit is not None and floating_pnl is not None:
+        grid_profit = total_profit - floating_pnl
+        grid_profit_source = "BINANCE_TOTAL_PROFIT_MINUS_FLOATING_PNL"
+    else:
+        grid_profit_source = "BINANCE_GRID_PROFIT" if grid_profit is not None else ""
+
     ratio = ""
     ratio_source = "UNAVAILABLE"
     if grid_profit is not None and total_profit not in (None, 0):
+        ratio_source = grid_profit_source or "BINANCE_GRID_PROFIT"
         ratio = f"{grid_profit / total_profit:.6f}"
         ratio_source = "BINANCE_GRID_PROFIT_DIV_TOTAL_PROFIT"
     elif str(item.get("_category") or "").lower() == "spot grid":
