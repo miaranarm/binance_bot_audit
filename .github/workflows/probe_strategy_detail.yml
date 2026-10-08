@@ -1,0 +1,30 @@
+name: Binance Strategy Detail Probe
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install -r requirements.txt
+      - run: playwright install --with-deps chromium
+      - run: python tools/probe_strategy_detail.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: strategy-detail-raw
+          path: results/strategy_detail_raw.json
+          retention-days: 7
+      - run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add results/strategy_detail_raw.json
+          git commit -m "diagnostic: capture Binance strategy detail [skip ci]" || exit 0
+          git push
