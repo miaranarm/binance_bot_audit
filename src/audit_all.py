@@ -254,8 +254,14 @@ def estimate_grid_profit(item, total_profit_usd, prices):
             "mode": mode,
             "investmentUsd": investment_usd,
             "quoteUsd": quote_usd,
-            "method": "BINANCE_FORMULA_RECONSTRUCTION",
-            "confidence": "MEDIUM_HIGH" if mode == "GEOMETRIC" else "MEDIUM",
+            # Binance publishes the Profit/Grid formula and the Qty Per
+            # Order concept, but the public marketplace payload does not expose
+            # the historical Qty Per Order or the matched-order distribution.
+            # Therefore the result is reconstructed in both modes; geometric
+            # mode removes grid-level dispersion, but it does NOT make Qty
+            # Per Order exact.
+            "method": "BINANCE_FORMULA_RECONSTRUCTION_QTY_ESTIMATE",
+            "confidence": "MEDIUM",
         }
     except (ZeroDivisionError, ValueError, OverflowError):
         return None
