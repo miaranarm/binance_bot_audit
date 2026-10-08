@@ -598,21 +598,28 @@ def capture_marketplace_detail_calls(page, rows):
                     payload = json.loads(body)
                     grid_profit = find_exact_numeric_key(payload, ["gridProfit"])
                     total_profit = find_exact_numeric_key(payload, ["totalProfit"])
-                    if grid_profit is not None or total_profit is not None:
+                    floating_pnl = find_exact_numeric_key(
+                        payload, ["floatingPnl", "unrealizedPnl", "floatProfit", "floatingProfit"]
+                    )
+                    if grid_profit is not None or total_profit is not None or floating_pnl is not None:
                         entry = metrics_by_sid.setdefault(active_sid["value"], {})
                         if grid_profit is not None:
                             entry["gridProfit"] = grid_profit
                         if total_profit is not None:
                             entry["totalProfit"] = total_profit
+                        if floating_pnl is not None:
+                            entry["floatingPnl"] = floating_pnl
                         entry["source"] = "BINANCE_DETAIL_API"
                         entry["url"] = url
                         debug_write("EXACT_GRID_METRICS sid=" + str(active_sid["value"]) +
                                     " gridProfit=" + str(grid_profit) +
                                     " totalProfit=" + str(total_profit) +
+                                    " floatingPnl=" + str(floating_pnl) +
                                     " url=" + url)
                         print("EXACT_GRID_METRICS sid=" + str(active_sid["value"]) +
                               " gridProfit=" + str(grid_profit) +
-                              " totalProfit=" + str(total_profit))
+                              " totalProfit=" + str(total_profit) +
+                              " floatingPnl=" + str(floating_pnl))
                 except Exception:
                     pass
             if any(token in url.lower() for token in ("/grid/", "strategy/detail", "strategy/info", "strategy/landing-page/")):
