@@ -43,6 +43,15 @@ jobs:
       - name: Run hourly Binance scan
         run: python src/audit_all.py
 
+      - name: Upload strategy detail diagnostics
+        uses: actions/upload-artifact@v4
+        with:
+          name: strategy-detail-debug-${{ github.run_id }}
+          path: results/strategy_detail_debug.log
+          if-no-files-found: ignore
+          retention-days: 7
+          compression-level: 9
+
       - name: Keep only the lean result set
         run: |
           find results -maxdepth 1 -type f \
