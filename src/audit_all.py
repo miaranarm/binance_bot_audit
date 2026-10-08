@@ -388,7 +388,7 @@ def grid_metrics(item, prices):
             estimate_low = estimate["low"]
             estimate_high = estimate["high"]
             grid_profit = estimate["mid"]
-            grid_profit_source = "RECONSTRUCTED_BINANCE_SPOT_GRID_MODEL"
+            grid_profit_source = "RECONSTRUCTED"
             estimate_method = estimate.get("method", "BINANCE_FORMULA_RECONSTRUCTION")
             estimate_confidence = estimate.get("confidence", "MEDIUM")
             ratio_value = grid_profit / total_profit
@@ -397,8 +397,8 @@ def grid_metrics(item, prices):
 
     # gridProfit is reserved for Binance-exact detail data.
     # Reconstructed values are persisted as Low/Mid/High estimates.
-    estimate_mid = grid_profit if grid_profit_source.startswith("RECONSTRUCTED_") else None
-    if grid_profit_source.startswith("RECONSTRUCTED_"):
+    estimate_mid = grid_profit if grid_profit_source == "RECONSTRUCTED" else None
+    if grid_profit_source == "RECONSTRUCTED":
         grid_profit = None
 
     floating_profit = None
