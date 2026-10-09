@@ -1,4 +1,111 @@
 {
   "endpoint_diagnostics": [],
+  "collection": {
+    "Spot Grid": {
+      "collected": 13188,
+      "expected": 13188,
+      "complete": true
+    },
+    "Marketplace type 2": {
+      "collected": 13842,
+      "expected": 13842,
+      "complete": true
+    },
+    "Marketplace type 3": {
+      "collected": 553,
+      "expected": 553,
+      "complete": true
+    },
+    "Marketplace type 4": {
+      "collected": 0,
+      "expected": 0,
+      "complete": true
+    },
+    "Marketplace type 5": {
+      "collected": 0,
+      "expected": 0,
+      "complete": true
+    },
+    "Marketplace type 6": {
+      "collected": 0,
+      "expected": 0,
+      "complete": true
+    },
+    "Marketplace type 7": {
+      "collected": 0,
+      "expected": 0,
+      "complete": true
+    },
+    "Marketplace type 8": {
+      "collected": 0,
+      "expected": 0,
+      "complete": true
+    },
+    "Marketplace type 9": {
+      "collected": 0,
+      "expected": 0,
+      "complete": true
+    },
+    "Marketplace type 10": {
+      "collected": 1481,
+      "expected": 1481,
+      "complete": true
+    },
+    "Marketplace type 11": {
+      "collected": 0,
+      "expected": 0,
+      "complete": true
+    },
+    "Marketplace type 12": {
+      "collected": 0,
+      "expected": 0,
+      "complete": true
+    },
+    "Marketplace type 13": {
+      "collected": 0,
+      "expected": 0,
+      "complete": true
+    },
+    "Marketplace type 14": {
+      "collected": 0,
+      "expected": 0,
+      "complete": true
+    },
+    "Marketplace type 15": {
+      "collected": 0,
+      "expected": 0,
+      "complete": true
+    },
+    "Marketplace type 16": {
+      "collected": 0,
+      "expected": 0,
+      "complete": true
+    },
+    "Marketplace type 17": {
+      "collected": 0,
+      "expected": 0,
+      "complete": true
+    },
+    "Marketplace type 18": {
+      "collected": 0,
+      "expected": 0,
+      "complete": true
+    },
+    "Marketplace type 19": {
+      "collected": 0,
+      "expected": 0,
+      "complete": true
+    },
+    "Marketplace type 20": {
+      "collected": 0,
+      "expected": 0,
+      "complete": true
+    },
+    "Futures DCA": {
+      "collected": 1481,
+      "expected": 1481,
+      "complete": true
+    }
+  },
   "filter": "active public Binance Bot Marketplace strategies with leverage <= 1"
 }
