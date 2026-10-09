@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-10-09T16:49:42.138697+00:00",
+  "generated_utc": "2026-10-09T17:30:04.816041+00:00",
   "purpose": "Find public Binance fields that may represent actual bot investment/capital; diagnostic only, not a validated capital metric.",
   "sample_strategy_ids": [
     "6850680",
@@ -309,137 +309,137 @@
         {
           "path": "$.data[0].strategyParams.initialMargin",
           "key": "initialMargin",
-          "value": null
+          "value": "50000.0000000"
         },
         {
           "path": "$.data[0].minInvestment",
           "key": "minInvestment",
-          "value": "670.92844500000000"
+          "value": "173.40000000000000"
         },
         {
           "path": "$.data[0].initialMargin",
           "key": "initialMargin",
-          "value": null
+          "value": "50000.0000000"
         },
         {
           "path": "$.data[1].strategyParams.initialMargin",
           "key": "initialMargin",
-          "value": null
+          "value": "10700.00000000"
         },
         {
           "path": "$.data[1].minInvestment",
           "key": "minInvestment",
-          "value": "1892.09000000000000"
+          "value": "151.74890000000000"
         },
         {
           "path": "$.data[1].initialMargin",
           "key": "initialMargin",
-          "value": null
+          "value": "10700.00000000"
         },
         {
           "path": "$.data[2].strategyParams.initialMargin",
           "key": "initialMargin",
-          "value": null
+          "value": "5200.00000000"
         },
         {
           "path": "$.data[2].minInvestment",
           "key": "minInvestment",
-          "value": "968.03000000000000"
+          "value": "103.33430000000000"
         },
         {
           "path": "$.data[2].initialMargin",
           "key": "initialMargin",
-          "value": null
+          "value": "5200.00000000"
         },
         {
           "path": "$.data[3].strategyParams.initialMargin",
           "key": "initialMargin",
-          "value": null
+          "value": "2000.0000000"
         },
         {
           "path": "$.data[3].minInvestment",
           "key": "minInvestment",
-          "value": "681.28000000000000"
+          "value": "217.00000000000000"
         },
         {
           "path": "$.data[3].initialMargin",
           "key": "initialMargin",
-          "value": null
+          "value": "2000.0000000"
         },
         {
           "path": "$.data[4].strategyParams.initialMargin",
           "key": "initialMargin",
-          "value": null
+          "value": "1000.0000000"
         },
         {
           "path": "$.data[4].minInvestment",
           "key": "minInvestment",
-          "value": "406.50000000000000"
+          "value": "404.00000000000000"
         },
         {
           "path": "$.data[4].initialMargin",
           "key": "initialMargin",
-          "value": null
+          "value": "1000.0000000"
         },
         {
           "path": "$.data[5].strategyParams.initialMargin",
           "key": "initialMargin",
-          "value": null
+          "value": "4000.00000000"
         },
         {
           "path": "$.data[5].minInvestment",
           "key": "minInvestment",
-          "value": "825.89000000000000"
+          "value": "114.75330000000000"
         },
         {
           "path": "$.data[5].initialMargin",
           "key": "initialMargin",
-          "value": null
+          "value": "4000.00000000"
         },
         {
           "path": "$.data[6].strategyParams.initialMargin",
           "key": "initialMargin",
-          "value": null
+          "value": "5000.0000000"
         },
         {
           "path": "$.data[6].minInvestment",
           "key": "minInvestment",
-          "value": "58.21000000000000"
+          "value": "242.19000000000000"
         },
         {
           "path": "$.data[6].initialMargin",
           "key": "initialMargin",
-          "value": null
+          "value": "5000.0000000"
         },
         {
           "path": "$.data[7].strategyParams.initialMargin",
           "key": "initialMargin",
-          "value": null
+          "value": "3900.00000000"
         },
         {
           "path": "$.data[7].minInvestment",
           "key": "minInvestment",
-          "value": "314.13756324000000"
+          "value": "104.33220000000000"
         },
         {
           "path": "$.data[7].initialMargin",
           "key": "initialMargin",
-          "value": null
+          "value": "3900.00000000"
         },
         {
           "path": "$.data[8].strategyParams.initialMargin",
           "key": "initialMargin",
-          "value": null
+          "value": "500.0000000"
         },
         {
           "path": "$.data[8].minInvestment",
           "key": "minInvestment",
-          "value": "444.10000000000000"
+          "value": "91.24590000000000"
         },
         {
           "path": "$.data[8].initialMargin",
           "key": "initialMargin",
-          "value": null
+          "value": "500.0000000"
         }
       ]
     },
