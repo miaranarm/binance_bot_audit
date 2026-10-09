@@ -29,6 +29,36 @@ FIELDS = [
 
 RETENTION_DAYS = 30
 
+# Diagnostic only: public Binance responses may expose capital fields under
+# names that differ between Marketplace endpoints. Do not use these fields
+# in the CSV until their accounting meaning and units are verified.
+CAPITAL_FIELD_NAMES = {
+    "totalinvestment", "initialinvestment", "investmentamount",
+    "investedamount", "investmentusd", "investmentvalue",
+    "initialcapital", "totalcapital", "capitalinvested",
+    "initialmargin", "startinvestment", "mininvestment",
+    "minimuminvestment", "investment", "totalinvest",
+}
+CAPITAL_FIELD_DIAGNOSTICS = []
+
+
+def collect_capital_fields(payload, path="$"):
+    """Return candidate capital/investment fields with JSON paths and raw values."""
+    found = []
+    if isinstance(payload, dict):
+        for key, value in payload.items():
+            normalized = str(key).replace("_", "").replace("-", "").lower()
+            if normalized in CAPITAL_FIELD_NAMES:
+                if isinstance(value, (str, int, float)) and not isinstance(value, bool):
+                    found.append({"path": f"{path}.{key}", "key": str(key), "value": value})
+                elif value is None:
+                    found.append({"path": f"{path}.{key}", "key": str(key), "value": None})
+            found.extend(collect_capital_fields(value, f"{path}.{key}"))
+    elif isinstance(payload, list):
+        for index, value in enumerate(payload):
+            found.extend(collect_capital_fields(value, f"{path}[{index}]"))
+    return found
+
 # --- collecte : paramètres de robustesse -------------------------------------
 PAGE_SIZE = 100
 MAX_PAGES = 400            # 40 000 lignes par catégorie (l'ancienne limite était 14 900)
@@ -784,6 +814,25 @@ def capture_marketplace_detail_calls(page, rows):
             body = response.text()
             lowered = body.lower()
             url = response.url
+            # Capture candidate investment/capital fields from every JSON
+            # response observed while a sampled public bot detail is open.
+            # This is an audit trail only; it does not alter any CSV metric.
+            if active_sid["value"]:
+                try:
+                    payload_for_capital = json.loads(body)
+                    candidate_fields = collect_capital_fields(payload_for_capital)
+                    if candidate_fields:
+                        CAPITAL_FIELD_DIAGNOSTICS.append({
+                            "strategyId": str(active_sid["value"]),
+                            "url": url,
+                            "httpStatus": response.status,
+                            "fields": candidate_fields,
+                        })
+                        debug_write("CAPITAL_FIELDS sid=" + str(active_sid["value"]) +
+                                    " url=" + url + " fields=" +
+                                    json.dumps(candidate_fields, ensure_ascii=False)[:20000])
+                except Exception:
+                    pass
             if "/bapi/" in url:
                 print("BAPI_RESPONSE url=" + url + " status=" + str(response.status) + " bytes=" + str(len(body)))
             if "/api/v2/query" in url.lower() or "/api/v1/feature-gate/check" in url.lower() or "/api/v2/strategy/query" in url.lower():
@@ -1041,6 +1090,40 @@ def main():
         debug_root.write_text("MAIN_REACHED_DETAIL_CALL\\n", encoding="utf-8")
         print("MAIN_REACHED_DETAIL_CALL " + str(debug_root))
         captured_detail_metrics = capture_marketplace_detail_calls(page, rows)
+
+        # Save a dedicated report so we can verify whether Binance's public
+        # detail responses expose the actual capital reference. Keep raw values,
+        # JSON paths, endpoint URLs, and strategy IDs for manual verification.
+        # Marketplace minInvestment is also recorded separately: it is not
+        # assumed to equal the bot's actual invested capital.
+        marketplace_capital_fields = []
+        for row in rows:
+            sid = str(row.get("strategyId") or "").strip()
+            if sid not in {"6850680", "3232564", "9161957"}:
+                continue
+            raw_fields = collect_capital_fields(row)
+            if raw_fields or row.get("minInvestment") is not None:
+                marketplace_capital_fields.append({
+                    "strategyId": sid,
+                    "symbol": row.get("symbol"),
+                    "category": row.get("_category"),
+                    "source": "BINANCE_MARKETPLACE_LISTING_PAYLOAD",
+                    "fields": raw_fields,
+                    "minInvestment": row.get("minInvestment", row.get("minimumInvestment")),
+                    "roi": row.get("roi"),
+                    "pnl": row.get("pnl"),
+                })
+        with (OUT / "capital_field_diagnostics.json").open("w", encoding="utf-8") as handle:
+            json.dump({
+                "generated_utc": now.isoformat(),
+                "purpose": "Find public Binance fields that may represent actual bot investment/capital; diagnostic only, not a validated capital metric.",
+                "sample_strategy_ids": ["6850680", "3232564", "9161957"],
+                "field_name_candidates": sorted(CAPITAL_FIELD_NAMES),
+                "marketplace_listing_fields": marketplace_capital_fields,
+                "detail_response_fields": CAPITAL_FIELD_DIAGNOSTICS,
+                "interpretation_rule": "A field name alone does not prove its accounting basis or units. Do not treat minInvestment, inferred PNL/ROI capital, initial capital, current capital, or margin as interchangeable without endpoint-level verification.",
+            }, handle, ensure_ascii=False, indent=2)
+
         if captured_detail_metrics:
             for row in rows:
                 sid = str(row.get("strategyId") or "").strip()
