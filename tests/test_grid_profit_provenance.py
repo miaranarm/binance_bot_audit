@@ -65,5 +65,19 @@ class GridProfitProvenanceTests(unittest.TestCase):
         self.assertEqual(row["floating_basis"], "TOTAL_MINUS_EXACT_GRID_PROFIT")
 
 
+    def test_spot_marketplace_total_does_not_reconstruct_from_detail_floating(self):
+        row = self.metric({
+            "strategyId": "spot-floating-test",
+            "_category": "Spot Grid",
+            "pnl": 100.0,
+            "_detail_total_profit": 40.0,
+            "_detail_floating_pnl": 10.0,
+        })
+        self.assertEqual(row["total_source"], "BINANCE_MARKETPLACE_PNL_USD_AS_TOTAL_PROFIT")
+        self.assertNotEqual(row["ratio_status"], "EXACT")
+        self.assertNotEqual(row["grid_source"], "BINANCE_EXACT")
+        self.assertIsNone(row["floating_profit"])
+
+
 if __name__ == "__main__":
     unittest.main()
