@@ -1,0 +1,12 @@
+# Transient Binance browser/network diagnostics (uploaded as Actions artifacts)
+results/marketplace_network_raw.json
+results/marketplace_click_raw.json
+results/marketplace_js_endpoints.json
+results/marketplace_js_hit_*.js
+results/matched_endpoint_variants.json
+results/strategy_detail_raw.json
+strategy_detail_debug.log
+roi_chart_probe.json
+
+# Temporary output
+results/*.tmp.csv
