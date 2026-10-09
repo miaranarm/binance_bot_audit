@@ -827,11 +827,21 @@ def capture_marketplace_detail_calls(page, rows):
     def on_response(response):
         try:
             content_type = (response.headers.get("content-type") or "").lower()
+            url = response.url
+            low_url = url.lower()
+            # Keep a compact record of relevant non-JSON responses too. Some
+            # detail-page data may be delivered through HTML/other transports;
+            # previously these were silently discarded before URL inspection.
             if "json" not in content_type:
+                if active_sid["value"] and any(token in low_url for token in
+                        ("strategy", "grid", "detail", "profit", "position", "order")):
+                    debug_write("DETAIL_NONJSON_RESPONSE sid=" + str(active_sid["value"]) +
+                                " status=" + str(response.status) +
+                                " contentType=" + content_type +
+                                " url=" + url[:1800])
                 return
             body = response.text()
             lowered = body.lower()
-            url = response.url
             # Capture candidate capital fields only from data endpoints.
             # Localization JSON contains labels such as "Total Investment", not
             # actual monetary values, and must never count as capital evidence.
@@ -1048,7 +1058,8 @@ def capture_marketplace_detail_calls(page, rows):
                 resources = page.evaluate("() => performance.getEntriesByType('resource').map(x => x.name).filter(Boolean)")
                 for resource_url in resources:
                     lowered_resource = str(resource_url).lower()
-                    if any(token in lowered_resource for token in ("strategy", "grid", "detail", "profit")):
+                    if any(token in lowered_resource for token in ("strategy", "grid", "detail", "profit", "position", "order")):
+                        debug_write("DETAIL_RESOURCE sid=" + str(sid) + " url=" + str(resource_url)[:1800])
                         print("DETAIL_RESOURCE " + resource_url)
                 html = page.content()
                 lowered_html = html.lower()
@@ -1072,6 +1083,23 @@ def capture_marketplace_detail_calls(page, rows):
                     # The previous order accidentally logged "Total Investment: 0"
                     # from Pending Trigger pages as if it were an observed metric.
                     pending_detail = ("Pending Trigger" in body_text or "Duration --" in body_text)
+                    page_state = {
+                        "pendingTrigger": "Pending Trigger" in body_text,
+                        "durationPlaceholder": "Duration --" in body_text,
+                        "hasGridDetails": "Grid Details" in body_text,
+                        "hasOrderHistory": "Order History" in body_text,
+                        "hasLoginPrompt": ("Log In" in body_text and "Sign Up" in body_text),
+                        "hasPendingOrder": "Pending Order" in body_text,
+                    }
+                    try:
+                        page_title = page.title()
+                    except Exception:
+                        page_title = ""
+                    debug_write("DETAIL_PAGE_STATE sid=" + str(sid) +
+                                " pending=" + str(pending_detail) +
+                                " state=" + json.dumps(page_state, ensure_ascii=False) +
+                                " title=" + str(page_title)[:300] +
+                                " bodyStart=" + body_text[:900].replace("\\n", " | "))
                     visible_capital = []
                     for capital_label in ("Total Investment", "Initial Investment", "Investment Amount", "Capital Invested"):
                         capital_value = parse_visible_metric(body_text, capital_label)
