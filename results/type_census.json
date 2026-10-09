@@ -255,24 +255,24 @@
   ],
   "collection": {
     "Spot Grid": {
-      "collected": 13782,
-      "unique_collected": 13782,
+      "collected": 12320,
+      "unique_collected": 12320,
       "duplicate_rows": 0,
-      "expected": 13782,
+      "expected": 12320,
       "complete": true
     },
     "Marketplace type 2": {
-      "collected": 14496,
-      "unique_collected": 14496,
+      "collected": 14168,
+      "unique_collected": 14168,
       "duplicate_rows": 0,
-      "expected": 14496,
+      "expected": 14168,
       "complete": true
     },
     "Marketplace type 3": {
-      "collected": 594,
-      "unique_collected": 594,
+      "collected": 572,
+      "unique_collected": 572,
       "duplicate_rows": 0,
-      "expected": 594,
+      "expected": 572,
       "complete": true
     },
     "Marketplace type 4": {
@@ -318,10 +318,10 @@
       "complete": true
     },
     "Marketplace type 10": {
-      "collected": 1498,
-      "unique_collected": 1498,
+      "collected": 1486,
+      "unique_collected": 1486,
       "duplicate_rows": 0,
-      "expected": 1498,
+      "expected": 1486,
       "complete": true
     },
     "Marketplace type 11": {
@@ -395,10 +395,10 @@
       "complete": false
     },
     "Futures DCA": {
-      "collected": 1498,
-      "unique_collected": 1498,
+      "collected": 1486,
+      "unique_collected": 1486,
       "duplicate_rows": 0,
-      "expected": 1498,
+      "expected": 1486,
       "complete": true
     }
   },
