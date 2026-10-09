@@ -2,12 +2,8 @@
   "3232564": {
     "status": 200,
     "url": "https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryRoiChart",
-    "point_count": 960,
+    "point_count": 961,
     "last_points": [
-      {
-        "roi": 1.8293737121,
-        "pnl": 1552.003886934027
-      },
       {
         "roi": 1.8310304492,
         "pnl": 1581.5296626158852
@@ -23,9 +19,13 @@
       {
         "roi": 1.8036294419,
         "pnl": 1501.5936555594262
+      },
+      {
+        "roi": 1.794141393,
+        "pnl": 1467.1411827118197
       }
     ],
-    "investment_from_chart": 83254.00000000001,
+    "investment_from_chart": 81773.99999999999,
     "raw": {
       "code": "000000",
       "message": null,
@@ -6750,6 +6750,13 @@
           "roi": 1.8036294419,
           "pnl": 1501.5936555594262,
           "time": 1791417600000
+        },
+        {
+          "rootUserId": 1,
+          "strategyId": 3232564,
+          "roi": 1.794141393,
+          "pnl": 1467.1411827118197,
+          "time": 1791504000000
         }
       ],
       "success": true
@@ -6758,12 +6765,8 @@
   "9161957": {
     "status": 200,
     "url": "https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryRoiChart",
-    "point_count": 274,
+    "point_count": 275,
     "last_points": [
-      {
-        "roi": 1.28669772176191,
-        "pnl": 27.020652157
-      },
       {
         "roi": 1.29871872695238,
         "pnl": 27.273093266
@@ -6779,9 +6782,13 @@
       {
         "roi": 1.29019907314286,
         "pnl": 27.094180536
+      },
+      {
+        "roi": 1.31263080995238,
+        "pnl": 27.565247009
       }
     ],
-    "investment_from_chart": 2099.9999999999955,
+    "investment_from_chart": 2100.0000000000014,
     "raw": {
       "code": "000000",
       "message": null,
@@ -8704,6 +8711,13 @@
           "roi": 1.29019907314286,
           "pnl": 27.094180536,
           "time": 1791417600000
+        },
+        {
+          "rootUserId": 1,
+          "strategyId": 9161957,
+          "roi": 1.31263080995238,
+          "pnl": 27.565247009,
+          "time": 1791504000000
         }
       ],
       "success": true
@@ -8712,12 +8726,8 @@
   "8799020": {
     "status": 200,
     "url": "https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryRoiChart",
-    "point_count": 346,
+    "point_count": 347,
     "last_points": [
-      {
-        "roi": 2.14485027957,
-        "pnl": 2144.85027957
-      },
       {
         "roi": 2.23732488688,
         "pnl": 2237.32488688
@@ -8733,6 +8743,10 @@
       {
         "roi": 2.20084247327,
         "pnl": 2200.8424732699996
+      },
+      {
+        "roi": 1.87994885454,
+        "pnl": 1879.94885454
       }
     ],
     "investment_from_chart": 100000.0,
@@ -11162,6 +11176,13 @@
           "roi": 2.20084247327,
           "pnl": 2200.8424732699996,
           "time": 1791417600000
+        },
+        {
+          "rootUserId": 1,
+          "strategyId": 8799020,
+          "roi": 1.87994885454,
+          "pnl": 1879.94885454,
+          "time": 1791504000000
         }
       ],
       "success": true
