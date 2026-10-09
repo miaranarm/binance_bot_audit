@@ -93,11 +93,11 @@ jobs:
       - name: Run hourly Binance scan
         run: python src/audit_all.py
 
-      - name: Finalize strict current_multicriteria.csv schema and ranking
-        run: python src/finalize_multicriteria.py
-
       - name: Validate Grid Profit calculations
         run: python src/validate_results.py
+
+      - name: Finalize strict current_multicriteria.csv schema and ranking
+        run: python src/finalize_multicriteria.py
 
       - name: Verify strategy detail diagnostics
         run: |
