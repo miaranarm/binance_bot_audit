@@ -25,13 +25,22 @@ def number(v, default=None):
         return default
 
 def ratio_value(row):
-    # Exact Binance/detail ratio wins; otherwise use the existing documented reconstruction.
+    # Preserve a ratio explicitly sourced by the scanner. Its source/status
+    # columns remain in the intermediate file even though the final CSV is compact.
     direct = number(row.get("gridProfitTotalProfitRatio"))
     if direct is not None:
         return direct
-    gp = number(row.get("gridProfit"))
+    source = str(row.get("gridProfitSource") or "")
     total = number(row.get("totalProfit"))
-    return gp / total if gp is not None and total not in (None, 0) else None
+    if total in (None, 0):
+        return None
+    if source == "BINANCE_EXACT":
+        gp = number(row.get("gridProfit"))
+        return gp / total if gp is not None else None
+    if source == "RECONSTRUCTED":
+        mid = number(row.get("gridProfitEstimateMid"))
+        return mid / total if mid is not None else None
+    return None
 
 def range_bounds(value):
     if not value:
@@ -107,9 +116,13 @@ def main():
             gp_low = gp if gp_low is None else gp_low
             gp_mid = gp if gp_mid is None else gp_mid
             gp_high = gp if gp_high is None else gp_high
-        if gp is None and gp_mid is not None:
-            gp = gp_mid
-        row["gridProfit"] = gp
+            official_gp = gp
+        else:
+            # The headline Grid Profit column is reserved for Binance-exact
+            # values. Keep reconstructed midpoint and uncertainty in estimate
+            # columns; never relabel an estimate as the official metric.
+            official_gp = None
+        row["gridProfit"] = official_gp
         row["gridProfitEstimateLow"] = gp_low
         row["gridProfitEstimateMid"] = gp_mid
         row["gridProfitEstimateHigh"] = gp_high
@@ -121,10 +134,10 @@ def main():
         floating_source = str(row.get("floatingProfitSource") or "")
         # A residual based on an estimated Grid Profit is not Floating Profit.
         # Keep the field blank unless its basis is exact/official.
-        if "RECONSTRUCTED" in floating_source or source == "RECONSTRUCTED":
+        if source != "BINANCE_EXACT" or "RECONSTRUCTED" in floating_source:
             floating = None
-        elif floating is None and total is not None and gp is not None and source == "BINANCE_EXACT":
-            floating = total - gp
+        elif floating is None and total is not None and official_gp is not None:
+            floating = total - official_gp
         row["floatingProfit"] = floating
 
         lo, hi = range_bounds(row.get("priceRange"))
