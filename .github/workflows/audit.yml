@@ -124,7 +124,7 @@ jobs:
           set -e
           # Raw browser/network captures are already uploaded as short-lived Actions artifacts.
           # Keep only the current report, compact scan diagnostics and retained hourly history.
-          find results -maxdepth 1 -type f \\
+          find results -maxdepth 1 -type f \
             ! -name 'current_multicriteria.csv' \\
             ! -name 'current_multicriteria_summary.txt' \\
             ! -name 'scan_meta.json' \\
