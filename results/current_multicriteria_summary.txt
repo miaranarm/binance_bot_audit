@@ -1,23 +1,23 @@
-COUNT=13963
+COUNT=13447
 UNIVERSE=Binance public Bot Marketplace, leverage <= 1, unique strategyId
 SCORING=GRID_TOTAL_RATIO20 GRID_RETURN_PER_RISK15 PRICE_CENTRE20 AGE15 TRADES10 PROFIT_PER_GRID10 TRADES_PER_DAY10 (indicatif)
-1. 6850680 TRXETH score=89.8 ratio=1.1005906658193172 roi=14.99 jours=613 mdd7d=0.01580324
-2. 9057113 ASTERUSDT score=88.8 ratio=1.4117094104983807 roi=26.37 jours=297 mdd7d=0.04313622
-3. 9011924 LTCETH score=88.6 ratio=2.1184936516228063 roi=15.52 jours=307 mdd7d=0.01983296
-4. 5826189 XRPETH score=88.5 ratio=0.8252725718653795 roi=33.4 jours=692 mdd7d=0.01433203
-5. 8291690 BANANAS31USDT score=88.5 ratio=1.0917256436701448 roi=36.52 jours=416 mdd7d=0.0442847
-6. 6848064 TRXETH score=88.4 ratio=0.9689299358035699 roi=16.55 jours=613 mdd7d=0.01529705
-7. 7648272 BNBETH score=88.2 ratio=1.6617836761049134 roi=8.11 jours=500 mdd7d=0.00940263
-8. 8634298 BNBETH score=87.6 ratio=1.180822591371909 roi=7.92 jours=369 mdd7d=0.00963621
-9. 9094592 ASTERUSDT score=87.5 ratio=1.0327827274334749 roi=61.44 jours=291 mdd7d=0.01868082
-10. 8554283 BNBETH score=87.4 ratio=1.149348353763405 roi=14.08 jours=382 mdd7d=0.01506688
-11. 8831425 BNBETH score=86.7 ratio=3.4196671629229054 roi=3.02 jours=341 mdd7d=0.01183231
-12. 8873114 BNBETH score=86.5 ratio=0.9660624684846518 roi=16.15 jours=335 mdd7d=0.00940614
-13. 9589652 NEIROUSDC score=86.4 ratio=2.798749510256449 roi=16.1 jours=172 mdd7d=0.07397556
-14. 6850667 TRXETH score=86.3 ratio=0.8963736948500545 roi=16.84 jours=613 mdd7d=0.01409113
-15. 7639888 LINKUSDC score=86.3 ratio=1.1572542727683566 roi=33.45 jours=501 mdd7d=0.08126849
-16. 8750250 BNBETH score=86.3 ratio=2.213845537364729 roi=7.37 jours=356 mdd7d=0.00896924
-17. 8366775 SOLETH score=86.1 ratio=1.3375449928505025 roi=9.4 jours=405 mdd7d=0.013637
-18. 7509775 ETHUSDC score=86.0 ratio=1.0980589159586904 roi=25.65 jours=515 mdd7d=0.03580427
-19. 5533222 UNIUSDT score=85.7 ratio=0.9836199910923725 roi=66.1 jours=720 mdd7d=0.03235563
-20. 8774363 BNBETH score=85.7 ratio=2.875069929156806 roi=2.74 jours=351 mdd7d=0.00862257
+1. 3232564 XRPBTC score=nan ratio=nan roi=178.66 jours=961 mdd7d=0.07696771
+2. 8205304 LINKETH score=nan ratio=nan roi=5.8 jours=426 mdd7d=0.02546187
+3. 3870454 RAYUSDT score=nan ratio=nan roi=136.6 jours=933 mdd7d=0.04339234
+4. 1441451 ETHUSDT score=nan ratio=nan roi=91.06 jours=1268 mdd7d=0.02732294
+5. 8622438 DASHBTC score=nan ratio=nan roi=140.31 jours=371 mdd7d=0.02531928
+6. 1810594 DOGEUSDT score=nan ratio=nan roi=105.96 jours=1148 mdd7d=0.09018672
+7. 8621457 DASHBTC score=nan ratio=nan roi=136.2 jours=371 mdd7d=0.03150282
+8. 197546 ETHUSDT score=nan ratio=nan roi=67.4 jours=1635 mdd7d=0.10061794
+9. 5838966 XRPUSDT score=nan ratio=nan roi=125.22 jours=692 mdd7d=0.11042992
+10. 2654917 BTCUSDT score=nan ratio=nan roi=86.12 jours=1022 mdd7d=0.03273056
+11. 4823941 CRVUSDT score=nan ratio=nan roi=101.83 jours=843 mdd7d=0.04802831
+12. 1764430 LTCUSDT score=nan ratio=nan roi=63.49 jours=1163 mdd7d=0.10746658
+13. 9161957 TSTUSDT score=nan ratio=nan roi=131.31 jours=275 mdd7d=0.01705741
+14. 2198857 CAKEUSDT score=nan ratio=nan roi=100.65 jours=1066 mdd7d=0.12178705
+15. 9173902 币安人生USDT score=nan ratio=nan roi=172.04 jours=271 mdd7d=0.27520936
+16. 3032217 BNBUSDT score=nan ratio=nan roi=100.22 jours=983 mdd7d=0.10565797
+17. 7268980 NEARUSDT score=nan ratio=nan roi=106.73 jours=549 mdd7d=0.00224634
+18. 5839119 XRPBTC score=nan ratio=nan roi=108.25 jours=692 mdd7d=0.09319319
+19. 3856072 RAYUSDT score=nan ratio=nan roi=89.57 jours=934 mdd7d=0.06067769
+20. 4840102 ADAETH score=nan ratio=nan roi=94.7 jours=840 mdd7d=0.06968212
