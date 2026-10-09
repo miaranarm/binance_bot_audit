@@ -91,8 +91,24 @@ def main():
                 fail(f"exact Grid Profit differs from its interval for {sid}")
 
         ratio = numeric(r.get("gridProfitTotalProfitRatio"))
+        floating = numeric(r.get("floatingProfit"))
         if ratio is not None and not 0 <= ratio <= 5:
             fail(f"ratio out of range for {sid}: {ratio}")
+        # In the final table, a populated headline ratio is allowed only when
+        # gridProfit itself is an exact Binance value. Estimated Grid Profit is
+        # shown only in the Low/Mid/High columns and must not masquerade as exact.
+        if grid is None and ratio is not None:
+            fail(f"estimated Grid Profit exposed as headline ratio for {sid}")
+        if grid is None and floating is not None:
+            fail(f"floatingProfit derived from estimated Grid Profit for {sid}")
+        if grid is not None and ratio is not None and floating is not None:
+            total = numeric(r.get("totalProfit"))
+            if total is not None and abs((total - grid) - floating) > max(TOL, abs(total) * TOL):
+                fail(f"floatingProfit identity mismatch for {sid}")
+        if grid is not None and ratio is not None:
+            total = numeric(r.get("totalProfit"))
+            if total is not None and total > 0 and abs(ratio - grid / total) > max(TOL, abs(ratio) * TOL):
+                fail(f"Grid/Total ratio mismatch for {sid}")
 
     exact = sum(numeric(r.get("gridProfit")) is not None for r in rows)
     scored = sum(s is not None for s in scores)
