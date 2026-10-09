@@ -384,24 +384,13 @@ def grid_metrics(item, prices):
 
     marketplace_pnl = num(item.get("pnl"), None)
 
-    detail_grid = first_num(item, ["_detail_grid_profit", "gridProfit", "strategyStats.gridProfit", "stats.gridProfit"])
-    if detail_grid is None:
-        detail_grid = find_exact_numeric_key(item, ["gridProfit"])
-
-    detail_total = first_num(item, ["_detail_total_profit", "totalProfit", "strategyStats.totalProfit", "stats.totalProfit"])
-    if detail_total is None:
-        detail_total = find_exact_numeric_key(item, ["totalProfit"])
-
-    floating_pnl = first_num(item, [
-        "_detail_floating_pnl", "floatingPnl", "floatingPNL", "unrealizedPnl",
-        "unrealizedPNL", "floatProfit", "floatingProfit",
-        "strategyStats.floatingPnl", "strategyStats.unrealizedPnl",
-        "stats.floatingPnl", "stats.unrealizedPnl",
-    ])
-    if floating_pnl is None:
-        floating_pnl = find_exact_numeric_key(
-            item, ["floatingPnl", "unrealizedPnl", "floatProfit", "floatingProfit"]
-        )
+    # Exact accounting metrics must come from the bot detail-page capture.
+    # Do not recursively search marketplace listing payloads: matching field
+    # names can occur in nested analytics/sample objects and do not prove that
+    # the value belongs to this bot or uses the required accounting basis.
+    detail_grid = num(item.get("_detail_grid_profit"), None)
+    detail_total = num(item.get("_detail_total_profit"), None)
+    floating_pnl = num(item.get("_detail_floating_pnl"), None)
 
     # Marketplace PNL is explicitly displayed in USD. For Spot Grid it is
     # Total Profit, i.e. Current Value - Initial Investment. Keep this as the
@@ -430,10 +419,11 @@ def grid_metrics(item, prices):
     estimate_qty = None
     estimate_qty_source = ""
 
-    # Best path: Binance exposes Grid Profit and Total Profit from the same
-    # detail payload. Their ratio is exact and unit-independent. We scale the
-    # exact ratio by the marketplace USD Total Profit so gridProfit is also
-    # comparable in USD across all pairs.
+    # Best path: Binance exposes Grid Profit and Total Profit from a captured
+    # strategy/grid detail endpoint. Their ratio is exact only when both fields
+    # are present in that verified detail capture. We scale that ratio by the
+    # marketplace USD Total Profit for cross-pair comparability; this scaling
+    # is valid only if both sources share the same accounting basis.
     exact_total = detail_total
     if exact_total is None and detail_grid is not None and floating_pnl is not None:
         exact_total = detail_grid + floating_pnl
@@ -975,8 +965,18 @@ def capture_marketplace_detail_calls(page, rows):
                                     " floatingPnl=" + str(roi_float))
                 except Exception as exc:
                     debug_write("ROI_CHART_PARSE_ERROR sid=" + str(active_sid["value"]) + " " + str(exc))
-            # Only accept exact Binance fields. Never infer metrics from PNL/ROI.
-            if active_sid["value"] and any(token in lowered for token in (
+            # Only inspect candidate accounting fields on strategy/grid detail
+            # endpoints (including Binance's public ROI chart). A similarly named
+            # field in unrelated analytics or recommendation responses is not
+            # sufficient evidence for an exact per-bot metric.
+            detail_metric_endpoint = (
+                "/strategy/landing-page/queryroichart" in low_url
+                or any(token in low_url for token in (
+                    "/strategy/detail", "/strategy/info", "/grid/detail",
+                    "/grid/query", "/grid/strategy", "/strategy/query"
+                ))
+            )
+            if active_sid["value"] and detail_metric_endpoint and any(token in lowered for token in (
                 "gridprofit", "totalprofit", "floatingpnl", "unrealizedpnl", "floatprofit", "floatingprofit"
             )):
                 try:
