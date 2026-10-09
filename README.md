@@ -23,7 +23,9 @@ Le classement donne la priorité au ratio **Grid Profit / Total Profit**, puis a
 
 - `roi (fourni par Binance)` conserve le ROI publié par Binance.
 - `roi (calculé)` est calculé comme PNL / investissement minimum × 100. L'investissement minimum peut différer du capital réellement investi : ce champ est un indicateur de comparaison, pas une reproduction garantie du ROI Binance.
-- `gridProfit` est exact uniquement quand une donnée publique Binance suffisamment explicite permet de l'établir. Sinon, le point central estimé est accompagné d'une fourchette basse/centrale/haute lorsqu'elle peut être calculée.
+- `gridProfit` est exact uniquement quand une donnée publique Binance suffisamment explicite permet de l'établir. Sinon, il reste vide dans la colonne principale et le point central estimé est accompagné d'une fourchette basse/centrale/haute lorsqu'elle peut être calculée.
+- Dans le tableau final, `gridProfitTotalProfitRatio` est renseigné uniquement lorsque le Grid Profit est exact. Si le Grid Profit est estimé, le ratio principal reste vide : l'estimation ne doit pas être confondue avec un ratio officiel, car la présentation finale ne possède pas de colonne distincte pour sa provenance.
+- `floatingProfit` reste vide dès que le Grid Profit n'est pas exact. Le résidu entre un profit total et un Grid Profit estimé n'est pas un Floating Profit fiable.
 - Le nombre de transactions ne suffit pas à retrouver le profit exact de chaque cycle. Une reconstruction fondée sur la géométrie de la grille demeure une estimation et ne doit jamais être présentée comme une donnée officielle.
 - `floatingProfit` reste vide lorsqu'il ne peut pas être calculé à partir de valeurs exactes et comparables. Le résidu entre un profit total et un Grid Profit estimé n'est pas un Floating Profit fiable.
 - `profitPerGridAfterFees` utilise la formule documentée de la grille et les frais Spot de référence. Les frais effectifs peuvent varier selon la paire, le niveau VIP et les réductions de frais.
