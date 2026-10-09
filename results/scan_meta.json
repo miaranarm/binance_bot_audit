@@ -1,7 +1,7 @@
 {
-  "scan_utc": "2026-10-09T10:36:18.951951+00:00",
-  "raw_rows": 5826,
-  "tradable_leverage_le_1": 4334,
+  "scan_utc": "2026-10-09T11:14:00.391577+00:00",
+  "raw_rows": 31808,
+  "tradable_leverage_le_1": 13963,
   "collection_complete": false,
   "incomplete_categories": [
     "Marketplace type 12",
@@ -12,29 +12,28 @@
     "Marketplace type 17",
     "Marketplace type 18",
     "Marketplace type 19",
-    "Marketplace type 20",
-    "Spot Grid"
+    "Marketplace type 20"
   ],
   "collection": {
     "Spot Grid": {
-      "collected": 4300,
-      "unique_collected": 4300,
+      "collected": 13748,
+      "unique_collected": 13748,
       "duplicate_rows": 0,
-      "expected": 13784,
-      "complete": false
+      "expected": 13748,
+      "complete": true
     },
     "Marketplace type 2": {
-      "collected": 0,
-      "unique_collected": 0,
+      "collected": 14414,
+      "unique_collected": 14414,
       "duplicate_rows": 0,
-      "expected": 0,
+      "expected": 14414,
       "complete": true
     },
     "Marketplace type 3": {
-      "collected": 0,
-      "unique_collected": 0,
+      "collected": 594,
+      "unique_collected": 594,
       "duplicate_rows": 0,
-      "expected": 0,
+      "expected": 594,
       "complete": true
     },
     "Marketplace type 4": {
@@ -80,10 +79,10 @@
       "complete": true
     },
     "Marketplace type 10": {
-      "collected": 0,
-      "unique_collected": 0,
+      "collected": 1526,
+      "unique_collected": 1526,
       "duplicate_rows": 0,
-      "expected": 0,
+      "expected": 1526,
       "complete": true
     },
     "Marketplace type 11": {
@@ -199,7 +198,7 @@
     ]
   },
   "history_retention_days": 30,
-  "snapshot": "results/history/2026/10/09/20261009T103618Z.csv.gz",
+  "snapshot": "results/history/2026/10/09/20261009T111400Z.csv.gz",
   "old_snapshots_removed": 0,
   "binance_marketplace_refresh": "hourly",
   "fields": [

@@ -255,24 +255,24 @@
   ],
   "collection": {
     "Spot Grid": {
-      "collected": 4300,
-      "unique_collected": 4300,
+      "collected": 13748,
+      "unique_collected": 13748,
       "duplicate_rows": 0,
-      "expected": 13784,
-      "complete": false
+      "expected": 13748,
+      "complete": true
     },
     "Marketplace type 2": {
-      "collected": 0,
-      "unique_collected": 0,
+      "collected": 14414,
+      "unique_collected": 14414,
       "duplicate_rows": 0,
-      "expected": 0,
+      "expected": 14414,
       "complete": true
     },
     "Marketplace type 3": {
-      "collected": 0,
-      "unique_collected": 0,
+      "collected": 594,
+      "unique_collected": 594,
       "duplicate_rows": 0,
-      "expected": 0,
+      "expected": 594,
       "complete": true
     },
     "Marketplace type 4": {
@@ -318,10 +318,10 @@
       "complete": true
     },
     "Marketplace type 10": {
-      "collected": 0,
-      "unique_collected": 0,
+      "collected": 1526,
+      "unique_collected": 1526,
       "duplicate_rows": 0,
-      "expected": 0,
+      "expected": 1526,
       "complete": true
     },
     "Marketplace type 11": {
