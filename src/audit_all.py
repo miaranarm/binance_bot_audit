@@ -250,19 +250,23 @@ def estimate_grid_profit(item, total_profit_usd, prices):
         qty_mid = qty_for_investment(investment_mid)
         qty_high = qty_for_investment(investment_high)
 
-        cycle_low = []
-        cycle_mid = []
-        cycle_high = []
-        for i in range(grids_i):
-            buy, sell = levels[i], levels[i + 1]
-            net_per_qty = (sell - buy) - 0.001 * (buy + sell)
-            cycle_low.append(max(0.0, net_per_qty * qty_low))
-            cycle_mid.append(max(0.0, net_per_qty * qty_mid))
-            cycle_high.append(max(0.0, net_per_qty * qty_high))
-
-        low_quote = matched * min(cycle_low)
-        high_quote = matched * max(cycle_high)
-        mid_quote = matched * (sum(cycle_mid) / len(cycle_mid))
+        # Ne pas tronquer les profits nets négatifs à zéro : les frais peuvent
+        # dépasser le pas de grille. Comme les bornes d'investissement et les
+        # niveaux de grille interagissent, calculer les bornes sur toutes les
+        # combinaisons extrêmes au lieu d'assumer que qty_low donne toujours
+        # le profit le plus faible.
+        net_per_qty = [
+            (levels[i + 1] - levels[i]) - 0.001 * (levels[i] + levels[i + 1])
+            for i in range(grids_i)
+        ]
+        possible = [
+            matched * net * qty
+            for net in net_per_qty
+            for qty in (qty_low, qty_mid, qty_high)
+        ]
+        low_quote = min(possible)
+        high_quote = max(possible)
+        mid_quote = matched * qty_mid * (sum(net_per_qty) / len(net_per_qty))
 
         raw_roi = str(item.get("roi", "")).strip()
         precision = len(raw_roi.split(".", 1)[1]) if "." in raw_roi else 0
