@@ -100,8 +100,13 @@ def main():
         gp_low = number(row.get("gridProfitEstimateLow"))
         gp_mid = number(row.get("gridProfitEstimateMid"))
         gp_high = number(row.get("gridProfitEstimateHigh"))
-        if gp_mid is None and gp is not None and str(row.get("gridProfitSource") or "") == "RECONSTRUCTED":
+        source = str(row.get("gridProfitSource") or "")
+        if gp_mid is None and gp is not None and source in {"RECONSTRUCTED", "BINANCE_EXACT"}:
             gp_mid = gp
+        if source == "BINANCE_EXACT" and gp is not None:
+            gp_low = gp if gp_low is None else gp_low
+            gp_mid = gp if gp_mid is None else gp_mid
+            gp_high = gp if gp_high is None else gp_high
         if gp is None and gp_mid is not None:
             gp = gp_mid
         row["gridProfit"] = gp
