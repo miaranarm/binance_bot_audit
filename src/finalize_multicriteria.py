@@ -36,7 +36,7 @@ def ratio_value(row):
 def range_bounds(value):
     if not value:
         return None, None
-    parts = re.split(r"\\s+-\\s+", str(value).strip(), maxsplit=1)
+    parts = re.split(r"\s+-\s+", str(value).strip(), maxsplit=1)
     if len(parts) != 2:
         return None, None
     return number(parts[0]), number(parts[1])
@@ -44,7 +44,7 @@ def range_bounds(value):
 def profit_grid_min(value):
     if not value:
         return None
-    vals = re.findall(r"[-+]?(?:\\d+\\.?\\d*|\\.\\d+)", str(value).replace(",", ""))
+    vals = re.findall(r"[-+]?(?:\d+\.?\d*|\.\d+)", str(value).replace(",", ""))
     vals = [number(v) for v in vals]
     vals = [v for v in vals if v is not None]
     return min(vals) if vals else None
