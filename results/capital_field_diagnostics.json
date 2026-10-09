@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-10-09T15:32:31.024438+00:00",
+  "generated_utc": "2026-10-09T15:51:35.648224+00:00",
   "purpose": "Find public Binance fields that may represent actual bot investment/capital; diagnostic only, not a validated capital metric.",
   "sample_strategy_ids": [
     "6850680",
@@ -38,7 +38,7 @@
         {
           "path": "$.minInvestment",
           "key": "minInvestment",
-          "value": "1109.82308220000000"
+          "value": "1109.85961048900000"
         },
         {
           "path": "$.initialMargin",
@@ -46,9 +46,9 @@
           "value": null
         }
       ],
-      "minInvestment": "1109.82308220000000",
+      "minInvestment": "1109.85961048900000",
       "roi": "178.14",
-      "pnl": "1471.20131065"
+      "pnl": "1479.00786746"
     },
     {
       "strategyId": "6850680",
@@ -64,7 +64,7 @@
         {
           "path": "$.minInvestment",
           "key": "minInvestment",
-          "value": "724.32806572500000"
+          "value": "724.07475835200000"
         },
         {
           "path": "$.initialMargin",
@@ -72,9 +72,9 @@
           "value": null
         }
       ],
-      "minInvestment": "724.32806572500000",
-      "roi": "15.44",
-      "pnl": "111.61772954"
+      "minInvestment": "724.07475835200000",
+      "roi": "15.24",
+      "pnl": "110.62092327"
     },
     {
       "strategyId": "9161957",
@@ -90,7 +90,7 @@
         {
           "path": "$.minInvestment",
           "key": "minInvestment",
-          "value": "20.20986000000000"
+          "value": "20.20775000000000"
         },
         {
           "path": "$.initialMargin",
@@ -98,9 +98,9 @@
           "value": null
         }
       ],
-      "minInvestment": "20.20986000000000",
-      "roi": "131.48",
-      "pnl": "27.61273089"
+      "minInvestment": "20.20775000000000",
+      "roi": "131.65",
+      "pnl": "27.64839995"
     }
   ],
   "detail_response_fields": [],
@@ -240,7 +240,7 @@
         {
           "path": "$.data[0].minInvestment",
           "key": "minInvestment",
-          "value": "1908.16000000000000"
+          "value": "1904.31000000000000"
         },
         {
           "path": "$.data[0].initialMargin",
@@ -255,7 +255,7 @@
         {
           "path": "$.data[1].minInvestment",
           "key": "minInvestment",
-          "value": "668.52389300000000"
+          "value": "669.43372300000000"
         },
         {
           "path": "$.data[1].initialMargin",
@@ -270,7 +270,7 @@
         {
           "path": "$.data[2].minInvestment",
           "key": "minInvestment",
-          "value": "409.26000000000000"
+          "value": "678.83000000000000"
         },
         {
           "path": "$.data[2].initialMargin",
@@ -285,7 +285,7 @@
         {
           "path": "$.data[3].minInvestment",
           "key": "minInvestment",
-          "value": "129.31100000000000"
+          "value": "408.95000000000000"
         },
         {
           "path": "$.data[3].initialMargin",
@@ -300,7 +300,7 @@
         {
           "path": "$.data[4].minInvestment",
           "key": "minInvestment",
-          "value": "676.52000000000000"
+          "value": "128.85500000000000"
         },
         {
           "path": "$.data[4].initialMargin",
@@ -315,7 +315,7 @@
         {
           "path": "$.data[5].minInvestment",
           "key": "minInvestment",
-          "value": "193.11000000000000"
+          "value": "70.24000000000000"
         },
         {
           "path": "$.data[5].initialMargin",
@@ -330,7 +330,7 @@
         {
           "path": "$.data[6].minInvestment",
           "key": "minInvestment",
-          "value": "66.13000000000000"
+          "value": "58.01000000000000"
         },
         {
           "path": "$.data[6].initialMargin",
@@ -345,7 +345,7 @@
         {
           "path": "$.data[7].minInvestment",
           "key": "minInvestment",
-          "value": "379.02480000000000"
+          "value": "440.99000000000000"
         },
         {
           "path": "$.data[7].initialMargin",
@@ -360,7 +360,7 @@
         {
           "path": "$.data[8].minInvestment",
           "key": "minInvestment",
-          "value": "116.35000000000000"
+          "value": "193.10000000000000"
         },
         {
           "path": "$.data[8].initialMargin",
