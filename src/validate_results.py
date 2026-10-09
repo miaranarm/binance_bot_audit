@@ -41,15 +41,29 @@ for row in rows:
         if grid is None or floating is not None:
             stats["sourceErrors"] += 1
             add_example({"strategyId": row.get("strategyId"), "type": "BAD_RECONSTRUCTED_METRIC_STATE", "gridProfit": grid, "floatingProfit": floating})
-        if ratio_status != "ESTIMATED_NOT_EXACT" or ratio_source != "RECONSTRUCTED_GRID_PROFIT_DIV_BINANCE_MARKETPLACE_TOTAL_PROFIT":
+        # The Grid Profit amount can remain reconstructed while a ratio from
+        # same-source Binance detail metrics is exact. Validate those separately:
+        # never compare an exact detail ratio against the estimated USD ratio.
+        exact_ratio = (
+            ratio_status == "EXACT"
+            and ratio_source in {
+                "BINANCE_DETAIL_GRID_DIV_TOTAL_EXACT",
+                "BINANCE_DETAIL_TOTAL_MINUS_FLOATING_DIV_TOTAL_EXACT",
+            }
+        )
+        if not exact_ratio:
+            if ratio_status != "ESTIMATED_NOT_EXACT" or ratio_source != "RECONSTRUCTED_GRID_PROFIT_DIV_BINANCE_MARKETPLACE_TOTAL_PROFIT":
+                stats["sourceErrors"] += 1
+                add_example({"strategyId": row.get("strategyId"), "type": "BAD_RECONSTRUCTED_RATIO_PROVENANCE", "status": ratio_status, "source": ratio_source})
+            if ratio is None:
+                stats["sourceErrors"] += 1
+                add_example({"strategyId": row.get("strategyId"), "type": "MISSING_PRIMARY_ESTIMATED_RATIO"})
+            if rmid is not None and ratio is not None and abs(ratio-rmid) > 1e-6:
+                stats["ratioErrors"] += 1
+                add_example({"strategyId": row.get("strategyId"), "type": "PRIMARY_RATIO_MISMATCH", "ratio": ratio, "mid": rmid})
+        elif ratio is None:
             stats["sourceErrors"] += 1
-            add_example({"strategyId": row.get("strategyId"), "type": "BAD_RECONSTRUCTED_RATIO_PROVENANCE", "status": ratio_status, "source": ratio_source})
-        if ratio is None:
-            stats["sourceErrors"] += 1
-            add_example({"strategyId": row.get("strategyId"), "type": "MISSING_PRIMARY_ESTIMATED_RATIO"})
-        if rmid is not None and ratio is not None and abs(ratio-rmid) > 1e-6:
-            stats["ratioErrors"] += 1
-            add_example({"strategyId": row.get("strategyId"), "type": "PRIMARY_RATIO_MISMATCH", "ratio": ratio, "mid": rmid})
+            add_example({"strategyId": row.get("strategyId"), "type": "MISSING_PRIMARY_EXACT_RATIO"})
         if any(v is not None and v < 0 for v in (low, mid, high)):
             # Negative reconstructed estimates may be economically valid when
             # estimated profit per grid after fees is negative. Preserve and report them.
