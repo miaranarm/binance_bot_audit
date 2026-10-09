@@ -35,7 +35,7 @@ def debug_write(line):
     path = Path(__file__).resolve().parent.parent / "strategy_detail_debug.log"
     try:
         with path.open("a", encoding="utf-8") as handle:
-            handle.write(str(line)[:50000] + "\\n")
+            handle.write(str(line)[:50000] + "\n")
     except Exception:
         # Diagnostics must never interrupt the public-marketplace scan.
         pass
