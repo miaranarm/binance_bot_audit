@@ -96,3 +96,17 @@ The next investigation checked Binance's official Spot API documentation, becaus
 ### Decision for the public bot audit
 
 For third-party public Marketplace bots, proceed only with (a) a publicly accessible, successful Binance response that explicitly exposes Grid Profit and its unit/accounting basis, or (b) a documented Binance-supported public data source containing complete bot-specific fills and fees. Otherwise keep gridProfit exact blank, retain all current estimate methods/ranges, and preserve the current CSV presentation. Do not treat minInvestment, Marketplace pnl, roi, or matchedCount alone as sufficient to infer exact Grid Profit or the true capital deployed.
+
+
+## Follow-up code-review finding: exact ratio vs scaled Grid Profit amount
+
+Reviewing `grid_metrics()` after the source audit found a separate provenance issue to address before any exact values are trusted:
+
+- When a detail endpoint supplies `Grid Profit` and `Total Profit`, the ratio can be calculated from those two same-source values.
+- The current pipeline then may multiply that ratio by Marketplace `pnl` to create the CSV `gridProfit` amount, while labelling the amount `BINANCE_EXACT`.
+- The Marketplace amount is expressed in USD, whereas Binance's Spot Grid FAQ says Grid Profit is displayed in the pair's quote asset. A ratio may be unit-invariant when both figures share the same valuation basis, but the scaled USD amount is not itself the raw exact Binance detail value unless the conversion basis and timestamp are verified.
+- The same scaling issue can occur when detail `Total Profit` and `Floating Profit` are used to reconstruct detail `Grid Profit`, then the ratio is applied to Marketplace PNL.
+
+**Required handling:** keep the same-source ratio and its provenance distinct from a USD amount derived by applying that ratio to Marketplace PNL. Do not label a scaled amount as the exact raw Grid Profit, and do not derive Floating Profit from a scaled amount as though it were exact. Existing estimates and CSV columns must remain intact.
+
+This is a code-review finding, not a claim that current public scans actually contain qualifying detail values: the latest validation still reports 0 exact rows. No code was changed in this follow-up; a patch should be implemented with targeted regression tests before it can be considered fixed.
