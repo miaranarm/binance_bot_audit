@@ -1,5 +1,11 @@
 #!/usr/bin/env python3
-"""Finalise l'export public Binance en un CSV strict et classé pour l'analyse."""
+"""Finalize the public Binance export while retaining Claude's Grid Profit estimates.
+
+The headline gridProfit remains populated when a reconstructed midpoint exists,
+but gridProfitSource and gridProfitEstimateStatus clearly distinguish it from
+an exact Binance value. A residual floatingProfit based on an estimate is also
+labelled as reconstructed, never as an official Binance metric.
+"""
 import csv, math, re
 from pathlib import Path
 
@@ -9,10 +15,11 @@ FIELDS = [
     "rank", "strategyId", "category", "strategyType", "symbol", "leverage",
     "minInvestment", "runningTime", "runningTime en J",
     "roi (fourni par Binance)", "roi (calculé)", "pnl", "matchedTrades",
-    "Trades / J", "mdd7d", "gridProfit", "gridMode", "gridCount",
-    "qtyPerOrderEstimate", "gridProfitEstimateLow", "gridProfitEstimateMid",
-    "gridProfitEstimateHigh", "totalProfit", "gridProfitTotalProfitRatio",
-    "floatingProfit", "currentPrice", "priceRange", "profitPerGridAfterFees", "score",
+    "Trades / J", "mdd7d", "gridProfit", "gridProfitSource", "gridProfitEstimateStatus",
+    "gridMode", "gridCount", "qtyPerOrderEstimate", "gridProfitEstimateLow",
+    "gridProfitEstimateMid", "gridProfitEstimateHigh", "totalProfit",
+    "gridProfitTotalProfitRatio", "floatingProfit", "floatingProfitSource",
+    "currentPrice", "priceRange", "profitPerGridAfterFees", "score",
 ]
 
 def number(v, default=None):
@@ -24,28 +31,20 @@ def number(v, default=None):
     except (TypeError, ValueError):
         return default
 
-def ratio_value(row):
-    # Preserve a ratio explicitly sourced by the scanner. Its source/status
-    # columns remain in the intermediate file even though the final CSV is compact.
+def ratio_value(row, grid_value=None):
     direct = number(row.get("gridProfitTotalProfitRatio"))
     if direct is not None:
         return direct
-    source = str(row.get("gridProfitSource") or "")
     total = number(row.get("totalProfit"))
-    if total in (None, 0):
+    gp = grid_value if grid_value is not None else number(row.get("gridProfit"))
+    if total in (None, 0) or gp is None:
         return None
-    if source == "BINANCE_EXACT":
-        gp = number(row.get("gridProfit"))
-        return gp / total if gp is not None else None
-    if source == "RECONSTRUCTED":
-        mid = number(row.get("gridProfitEstimateMid"))
-        return mid / total if mid is not None else None
-    return None
+    return gp / total
 
 def range_bounds(value):
     if not value:
         return None, None
-    parts = re.split(r"\s+-\s+", str(value).strip(), maxsplit=1)
+    parts = re.split(r"\\s+-\\s+", str(value).strip(), maxsplit=1)
     if len(parts) != 2:
         return None, None
     return number(parts[0]), number(parts[1])
@@ -53,7 +52,7 @@ def range_bounds(value):
 def profit_grid_min(value):
     if not value:
         return None
-    vals = re.findall(r"[-+]?(?:\d+\.?\d*|\.\d+)", str(value).replace(",", ""))
+    vals = re.findall(r"[-+]?(?:\\d+\\.?\\d*|\\.\\d+)", str(value).replace(",", ""))
     vals = [number(v) for v in vals]
     vals = [v for v in vals if v is not None]
     return min(vals) if vals else None
@@ -64,9 +63,7 @@ def percentile(values, value, reverse=False):
         return 0.0
     if len(vals) == 1:
         return 50.0
-    # Percentile rank robust to outliers; reverse for risk metrics.
-    less = sum(v <= value for v in vals)
-    score = 100.0 * less / len(vals)
+    score = 100.0 * sum(v <= value for v in vals) / len(vals)
     return 100.0 - score if reverse else score
 
 def main():
@@ -77,7 +74,6 @@ def main():
     if not rows:
         raise SystemExit("Le CSV source ne contient aucune stratégie.")
 
-    # Fail closed on unknown leverage. Keep only unique public strategies <= 1x.
     unique = {}
     for row in rows:
         sid = str(row.get("strategyId") or "").strip()
@@ -96,49 +92,57 @@ def main():
         pnl = number(row.get("pnl"))
         min_inv = number(row.get("minInvestment"))
         roi_binance = number(row.get("roi"))
-        # This is a distinct calculation against Binance's minimumInvestment field;
-        # it is not presented as Binance ROI because minimum investment may not be actual capital.
         roi_calc = pnl / min_inv * 100.0 if pnl is not None and min_inv is not None and min_inv > 0 else None
         row["runningTime en J"] = days
         row["roi (fourni par Binance)"] = roi_binance
         row["roi (calculé)"] = roi_calc
         row["Trades / J"] = trades / days if trades is not None and days is not None and days > 0 else None
 
-        # Ensure the estimate midpoint is the same value used for the headline Grid Profit.
-        gp = number(row.get("gridProfit"))
+        gp_exact_or_existing = number(row.get("gridProfit"))
         gp_low = number(row.get("gridProfitEstimateLow"))
         gp_mid = number(row.get("gridProfitEstimateMid"))
         gp_high = number(row.get("gridProfitEstimateHigh"))
-        source = str(row.get("gridProfitSource") or "")
-        if gp_mid is None and gp is not None and source in {"RECONSTRUCTED", "BINANCE_EXACT"}:
-            gp_mid = gp
-        if source == "BINANCE_EXACT" and gp is not None:
+        source = str(row.get("gridProfitSource") or "").strip()
+
+        if source == "BINANCE_EXACT" and gp_exact_or_existing is not None:
+            gp = gp_exact_or_existing
             gp_low = gp if gp_low is None else gp_low
             gp_mid = gp if gp_mid is None else gp_mid
             gp_high = gp if gp_high is None else gp_high
-            official_gp = gp
+            status = "EXACT"
+        elif source == "RECONSTRUCTED":
+            gp = gp_mid if gp_mid is not None else gp_exact_or_existing
+            if gp_mid is None:
+                gp_mid = gp
+            status = "ESTIMATED_NOT_EXACT" if gp is not None else "UNAVAILABLE"
         else:
-            # The headline Grid Profit column is reserved for Binance-exact
-            # values. Keep reconstructed midpoint and uncertainty in estimate
-            # columns; never relabel an estimate as the official metric.
-            official_gp = None
-        row["gridProfit"] = official_gp
+            gp = gp_exact_or_existing
+            status = "UNAVAILABLE" if gp is None else "UNVERIFIED_SOURCE"
+
+        row["gridProfit"] = gp
+        row["gridProfitSource"] = source
+        row["gridProfitEstimateStatus"] = status
         row["gridProfitEstimateLow"] = gp_low
         row["gridProfitEstimateMid"] = gp_mid
         row["gridProfitEstimateHigh"] = gp_high
-        row["gridProfitTotalProfitRatio"] = ratio_value(row)
+        row["gridProfitTotalProfitRatio"] = ratio_value(row, gp)
 
-        # Do not invent a total or floating PnL when Binance has not exposed enough data.
         total = number(row.get("totalProfit"))
-        floating = number(row.get("floatingProfit"))
-        floating_source = str(row.get("floatingProfitSource") or "")
-        # A residual based on an estimated Grid Profit is not Floating Profit.
-        # Keep the field blank unless its basis is exact/official.
-        if source != "BINANCE_EXACT" or "RECONSTRUCTED" in floating_source:
-            floating = None
-        elif floating is None and total is not None and official_gp is not None:
-            floating = total - official_gp
-        row["floatingProfit"] = floating
+        if total is None:
+            total = number(row.get("pnl"))
+            if total is not None:
+                row["totalProfit"] = total
+                if not row.get("totalProfitSource"):
+                    row["totalProfitSource"] = "BINANCE_MARKETPLACE_PNL_FALLBACK"
+        if gp is not None and total is not None:
+            row["floatingProfit"] = total - gp
+            row["floatingProfitSource"] = (
+                "TOTAL_MINUS_EXACT_GRID_PROFIT" if status == "EXACT"
+                else "RECONSTRUCTED_RESIDUAL_NOT_OFFICIAL"
+            )
+        else:
+            row["floatingProfit"] = None
+            row["floatingProfitSource"] = ""
 
         lo, hi = range_bounds(row.get("priceRange"))
         price = number(row.get("currentPrice"))
@@ -154,12 +158,8 @@ def main():
         row["_mdd"] = number(row.get("mdd7d"))
         enriched.append(row)
 
-    # Score aligned with the user's priorities: Grid/Total ratio, healthy grid economics,
-    # price near the centre of range, sustained runtime/activity, then drawdown.
     for row in enriched:
         ratio = row["_ratio"]
-        # Ratio is meaningful for ranking only when Total Profit is positive; don't reward
-        # pathological ratios caused by zero/negative totals.
         ratio_score = min(100.0, max(0.0, ratio * 100.0)) if ratio is not None and number(row.get("totalProfit"), 0) > 0 else 0.0
         pg = row["_profit_grid_min"]
         pg_score = 100.0 if pg is not None and pg >= 1.5 else (max(0.0, pg / 1.5 * 100.0) if pg is not None else 0.0)
@@ -189,8 +189,6 @@ def main():
             writer.writerow(out)
     TMP.replace(SRC)
 
-    # Keep the human-readable summary consistent with the final ranking rather
-    # than leaving the preliminary ROI/PNL ranking produced by audit_all.py.
     summary = Path("results/current_multicriteria_summary.txt")
     with summary.open("w", encoding="utf-8") as handle:
         handle.write(f"COUNT={len(enriched)}\\n")
@@ -200,15 +198,15 @@ def main():
         for rank, row in enumerate(enriched[:20], 1):
             handle.write(
                 f"{rank}. {row.get('strategyId', '')} {row.get('symbol', '')} "
-                f"score={row.get('score', 0):.4f} "
-                f"gridProfit={row.get('gridProfit', '')} "
+                f"score={row.get('score', 0):.4f} gridProfit={row.get('gridProfit', '')} "
+                f"gridProfitSource={row.get('gridProfitSource', '')} "
                 f"ratio={row.get('gridProfitTotalProfitRatio', '')} "
                 f"roiBinance={row.get('roi (fourni par Binance)', '')} "
                 f"pnl={row.get('pnl', '')} tradesPerDay={row.get('Trades / J', '')} "
                 f"mdd7d={row.get('mdd7d', '')}\\n"
             )
-    print(f"CSV strict finalisé: {len(enriched)} bots uniques, levier <= 1; {len(FIELDS)} colonnes.")
-    print("Scores: ratio Grid/Total 35%, profit/grille 15%, prix centré 15%, durée 10%, activité 10%, profit/trade 5%, MDD 10%.")
+    print(f"CSV finalisé: {len(enriched)} bots; gridProfit exact={sum(r['gridProfitEstimateStatus']=='EXACT' for r in enriched)}, estimé={sum(r['gridProfitEstimateStatus']=='ESTIMATED_NOT_EXACT' for r in enriched)}.")
+    print("Les estimations restent identifiées par leur source; elles ne sont pas présentées comme des chiffres officiels Binance.")
 
 if __name__ == "__main__":
     main()
