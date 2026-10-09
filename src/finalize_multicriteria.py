@@ -118,7 +118,12 @@ def main():
         # Do not invent a total or floating PnL when Binance has not exposed enough data.
         total = number(row.get("totalProfit"))
         floating = number(row.get("floatingProfit"))
-        if floating is None and total is not None and gp is not None:
+        floating_source = str(row.get("floatingProfitSource") or "")
+        # A residual based on an estimated Grid Profit is not Floating Profit.
+        # Keep the field blank unless its basis is exact/official.
+        if "RECONSTRUCTED" in floating_source or source == "RECONSTRUCTED":
+            floating = None
+        elif floating is None and total is not None and gp is not None and source == "BINANCE_EXACT":
             floating = total - gp
         row["floatingProfit"] = floating
 
