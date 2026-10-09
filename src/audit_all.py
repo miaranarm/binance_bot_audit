@@ -485,7 +485,12 @@ def pages(page, endpoint, base_query, category, streamer, diagnostics, stats=Non
                 if not http.ok:
                     raise RuntimeError(f"HTTP {http.status}")
                 response = http.json()
-                data = response.get("data") or []
+                if not isinstance(response, dict):
+                    raise RuntimeError("JSON payload is not an object")
+                raw_data = response.get("data")
+                if not isinstance(raw_data, list):
+                    raise RuntimeError("JSON payload has no list-valued data field")
+                data = raw_data
                 break
             except Exception as exc:
                 diagnostics.append({
@@ -504,7 +509,10 @@ def pages(page, endpoint, base_query, category, streamer, diagnostics, stats=Non
             break
 
         if expected is None:
-            expected = int(num(response.get("total"), 0))
+            total_raw = response.get("total")
+            parsed_total = num(total_raw, None)
+            # Missing total is not equivalent to an announced total of zero.
+            expected = int(parsed_total) if parsed_total is not None and parsed_total >= 0 else None
 
         for item in data:
             item = dict(item)
@@ -521,10 +529,20 @@ def pages(page, endpoint, base_query, category, streamer, diagnostics, stats=Non
         failed = True           # plafond MAX_PAGES atteint : on n'a peut-être pas tout lu
 
     if stats is not None:
+        strategy_ids = [
+            str(item.get("strategyId") or "").strip()
+            for item in rows
+            if str(item.get("strategyId") or "").strip()
+        ]
+        unique_collected = len(set(strategy_ids))
         stats[category] = {
             "collected": len(rows),
+            "unique_collected": unique_collected,
+            "duplicate_rows": len(rows) - unique_collected,
             "expected": expected,
-            "complete": (not failed) and (not expected or len(rows) >= expected),
+            # We only mark a category complete when Binance gave us a total
+            # and the unique IDs cover that total. Unknown totals fail closed.
+            "complete": (not failed) and expected is not None and unique_collected >= expected,
         }
     return rows
 
@@ -876,7 +894,11 @@ def capture_marketplace_detail_calls(page, rows):
             running = num(row.get("runningTime"), 0.0)
             # Correction : le champ peut s'appeler matchedTrades, matchedCount ou
             # latestMatchedCount selon la réponse ; l'ancien code ne lisait que les deux derniers.
-            matched = num(row.get("matchedCount", row.get("latestMatchedCount", row.get("matchedTrades", 0))), 0.0)
+            matched_values = [
+                num(row.get(key), 0.0)
+                for key in ("matchedTrades", "matchedCount", "latestMatchedCount", "totalMatchedTrades")
+            ]
+            matched = max(matched_values, default=0.0)
             pnl = num(row.get("pnl"), 0.0)
             if running <= 0 or matched <= 0 or pnl == 0:
                 continue
@@ -1053,6 +1075,19 @@ def main():
             "collection_complete": collection_complete,
             "incomplete_categories": incomplete,
             "collection": stats,
+            "collection_method": {
+                "page_size": PAGE_SIZE,
+                "max_pages_per_category": MAX_PAGES,
+                "max_attempts_per_page": MAX_ATTEMPTS,
+                "sort": "pnl",
+                "strategy_types_scanned": [1, *range(2, 21)],
+                "completeness_rule": "Each category must expose a total and the unique collected strategy IDs must cover that total; exhausted retries or page cap means incomplete.",
+                "limitations": [
+                    "Marketplace sorting by PNL can change during pagination; total/unique checks detect many, but not every, skip/duplicate caused by live resorting.",
+                    "Only strategy types 1 through 20 are queried; types above 20 are not covered unless Binance documents/discovers them.",
+                    "The endpoint total can change during a live scan, so completeness is relative to the first successful page response."
+                ],
+            },
             "history_retention_days": RETENTION_DAYS,
             "snapshot": str(snapshot),
             "old_snapshots_removed": removed,
