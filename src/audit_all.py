@@ -507,11 +507,19 @@ def grid_metrics(item, prices):
     # Reconstructed Grid Profit is intentionally promoted into the CSV, but
     # remains explicitly marked RECONSTRUCTED / ESTIMATED_NOT_EXACT.
 
-    # Do not derive Floating Profit from a Marketplace USD total and an
-    # estimated/scaled Grid Profit. This pipeline has not verified a common
-    # unit and valuation basis for those values.
+    # Preserve the existing Floating Profit calculation method, but only
+    # when both inputs are exact and the total uses the same detail accounting
+    # basis. Never combine Marketplace USD PNL with an estimated/scaled amount.
     floating_profit = None
     floating_basis = None
+    if (
+        total_source == "BINANCE_DETAIL_TOTAL_PROFIT"
+        and total_profit is not None
+        and grid_profit is not None
+        and grid_profit_source == "BINANCE_EXACT"
+    ):
+        floating_profit = total_profit - grid_profit
+        floating_basis = "TOTAL_MINUS_EXACT_GRID_PROFIT"
 
     return (
         ratio, price_range, profit_grid, profit_grid_source, ratio_source,
