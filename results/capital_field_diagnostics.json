@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-10-09T15:11:56.896888+00:00",
+  "generated_utc": "2026-10-09T15:22:36.139130+00:00",
   "purpose": "Find public Binance fields that may represent actual bot investment/capital; diagnostic only, not a validated capital metric.",
   "sample_strategy_ids": [
     "6850680",
@@ -103,1037 +103,415 @@
       "pnl": "27.61273089"
     }
   ],
-  "detail_response_fields": [
+  "detail_response_fields": [],
+  "public_bapi_endpoint_schemas": [
     {
-      "strategyId": "197546",
-      "url": "https://bin.bnbstatic.com/api/i18n/-/web/cms/en/spot-strategy-ui",
+      "url": "https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/introduction",
       "httpStatus": 200,
-      "fields": [
+      "rootKeys": [
+        "code",
+        "message",
+        "messageDetail",
+        "data",
+        "success"
+      ],
+      "keyPaths": [
+        "$.code",
+        "$.message",
+        "$.messageDetail",
+        "$.data",
+        "$.data[0].activeCount",
+        "$.data[0].totalValue",
+        "$.data[0].strategyType",
+        "$.data[0].lastUpdateTime",
+        "$.success"
+      ],
+      "dataSampleKeys": [
+        "activeCount",
+        "totalValue",
+        "strategyType",
+        "lastUpdateTime"
+      ],
+      "capitalCandidateFields": []
+    },
+    {
+      "url": "https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryTopStrategy",
+      "httpStatus": 200,
+      "rootKeys": [
+        "code",
+        "message",
+        "messageDetail",
+        "data",
+        "total",
+        "success"
+      ],
+      "keyPaths": [
+        "$.code",
+        "$.message",
+        "$.messageDetail",
+        "$.data",
+        "$.data[0].symbol",
+        "$.data[0].copyCount",
+        "$.data[0].roi",
+        "$.data[0].pnl",
+        "$.data[0].runningTime",
+        "$.data[0].strategyId",
+        "$.data[0].strategyType",
+        "$.data[0].direction",
+        "$.data[0].userId",
+        "$.data[0].strategyParams",
+        "$.data[0].strategyParams.type",
+        "$.data[0].strategyParams.lowerLimit",
+        "$.data[0].strategyParams.upperLimit",
+        "$.data[0].strategyParams.gridCount",
+        "$.data[0].strategyParams.triggerPrice",
+        "$.data[0].strategyParams.stopLowerLimit",
+        "$.data[0].strategyParams.stopUpperLimit",
+        "$.data[0].strategyParams.baseAsset",
+        "$.data[0].strategyParams.quoteAsset",
+        "$.data[0].strategyParams.leverage",
+        "$.data[0].strategyParams.trailingUp",
+        "$.data[0].strategyParams.trailingDown",
+        "$.data[0].strategyParams.autoInitPos",
+        "$.data[0].strategyParams.stopTriggerType",
+        "$.data[0].strategyParams.pnlStopTriggerType",
+        "$.data[0].strategyParams.stopSlPnl",
+        "$.data[0].strategyParams.stopTpPnl",
+        "$.data[0].strategyParams.initialMargin",
+        "$.data[0].strategyParams.totalAdjustmentAmount",
+        "$.data[0].strategyParams.cps",
+        "$.data[0].strategyParams.trailingUpLimitPrice",
+        "$.data[0].strategyParams.trailingDownLimitPrice",
+        "$.data[0].trailingType",
+        "$.data[0].latestMatchedCount",
+        "$.data[0].matchedCount",
+        "$.data[0].minInvestment",
+        "$.data[0].sevenDayMdd",
+        "$.data[0].autoInitPos",
+        "$.data[0].stopTriggerType",
+        "$.data[0].pnlStopTriggerType",
+        "$.data[0].stopSlPnl",
+        "$.data[0].stopTpPnl",
+        "$.data[0].initialMargin",
+        "$.data[0].totalAdjustmentAmount",
+        "$.data[0].cps",
+        "$.data[0].trailingUpLimitPrice",
+        "$.data[0].trailingDownLimitPrice",
+        "$.data[0].orderCount",
+        "$.data[0].density",
+        "$.total",
+        "$.success"
+      ],
+      "dataSampleKeys": [
+        "symbol",
+        "copyCount",
+        "roi",
+        "pnl",
+        "runningTime",
+        "strategyId",
+        "strategyType",
+        "direction",
+        "userId",
+        "strategyParams",
+        "trailingType",
+        "latestMatchedCount",
+        "matchedCount",
+        "minInvestment",
+        "sevenDayMdd",
+        "autoInitPos",
+        "stopTriggerType",
+        "pnlStopTriggerType",
+        "stopSlPnl",
+        "stopTpPnl",
+        "initialMargin",
+        "totalAdjustmentAmount",
+        "cps",
+        "trailingUpLimitPrice",
+        "trailingDownLimitPrice",
+        "orderCount",
+        "density"
+      ],
+      "capitalCandidateFields": [
         {
-          "path": "$.investment",
-          "key": "investment",
-          "value": "Investment"
+          "path": "$.data[0].strategyParams.initialMargin",
+          "key": "initialMargin",
+          "value": null
+        },
+        {
+          "path": "$.data[0].minInvestment",
+          "key": "minInvestment",
+          "value": "1908.16000000000000"
+        },
+        {
+          "path": "$.data[0].initialMargin",
+          "key": "initialMargin",
+          "value": null
+        },
+        {
+          "path": "$.data[1].strategyParams.initialMargin",
+          "key": "initialMargin",
+          "value": null
+        },
+        {
+          "path": "$.data[1].minInvestment",
+          "key": "minInvestment",
+          "value": "668.52389300000000"
+        },
+        {
+          "path": "$.data[1].initialMargin",
+          "key": "initialMargin",
+          "value": null
+        },
+        {
+          "path": "$.data[2].strategyParams.initialMargin",
+          "key": "initialMargin",
+          "value": null
+        },
+        {
+          "path": "$.data[2].minInvestment",
+          "key": "minInvestment",
+          "value": "409.26000000000000"
+        },
+        {
+          "path": "$.data[2].initialMargin",
+          "key": "initialMargin",
+          "value": null
+        },
+        {
+          "path": "$.data[3].strategyParams.initialMargin",
+          "key": "initialMargin",
+          "value": null
+        },
+        {
+          "path": "$.data[3].minInvestment",
+          "key": "minInvestment",
+          "value": "129.31100000000000"
+        },
+        {
+          "path": "$.data[3].initialMargin",
+          "key": "initialMargin",
+          "value": null
+        },
+        {
+          "path": "$.data[4].strategyParams.initialMargin",
+          "key": "initialMargin",
+          "value": null
+        },
+        {
+          "path": "$.data[4].minInvestment",
+          "key": "minInvestment",
+          "value": "676.52000000000000"
+        },
+        {
+          "path": "$.data[4].initialMargin",
+          "key": "initialMargin",
+          "value": null
+        },
+        {
+          "path": "$.data[5].strategyParams.initialMargin",
+          "key": "initialMargin",
+          "value": null
+        },
+        {
+          "path": "$.data[5].minInvestment",
+          "key": "minInvestment",
+          "value": "193.11000000000000"
+        },
+        {
+          "path": "$.data[5].initialMargin",
+          "key": "initialMargin",
+          "value": null
+        },
+        {
+          "path": "$.data[6].strategyParams.initialMargin",
+          "key": "initialMargin",
+          "value": null
+        },
+        {
+          "path": "$.data[6].minInvestment",
+          "key": "minInvestment",
+          "value": "66.13000000000000"
+        },
+        {
+          "path": "$.data[6].initialMargin",
+          "key": "initialMargin",
+          "value": null
+        },
+        {
+          "path": "$.data[7].strategyParams.initialMargin",
+          "key": "initialMargin",
+          "value": null
+        },
+        {
+          "path": "$.data[7].minInvestment",
+          "key": "minInvestment",
+          "value": "379.02480000000000"
+        },
+        {
+          "path": "$.data[7].initialMargin",
+          "key": "initialMargin",
+          "value": null
+        },
+        {
+          "path": "$.data[8].strategyParams.initialMargin",
+          "key": "initialMargin",
+          "value": null
+        },
+        {
+          "path": "$.data[8].minInvestment",
+          "key": "minInvestment",
+          "value": "116.35000000000000"
+        },
+        {
+          "path": "$.data[8].initialMargin",
+          "key": "initialMargin",
+          "value": null
         }
       ]
     },
     {
-      "strategyId": "197546",
-      "url": "https://bin.bnbstatic.com/api/i18n/-/web/cms/en/strategy-widget",
+      "url": "https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryTopUmDcaStrategy",
       "httpStatus": 200,
-      "fields": [
-        {
-          "path": "$.investment",
-          "key": "investment",
-          "value": "Investment"
-        },
-        {
-          "path": "$.min-investment",
-          "key": "min-investment",
-          "value": "Min. Investment"
-        },
-        {
-          "path": "$.total-investment",
-          "key": "total-investment",
-          "value": "Total Investment"
-        },
-        {
-          "path": "$.investment-amount",
-          "key": "investment-amount",
-          "value": "Investment Amount"
-        }
-      ]
+      "rootKeys": [
+        "code",
+        "message",
+        "messageDetail",
+        "data",
+        "total",
+        "success"
+      ],
+      "keyPaths": [
+        "$.code",
+        "$.message",
+        "$.messageDetail",
+        "$.data",
+        "$.data[0].batchId",
+        "$.data[0].symbol",
+        "$.data[0].copyCount",
+        "$.data[0].roi",
+        "$.data[0].pnl",
+        "$.data[0].runningTime",
+        "$.data[0].strategyId",
+        "$.data[0].strategyType",
+        "$.data[0].direction",
+        "$.data[0].userId",
+        "$.data[0].sevenDayMdd",
+        "$.data[0].leverage",
+        "$.data[0].sharingParams",
+        "$.data[0].sharingParams.direction",
+        "$.data[0].sharingParams.leverage",
+        "$.data[0].sharingParams.priceDev",
+        "$.data[0].sharingParams.tpRatio",
+        "$.data[0].sharingParams.initBaseOrderAmount",
+        "$.data[0].sharingParams.initSafetyOrderAmount",
+        "$.data[0].sharingParams.startType",
+        "$.data[0].sharingParams.stopType",
+        "$.data[0].sharingParams.stopPrice",
+        "$.data[0].sharingParams.stopPriceCondition",
+        "$.data[0].sharingParams.maxSafetyOrderCount",
+        "$.data[0].sharingParams.priceDevMulti",
+        "$.data[0].sharingParams.orderSizeMulti",
+        "$.data[0].sharingParams.completedRound",
+        "$.data[0].sharingParams.sharing",
+        "$.data[0].sharingParams.initBaseSafetyMarginRatio",
+        "$.data[0].sharingParams.marginAsset",
+        "$.data[0].sharingParams.symbol",
+        "$.data[0].sharingParams.copyCount",
+        "$.data[0].sharingParams.roi",
+        "$.data[0].sharingParams.pnl",
+        "$.data[0].sharingParams.runningTime",
+        "$.data[0].sharingParams.strategyType",
+        "$.data[0].sharingParams.sevenDayMdd",
+        "$.data[0].sharingParams.strategyId",
+        "$.total",
+        "$.success"
+      ],
+      "dataSampleKeys": [
+        "batchId",
+        "symbol",
+        "copyCount",
+        "roi",
+        "pnl",
+        "runningTime",
+        "strategyId",
+        "strategyType",
+        "direction",
+        "userId",
+        "sevenDayMdd",
+        "leverage",
+        "sharingParams"
+      ],
+      "capitalCandidateFields": []
     },
     {
-      "strategyId": "197546",
-      "url": "https://bin.bnbstatic.com/api/i18n/-/web/cms/en/mainuc-strategy-ui",
+      "url": "https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryRoiChart",
       "httpStatus": 200,
-      "fields": [
-        {
-          "path": "$.total-investment",
-          "key": "total-investment",
-          "value": "Total Investment"
-        },
-        {
-          "path": "$.initial-investment",
-          "key": "initial-investment",
-          "value": "Initial Investment"
-        }
-      ]
+      "rootKeys": [
+        "code",
+        "message",
+        "messageDetail",
+        "data",
+        "success"
+      ],
+      "keyPaths": [
+        "$.code",
+        "$.message",
+        "$.messageDetail",
+        "$.data",
+        "$.data[0].rootUserId",
+        "$.data[0].strategyId",
+        "$.data[0].roi",
+        "$.data[0].pnl",
+        "$.data[0].time",
+        "$.success"
+      ],
+      "dataSampleKeys": [
+        "rootUserId",
+        "strategyId",
+        "roi",
+        "pnl",
+        "time"
+      ],
+      "capitalCandidateFields": []
     },
     {
-      "strategyId": "197546",
-      "url": "https://bin.bnbstatic.com/api/i18n/-/web/cms/en/futures-strategy-ui",
+      "url": "https://www.binance.com/bapi/futures/v1/public/future/common/grid/coef",
       "httpStatus": 200,
-      "fields": [
-        {
-          "path": "$.investment",
-          "key": "investment",
-          "value": "Total Investment"
-        },
-        {
-          "path": "$.min-investment",
-          "key": "min-investment",
-          "value": "Min Investment"
-        },
-        {
-          "path": "$.investment-amount",
-          "key": "investment-amount",
-          "value": "Investment Amount"
-        }
-      ]
-    },
-    {
-      "strategyId": "197546",
-      "url": "https://bin.bnbstatic.com/api/i18n/-/web/cms/en/mainuc-strategy-ui",
-      "httpStatus": 200,
-      "fields": [
-        {
-          "path": "$.total-investment",
-          "key": "total-investment",
-          "value": "Total Investment"
-        },
-        {
-          "path": "$.initial-investment",
-          "key": "initial-investment",
-          "value": "Initial Investment"
-        }
-      ]
-    },
-    {
-      "strategyId": "1548524",
-      "url": "https://bin.bnbstatic.com/api/i18n/-/web/cms/en/futures-strategy-ui",
-      "httpStatus": 200,
-      "fields": [
-        {
-          "path": "$.investment",
-          "key": "investment",
-          "value": "Total Investment"
-        },
-        {
-          "path": "$.min-investment",
-          "key": "min-investment",
-          "value": "Min Investment"
-        },
-        {
-          "path": "$.investment-amount",
-          "key": "investment-amount",
-          "value": "Investment Amount"
-        }
-      ]
-    },
-    {
-      "strategyId": "1548524",
-      "url": "https://bin.bnbstatic.com/api/i18n/-/web/cms/en/spot-strategy-ui",
-      "httpStatus": 200,
-      "fields": [
-        {
-          "path": "$.investment",
-          "key": "investment",
-          "value": "Investment"
-        }
-      ]
-    },
-    {
-      "strategyId": "1548524",
-      "url": "https://bin.bnbstatic.com/api/i18n/-/web/cms/en/strategy-widget",
-      "httpStatus": 200,
-      "fields": [
-        {
-          "path": "$.investment",
-          "key": "investment",
-          "value": "Investment"
-        },
-        {
-          "path": "$.min-investment",
-          "key": "min-investment",
-          "value": "Min. Investment"
-        },
-        {
-          "path": "$.total-investment",
-          "key": "total-investment",
-          "value": "Total Investment"
-        },
-        {
-          "path": "$.investment-amount",
-          "key": "investment-amount",
-          "value": "Investment Amount"
-        }
-      ]
-    },
-    {
-      "strategyId": "1548524",
-      "url": "https://bin.bnbstatic.com/api/i18n/-/web/cms/en/mainuc-strategy-ui",
-      "httpStatus": 200,
-      "fields": [
-        {
-          "path": "$.total-investment",
-          "key": "total-investment",
-          "value": "Total Investment"
-        },
-        {
-          "path": "$.initial-investment",
-          "key": "initial-investment",
-          "value": "Initial Investment"
-        }
-      ]
-    },
-    {
-      "strategyId": "1764430",
-      "url": "https://bin.bnbstatic.com/api/i18n/-/web/cms/en/futures-strategy-ui",
-      "httpStatus": 200,
-      "fields": [
-        {
-          "path": "$.investment",
-          "key": "investment",
-          "value": "Total Investment"
-        },
-        {
-          "path": "$.min-investment",
-          "key": "min-investment",
-          "value": "Min Investment"
-        },
-        {
-          "path": "$.investment-amount",
-          "key": "investment-amount",
-          "value": "Investment Amount"
-        }
-      ]
-    },
-    {
-      "strategyId": "1764430",
-      "url": "https://bin.bnbstatic.com/api/i18n/-/web/cms/en/spot-strategy-ui",
-      "httpStatus": 200,
-      "fields": [
-        {
-          "path": "$.investment",
-          "key": "investment",
-          "value": "Investment"
-        }
-      ]
-    },
-    {
-      "strategyId": "1764430",
-      "url": "https://bin.bnbstatic.com/api/i18n/-/web/cms/en/strategy-widget",
-      "httpStatus": 200,
-      "fields": [
-        {
-          "path": "$.investment",
-          "key": "investment",
-          "value": "Investment"
-        },
-        {
-          "path": "$.min-investment",
-          "key": "min-investment",
-          "value": "Min. Investment"
-        },
-        {
-          "path": "$.total-investment",
-          "key": "total-investment",
-          "value": "Total Investment"
-        },
-        {
-          "path": "$.investment-amount",
-          "key": "investment-amount",
-          "value": "Investment Amount"
-        }
-      ]
-    },
-    {
-      "strategyId": "1764430",
-      "url": "https://bin.bnbstatic.com/api/i18n/-/web/cms/en/mainuc-strategy-ui",
-      "httpStatus": 200,
-      "fields": [
-        {
-          "path": "$.total-investment",
-          "key": "total-investment",
-          "value": "Total Investment"
-        },
-        {
-          "path": "$.initial-investment",
-          "key": "initial-investment",
-          "value": "Initial Investment"
-        }
-      ]
-    },
-    {
-      "strategyId": "1810594",
-      "url": "https://bin.bnbstatic.com/api/i18n/-/web/cms/en/spot-strategy-ui",
-      "httpStatus": 200,
-      "fields": [
-        {
-          "path": "$.investment",
-          "key": "investment",
-          "value": "Investment"
-        }
-      ]
-    },
-    {
-      "strategyId": "1810594",
-      "url": "https://bin.bnbstatic.com/api/i18n/-/web/cms/en/strategy-widget",
-      "httpStatus": 200,
-      "fields": [
-        {
-          "path": "$.investment",
-          "key": "investment",
-          "value": "Investment"
-        },
-        {
-          "path": "$.min-investment",
-          "key": "min-investment",
-          "value": "Min. Investment"
-        },
-        {
-          "path": "$.total-investment",
-          "key": "total-investment",
-          "value": "Total Investment"
-        },
-        {
-          "path": "$.investment-amount",
-          "key": "investment-amount",
-          "value": "Investment Amount"
-        }
-      ]
-    },
-    {
-      "strategyId": "1810594",
-      "url": "https://bin.bnbstatic.com/api/i18n/-/web/cms/en/mainuc-strategy-ui",
-      "httpStatus": 200,
-      "fields": [
-        {
-          "path": "$.total-investment",
-          "key": "total-investment",
-          "value": "Total Investment"
-        },
-        {
-          "path": "$.initial-investment",
-          "key": "initial-investment",
-          "value": "Initial Investment"
-        }
-      ]
-    },
-    {
-      "strategyId": "1810594",
-      "url": "https://bin.bnbstatic.com/api/i18n/-/web/cms/en/futures-strategy-ui",
-      "httpStatus": 200,
-      "fields": [
-        {
-          "path": "$.investment",
-          "key": "investment",
-          "value": "Total Investment"
-        },
-        {
-          "path": "$.min-investment",
-          "key": "min-investment",
-          "value": "Min Investment"
-        },
-        {
-          "path": "$.investment-amount",
-          "key": "investment-amount",
-          "value": "Investment Amount"
-        }
-      ]
-    },
-    {
-      "strategyId": "2198857",
-      "url": "https://bin.bnbstatic.com/api/i18n/-/web/cms/en/futures-strategy-ui",
-      "httpStatus": 200,
-      "fields": [
-        {
-          "path": "$.investment",
-          "key": "investment",
-          "value": "Total Investment"
-        },
-        {
-          "path": "$.min-investment",
-          "key": "min-investment",
-          "value": "Min Investment"
-        },
-        {
-          "path": "$.investment-amount",
-          "key": "investment-amount",
-          "value": "Investment Amount"
-        }
-      ]
-    },
-    {
-      "strategyId": "2198857",
-      "url": "https://bin.bnbstatic.com/api/i18n/-/web/cms/en/spot-strategy-ui",
-      "httpStatus": 200,
-      "fields": [
-        {
-          "path": "$.investment",
-          "key": "investment",
-          "value": "Investment"
-        }
-      ]
-    },
-    {
-      "strategyId": "2198857",
-      "url": "https://bin.bnbstatic.com/api/i18n/-/web/cms/en/strategy-widget",
-      "httpStatus": 200,
-      "fields": [
-        {
-          "path": "$.investment",
-          "key": "investment",
-          "value": "Investment"
-        },
-        {
-          "path": "$.min-investment",
-          "key": "min-investment",
-          "value": "Min. Investment"
-        },
-        {
-          "path": "$.total-investment",
-          "key": "total-investment",
-          "value": "Total Investment"
-        },
-        {
-          "path": "$.investment-amount",
-          "key": "investment-amount",
-          "value": "Investment Amount"
-        }
-      ]
-    },
-    {
-      "strategyId": "2198857",
-      "url": "https://bin.bnbstatic.com/api/i18n/-/web/cms/en/mainuc-strategy-ui",
-      "httpStatus": 200,
-      "fields": [
-        {
-          "path": "$.total-investment",
-          "key": "total-investment",
-          "value": "Total Investment"
-        },
-        {
-          "path": "$.initial-investment",
-          "key": "initial-investment",
-          "value": "Initial Investment"
-        }
-      ]
-    },
-    {
-      "strategyId": "2222438",
-      "url": "https://bin.bnbstatic.com/api/i18n/-/web/cms/en/futures-strategy-ui",
-      "httpStatus": 200,
-      "fields": [
-        {
-          "path": "$.investment",
-          "key": "investment",
-          "value": "Total Investment"
-        },
-        {
-          "path": "$.min-investment",
-          "key": "min-investment",
-          "value": "Min Investment"
-        },
-        {
-          "path": "$.investment-amount",
-          "key": "investment-amount",
-          "value": "Investment Amount"
-        }
-      ]
-    },
-    {
-      "strategyId": "2222438",
-      "url": "https://bin.bnbstatic.com/api/i18n/-/web/cms/en/spot-strategy-ui",
-      "httpStatus": 200,
-      "fields": [
-        {
-          "path": "$.investment",
-          "key": "investment",
-          "value": "Investment"
-        }
-      ]
-    },
-    {
-      "strategyId": "2222438",
-      "url": "https://bin.bnbstatic.com/api/i18n/-/web/cms/en/strategy-widget",
-      "httpStatus": 200,
-      "fields": [
-        {
-          "path": "$.investment",
-          "key": "investment",
-          "value": "Investment"
-        },
-        {
-          "path": "$.min-investment",
-          "key": "min-investment",
-          "value": "Min. Investment"
-        },
-        {
-          "path": "$.total-investment",
-          "key": "total-investment",
-          "value": "Total Investment"
-        },
-        {
-          "path": "$.investment-amount",
-          "key": "investment-amount",
-          "value": "Investment Amount"
-        }
-      ]
-    },
-    {
-      "strategyId": "2222438",
-      "url": "https://bin.bnbstatic.com/api/i18n/-/web/cms/en/mainuc-strategy-ui",
-      "httpStatus": 200,
-      "fields": [
-        {
-          "path": "$.total-investment",
-          "key": "total-investment",
-          "value": "Total Investment"
-        },
-        {
-          "path": "$.initial-investment",
-          "key": "initial-investment",
-          "value": "Initial Investment"
-        }
-      ]
-    },
-    {
-      "strategyId": "2647824",
-      "url": "https://bin.bnbstatic.com/api/i18n/-/web/cms/en/futures-strategy-ui",
-      "httpStatus": 200,
-      "fields": [
-        {
-          "path": "$.investment",
-          "key": "investment",
-          "value": "Total Investment"
-        },
-        {
-          "path": "$.min-investment",
-          "key": "min-investment",
-          "value": "Min Investment"
-        },
-        {
-          "path": "$.investment-amount",
-          "key": "investment-amount",
-          "value": "Investment Amount"
-        }
-      ]
-    },
-    {
-      "strategyId": "2647824",
-      "url": "https://bin.bnbstatic.com/api/i18n/-/web/cms/en/spot-strategy-ui",
-      "httpStatus": 200,
-      "fields": [
-        {
-          "path": "$.investment",
-          "key": "investment",
-          "value": "Investment"
-        }
-      ]
-    },
-    {
-      "strategyId": "2647824",
-      "url": "https://bin.bnbstatic.com/api/i18n/-/web/cms/en/strategy-widget",
-      "httpStatus": 200,
-      "fields": [
-        {
-          "path": "$.investment",
-          "key": "investment",
-          "value": "Investment"
-        },
-        {
-          "path": "$.min-investment",
-          "key": "min-investment",
-          "value": "Min. Investment"
-        },
-        {
-          "path": "$.total-investment",
-          "key": "total-investment",
-          "value": "Total Investment"
-        },
-        {
-          "path": "$.investment-amount",
-          "key": "investment-amount",
-          "value": "Investment Amount"
-        }
-      ]
-    },
-    {
-      "strategyId": "2647824",
-      "url": "https://bin.bnbstatic.com/api/i18n/-/web/cms/en/mainuc-strategy-ui",
-      "httpStatus": 200,
-      "fields": [
-        {
-          "path": "$.total-investment",
-          "key": "total-investment",
-          "value": "Total Investment"
-        },
-        {
-          "path": "$.initial-investment",
-          "key": "initial-investment",
-          "value": "Initial Investment"
-        }
-      ]
-    },
-    {
-      "strategyId": "2654917",
-      "url": "https://bin.bnbstatic.com/api/i18n/-/web/cms/en/spot-strategy-ui",
-      "httpStatus": 200,
-      "fields": [
-        {
-          "path": "$.investment",
-          "key": "investment",
-          "value": "Investment"
-        }
-      ]
-    },
-    {
-      "strategyId": "2654917",
-      "url": "https://bin.bnbstatic.com/api/i18n/-/web/cms/en/strategy-widget",
-      "httpStatus": 200,
-      "fields": [
-        {
-          "path": "$.investment",
-          "key": "investment",
-          "value": "Investment"
-        },
-        {
-          "path": "$.min-investment",
-          "key": "min-investment",
-          "value": "Min. Investment"
-        },
-        {
-          "path": "$.total-investment",
-          "key": "total-investment",
-          "value": "Total Investment"
-        },
-        {
-          "path": "$.investment-amount",
-          "key": "investment-amount",
-          "value": "Investment Amount"
-        }
-      ]
-    },
-    {
-      "strategyId": "2654917",
-      "url": "https://bin.bnbstatic.com/api/i18n/-/web/cms/en/mainuc-strategy-ui",
-      "httpStatus": 200,
-      "fields": [
-        {
-          "path": "$.total-investment",
-          "key": "total-investment",
-          "value": "Total Investment"
-        },
-        {
-          "path": "$.initial-investment",
-          "key": "initial-investment",
-          "value": "Initial Investment"
-        }
-      ]
-    },
-    {
-      "strategyId": "2654917",
-      "url": "https://bin.bnbstatic.com/api/i18n/-/web/cms/en/futures-strategy-ui",
-      "httpStatus": 200,
-      "fields": [
-        {
-          "path": "$.investment",
-          "key": "investment",
-          "value": "Total Investment"
-        },
-        {
-          "path": "$.min-investment",
-          "key": "min-investment",
-          "value": "Min Investment"
-        },
-        {
-          "path": "$.investment-amount",
-          "key": "investment-amount",
-          "value": "Investment Amount"
-        }
-      ]
-    },
-    {
-      "strategyId": "10150437",
-      "url": "https://bin.bnbstatic.com/api/i18n/-/web/cms/en/futures-strategy-ui",
-      "httpStatus": 200,
-      "fields": [
-        {
-          "path": "$.investment",
-          "key": "investment",
-          "value": "Total Investment"
-        },
-        {
-          "path": "$.min-investment",
-          "key": "min-investment",
-          "value": "Min Investment"
-        },
-        {
-          "path": "$.investment-amount",
-          "key": "investment-amount",
-          "value": "Investment Amount"
-        }
-      ]
-    },
-    {
-      "strategyId": "10150437",
-      "url": "https://bin.bnbstatic.com/api/i18n/-/web/cms/en/spot-strategy-ui",
-      "httpStatus": 200,
-      "fields": [
-        {
-          "path": "$.investment",
-          "key": "investment",
-          "value": "Investment"
-        }
-      ]
-    },
-    {
-      "strategyId": "10150437",
-      "url": "https://bin.bnbstatic.com/api/i18n/-/web/cms/en/strategy-widget",
-      "httpStatus": 200,
-      "fields": [
-        {
-          "path": "$.investment",
-          "key": "investment",
-          "value": "Investment"
-        },
-        {
-          "path": "$.min-investment",
-          "key": "min-investment",
-          "value": "Min. Investment"
-        },
-        {
-          "path": "$.total-investment",
-          "key": "total-investment",
-          "value": "Total Investment"
-        },
-        {
-          "path": "$.investment-amount",
-          "key": "investment-amount",
-          "value": "Investment Amount"
-        }
-      ]
-    },
-    {
-      "strategyId": "10150437",
-      "url": "https://bin.bnbstatic.com/api/i18n/-/web/cms/en/mainuc-strategy-ui",
-      "httpStatus": 200,
-      "fields": [
-        {
-          "path": "$.total-investment",
-          "key": "total-investment",
-          "value": "Total Investment"
-        },
-        {
-          "path": "$.initial-investment",
-          "key": "initial-investment",
-          "value": "Initial Investment"
-        }
-      ]
-    },
-    {
-      "strategyId": "10150419",
-      "url": "https://bin.bnbstatic.com/api/i18n/-/web/cms/en/spot-strategy-ui",
-      "httpStatus": 200,
-      "fields": [
-        {
-          "path": "$.investment",
-          "key": "investment",
-          "value": "Investment"
-        }
-      ]
-    },
-    {
-      "strategyId": "10150419",
-      "url": "https://bin.bnbstatic.com/api/i18n/-/web/cms/en/futures-strategy-ui",
-      "httpStatus": 200,
-      "fields": [
-        {
-          "path": "$.investment",
-          "key": "investment",
-          "value": "Total Investment"
-        },
-        {
-          "path": "$.min-investment",
-          "key": "min-investment",
-          "value": "Min Investment"
-        },
-        {
-          "path": "$.investment-amount",
-          "key": "investment-amount",
-          "value": "Investment Amount"
-        }
-      ]
-    },
-    {
-      "strategyId": "10150419",
-      "url": "https://bin.bnbstatic.com/api/i18n/-/web/cms/en/strategy-widget",
-      "httpStatus": 200,
-      "fields": [
-        {
-          "path": "$.investment",
-          "key": "investment",
-          "value": "Investment"
-        },
-        {
-          "path": "$.min-investment",
-          "key": "min-investment",
-          "value": "Min. Investment"
-        },
-        {
-          "path": "$.total-investment",
-          "key": "total-investment",
-          "value": "Total Investment"
-        },
-        {
-          "path": "$.investment-amount",
-          "key": "investment-amount",
-          "value": "Investment Amount"
-        }
-      ]
-    },
-    {
-      "strategyId": "10150419",
-      "url": "https://bin.bnbstatic.com/api/i18n/-/web/cms/en/mainuc-strategy-ui",
-      "httpStatus": 200,
-      "fields": [
-        {
-          "path": "$.total-investment",
-          "key": "total-investment",
-          "value": "Total Investment"
-        },
-        {
-          "path": "$.initial-investment",
-          "key": "initial-investment",
-          "value": "Initial Investment"
-        }
-      ]
-    },
-    {
-      "strategyId": "6850680",
-      "url": "https://bin.bnbstatic.com/api/i18n/-/web/cms/en/futures-strategy-ui",
-      "httpStatus": 200,
-      "fields": [
-        {
-          "path": "$.investment",
-          "key": "investment",
-          "value": "Total Investment"
-        },
-        {
-          "path": "$.min-investment",
-          "key": "min-investment",
-          "value": "Min Investment"
-        },
-        {
-          "path": "$.investment-amount",
-          "key": "investment-amount",
-          "value": "Investment Amount"
-        }
-      ]
-    },
-    {
-      "strategyId": "6850680",
-      "url": "https://bin.bnbstatic.com/api/i18n/-/web/cms/en/spot-strategy-ui",
-      "httpStatus": 200,
-      "fields": [
-        {
-          "path": "$.investment",
-          "key": "investment",
-          "value": "Investment"
-        }
-      ]
-    },
-    {
-      "strategyId": "6850680",
-      "url": "https://bin.bnbstatic.com/api/i18n/-/web/cms/en/strategy-widget",
-      "httpStatus": 200,
-      "fields": [
-        {
-          "path": "$.investment",
-          "key": "investment",
-          "value": "Investment"
-        },
-        {
-          "path": "$.min-investment",
-          "key": "min-investment",
-          "value": "Min. Investment"
-        },
-        {
-          "path": "$.total-investment",
-          "key": "total-investment",
-          "value": "Total Investment"
-        },
-        {
-          "path": "$.investment-amount",
-          "key": "investment-amount",
-          "value": "Investment Amount"
-        }
-      ]
-    },
-    {
-      "strategyId": "6850680",
-      "url": "https://bin.bnbstatic.com/api/i18n/-/web/cms/en/mainuc-strategy-ui",
-      "httpStatus": 200,
-      "fields": [
-        {
-          "path": "$.total-investment",
-          "key": "total-investment",
-          "value": "Total Investment"
-        },
-        {
-          "path": "$.initial-investment",
-          "key": "initial-investment",
-          "value": "Initial Investment"
-        }
-      ]
-    },
-    {
-      "strategyId": "3232564",
-      "url": "https://bin.bnbstatic.com/api/i18n/-/web/cms/en/futures-strategy-ui",
-      "httpStatus": 200,
-      "fields": [
-        {
-          "path": "$.investment",
-          "key": "investment",
-          "value": "Total Investment"
-        },
-        {
-          "path": "$.min-investment",
-          "key": "min-investment",
-          "value": "Min Investment"
-        },
-        {
-          "path": "$.investment-amount",
-          "key": "investment-amount",
-          "value": "Investment Amount"
-        }
-      ]
-    },
-    {
-      "strategyId": "3232564",
-      "url": "https://bin.bnbstatic.com/api/i18n/-/web/cms/en/spot-strategy-ui",
-      "httpStatus": 200,
-      "fields": [
-        {
-          "path": "$.investment",
-          "key": "investment",
-          "value": "Investment"
-        }
-      ]
-    },
-    {
-      "strategyId": "3232564",
-      "url": "https://bin.bnbstatic.com/api/i18n/-/web/cms/en/strategy-widget",
-      "httpStatus": 200,
-      "fields": [
-        {
-          "path": "$.investment",
-          "key": "investment",
-          "value": "Investment"
-        },
-        {
-          "path": "$.min-investment",
-          "key": "min-investment",
-          "value": "Min. Investment"
-        },
-        {
-          "path": "$.total-investment",
-          "key": "total-investment",
-          "value": "Total Investment"
-        },
-        {
-          "path": "$.investment-amount",
-          "key": "investment-amount",
-          "value": "Investment Amount"
-        }
-      ]
-    },
-    {
-      "strategyId": "3232564",
-      "url": "https://bin.bnbstatic.com/api/i18n/-/web/cms/en/mainuc-strategy-ui",
-      "httpStatus": 200,
-      "fields": [
-        {
-          "path": "$.total-investment",
-          "key": "total-investment",
-          "value": "Total Investment"
-        },
-        {
-          "path": "$.initial-investment",
-          "key": "initial-investment",
-          "value": "Initial Investment"
-        }
-      ]
-    },
-    {
-      "strategyId": "9161957",
-      "url": "https://bin.bnbstatic.com/api/i18n/-/web/cms/en/futures-strategy-ui",
-      "httpStatus": 200,
-      "fields": [
-        {
-          "path": "$.investment",
-          "key": "investment",
-          "value": "Total Investment"
-        },
-        {
-          "path": "$.min-investment",
-          "key": "min-investment",
-          "value": "Min Investment"
-        },
-        {
-          "path": "$.investment-amount",
-          "key": "investment-amount",
-          "value": "Investment Amount"
-        }
-      ]
-    },
-    {
-      "strategyId": "9161957",
-      "url": "https://bin.bnbstatic.com/api/i18n/-/web/cms/en/spot-strategy-ui",
-      "httpStatus": 200,
-      "fields": [
-        {
-          "path": "$.investment",
-          "key": "investment",
-          "value": "Investment"
-        }
-      ]
-    },
-    {
-      "strategyId": "9161957",
-      "url": "https://bin.bnbstatic.com/api/i18n/-/web/cms/en/strategy-widget",
-      "httpStatus": 200,
-      "fields": [
-        {
-          "path": "$.investment",
-          "key": "investment",
-          "value": "Investment"
-        },
-        {
-          "path": "$.min-investment",
-          "key": "min-investment",
-          "value": "Min. Investment"
-        },
-        {
-          "path": "$.total-investment",
-          "key": "total-investment",
-          "value": "Total Investment"
-        },
-        {
-          "path": "$.investment-amount",
-          "key": "investment-amount",
-          "value": "Investment Amount"
-        }
-      ]
-    },
-    {
-      "strategyId": "9161957",
-      "url": "https://bin.bnbstatic.com/api/i18n/-/web/cms/en/mainuc-strategy-ui",
-      "httpStatus": 200,
-      "fields": [
-        {
-          "path": "$.total-investment",
-          "key": "total-investment",
-          "value": "Total Investment"
-        },
-        {
-          "path": "$.initial-investment",
-          "key": "initial-investment",
-          "value": "Initial Investment"
-        }
-      ]
+      "rootKeys": [
+        "code",
+        "message",
+        "messageDetail",
+        "data",
+        "success"
+      ],
+      "keyPaths": [
+        "$.code",
+        "$.message",
+        "$.messageDetail",
+        "$.data",
+        "$.data.windowCount",
+        "$.data.orderBufferCount",
+        "$.data.maxGridCount",
+        "$.data.minGridCount",
+        "$.data.maxTrailingGridCount",
+        "$.data.adjustCoef",
+        "$.data.trailingCoef",
+        "$.data.orderBufferCountBySymbol",
+        "$.data.priceDiffBuffer",
+        "$.success"
+      ],
+      "dataSampleKeys": [
+        "windowCount",
+        "orderBufferCount",
+        "maxGridCount",
+        "minGridCount",
+        "maxTrailingGridCount",
+        "adjustCoef",
+        "trailingCoef",
+        "orderBufferCountBySymbol",
+        "priceDiffBuffer"
+      ],
+      "capitalCandidateFields": []
     }
   ],
   "interpretation_rule": "A field name alone does not prove its accounting basis or units. Do not treat minInvestment, inferred PNL/ROI capital, initial capital, current capital, or margin as interchangeable without endpoint-level verification."
