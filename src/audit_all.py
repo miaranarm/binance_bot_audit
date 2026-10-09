@@ -1020,12 +1020,16 @@ def capture_marketplace_detail_calls(page, rows):
                     visible_grid = parse_visible_metric(body_text, "Grid Profit")
                     visible_total = parse_visible_metric(body_text, "Total Profit")
                     visible_float = parse_visible_metric(body_text, "Floating Profit")
+                    # Detect placeholder pages BEFORE recording capital values.
+                    # The previous order accidentally logged "Total Investment: 0"
+                    # from Pending Trigger pages as if it were an observed metric.
+                    pending_detail = ("Pending Trigger" in body_text or "Duration --" in body_text)
                     visible_capital = []
                     for capital_label in ("Total Investment", "Initial Investment", "Investment Amount", "Capital Invested"):
                         capital_value = parse_visible_metric(body_text, capital_label)
                         if capital_value is not None:
                             visible_capital.append({"label": capital_label, "value": capital_value})
-                    if visible_capital:
+                    if visible_capital and not pending_detail:
                         CAPITAL_FIELD_DIAGNOSTICS.append({
                             "strategyId": str(sid),
                             "url": url,
@@ -1035,7 +1039,10 @@ def capture_marketplace_detail_calls(page, rows):
                         debug_write("CAPITAL_VISIBLE sid=" + str(sid) +
                                     " url=" + url + " fields=" +
                                     json.dumps(visible_capital, ensure_ascii=False))
-                    pending_detail = ("Pending Trigger" in body_text or "Duration --" in body_text)
+                    elif visible_capital and pending_detail:
+                        debug_write("CAPITAL_VISIBLE_REJECTED_PENDING sid=" + str(sid) +
+                                    " url=" + url + " fields=" +
+                                    json.dumps(visible_capital, ensure_ascii=False))
                     if pending_detail:
                         debug_write("DETAIL_VISIBLE_REJECTED_PENDING sid=" + str(sid))
                         print("DETAIL_VISIBLE_REJECTED_PENDING sid=" + str(sid))
