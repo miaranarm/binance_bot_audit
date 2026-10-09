@@ -83,3 +83,16 @@ A response that returns HTTP 200 but has an application-level failure, login pro
 - The scan collected 30,032 raw listing rows and retained 12,515 bots with leverage <= 1. Collection was explicitly **incomplete** for Marketplace types 12–20, so the run does not prove complete coverage of every bot family.
 - The capital diagnostics sampled bots `3232564`, `6850680`, and `9161957`. Public listing payloads exposed `minInvestment` and null `initialMargin` for these Spot Grid examples; the diagnostic found no detail-response capital fields. These are candidate observations only, not proof that `minInvestment` equals total deployed capital.
 - Conclusion after this run: the provenance guard and existing estimate pipeline passed automated checks, but the central research question remains unresolved. No exact public Grid Profit field or sufficient matched-fill-and-fee data was found in the tested responses. Do not change the CSV presentation or remove any estimate method.
+
+## Next-source boundary: official Spot API fills are account-specific (2026-10-09)
+
+The next investigation checked Binance's official Spot API documentation, because the Spot Grid formula requires filled buy/sell pairs and the actual fees.
+
+- Binance's official Spot API documentation describes personal order history and trade history as signed, account-specific endpoints (USER_DATA); the trade response contains execution fields such as price, quantity, quote quantity, commission and commission asset. See the [official Spot API documentation repository](https://github.com/binance/binance-spot-api-docs) and [official trade-data guidance](https://www.binance.com/uk-UA/academy/articles/how-to-get-trading-data-via-the-binance-api).
+- Those records describe the authenticated account's own trades. They are not a public endpoint for retrieving another marketplace bot operator's complete fills. Therefore they cannot be used by this public-marketplace scanner to reconstruct the exact Grid Profit of arbitrary third-party bots.
+- Even if a user authenticated their own account, reconstructing Spot Grid Grid Profit from general account fills would still require reliably identifying the bot's fills, matching buy/sell legs according to Binance's grid rules, converting commissions paid in another asset at the correct price, and handling partial fills, rebates and terminated grids. A strategyId is not guaranteed on historical fills unless the order was created with that metadata.
+- This is a boundary of the tested public-data approach, not proof that Binance has no internal/private endpoint or partner API. The audit will not attempt to bypass authentication or access another user's private data.
+
+### Decision for the public bot audit
+
+For third-party public Marketplace bots, proceed only with (a) a publicly accessible, successful Binance response that explicitly exposes Grid Profit and its unit/accounting basis, or (b) a documented Binance-supported public data source containing complete bot-specific fills and fees. Otherwise keep gridProfit exact blank, retain all current estimate methods/ranges, and preserve the current CSV presentation. Do not treat minInvestment, Marketplace pnl, roi, or matchedCount alone as sufficient to infer exact Grid Profit or the true capital deployed.
