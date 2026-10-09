@@ -25,7 +25,8 @@ TOL = 1e-6
 
 def numeric(value):
     try:
-        number = float(value)
+        text = str(value).strip().replace("≈", "")
+        number = float(text)
         return number if math.isfinite(number) else None
     except (TypeError, ValueError):
         return None
@@ -85,8 +86,6 @@ def main():
 
         low, mid, high = (numeric(r.get(k)) for k in
                           ("gridProfitEstimateLow", "gridProfitEstimateMid", "gridProfitEstimateHigh"))
-        if any(v is not None and v < 0 for v in (low, mid, high)):
-            fail(f"negative Grid Profit estimate for {sid}")
         if None not in (low, mid, high) and not (low <= mid + TOL and mid <= high + TOL):
             fail(f"Grid Profit interval unordered for {sid}")
 
@@ -95,25 +94,28 @@ def main():
             if any(abs(v - grid) > max(TOL, abs(grid) * TOL) for v in (low, mid, high)):
                 fail(f"exact Grid Profit differs from its interval for {sid}")
 
-        ratio = numeric(r.get("gridProfitTotalProfitRatio"))
+        ratio_raw = str(r.get("gridProfitTotalProfitRatio", "")).strip()
+        ratio = numeric(ratio_raw)
         floating = numeric(r.get("floatingProfit"))
-        if ratio is not None and not 0 <= ratio <= 5:
-            fail(f"ratio out of range for {sid}: {ratio}")
-        # In the final table, a populated headline ratio is allowed only when
-        # gridProfit itself is an exact Binance value. Estimated Grid Profit is
-        # shown only in the Low/Mid/High columns and must not masquerade as exact.
-        if grid is None and ratio is not None:
-            fail(f"estimated Grid Profit exposed as headline ratio for {sid}")
+        total = numeric(r.get("totalProfit"))
+        # Aucun plafond arbitraire : les ratios >100 %, négatifs ou >500 % sont
+        # conservés si les valeurs sous-jacentes le permettent.
+        if grid is None and ratio is not None and not ratio_raw.startswith("≈"):
+            fail(f"estimated ratio must be visibly marked with ≈ for {sid}")
         if grid is None and floating is not None:
             fail(f"floatingProfit derived from estimated Grid Profit for {sid}")
         if grid is not None and ratio is not None and floating is not None:
-            total = numeric(r.get("totalProfit"))
             if total is not None and abs((total - grid) - floating) > max(TOL, abs(total) * TOL):
                 fail(f"floatingProfit identity mismatch for {sid}")
         if grid is not None and ratio is not None:
-            total = numeric(r.get("totalProfit"))
-            if total is not None and total > 0 and abs(ratio - grid / total) > max(TOL, abs(ratio) * TOL):
+            if total is not None and total != 0 and abs(ratio - grid / total) > max(TOL, abs(ratio) * TOL):
                 fail(f"Grid/Total ratio mismatch for {sid}")
+        if grid is None and ratio is not None and total not in (None, 0) and mid is not None:
+            expected_ratio = mid / total
+            if abs(ratio - expected_ratio) > max(1e-4, abs(expected_ratio) * 1e-4):
+                fail(f"estimated Grid/Total ratio mismatch for {sid}")
+        if ratio is not None and total == 0:
+            fail(f"ratio must be blank when Total Profit is zero for {sid}")
 
     exact = sum(numeric(r.get("gridProfit")) is not None for r in rows)
     scored = sum(s is not None for s in scores)
