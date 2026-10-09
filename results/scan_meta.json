@@ -1,118 +1,204 @@
 {
-  "scan_utc": "2026-10-09T05:50:05.896496+00:00",
-  "raw_rows": 30545,
-  "tradable_leverage_le_1": 13396,
-  "collection_complete": true,
-  "incomplete_categories": [],
+  "scan_utc": "2026-10-09T07:15:55.914082+00:00",
+  "raw_rows": 31229,
+  "tradable_leverage_le_1": 13761,
+  "collection_complete": false,
+  "incomplete_categories": [
+    "Marketplace type 12",
+    "Marketplace type 13",
+    "Marketplace type 14",
+    "Marketplace type 15",
+    "Marketplace type 16",
+    "Marketplace type 17",
+    "Marketplace type 18",
+    "Marketplace type 19",
+    "Marketplace type 20"
+  ],
   "collection": {
     "Spot Grid": {
-      "collected": 13188,
-      "expected": 13188,
+      "collected": 13549,
+      "unique_collected": 13549,
+      "duplicate_rows": 0,
+      "expected": 13549,
       "complete": true
     },
     "Marketplace type 2": {
-      "collected": 13842,
-      "expected": 13842,
+      "collected": 14154,
+      "unique_collected": 14154,
+      "duplicate_rows": 0,
+      "expected": 14154,
       "complete": true
     },
     "Marketplace type 3": {
-      "collected": 553,
-      "expected": 553,
+      "collected": 568,
+      "unique_collected": 568,
+      "duplicate_rows": 0,
+      "expected": 568,
       "complete": true
     },
     "Marketplace type 4": {
       "collected": 0,
+      "unique_collected": 0,
+      "duplicate_rows": 0,
       "expected": 0,
       "complete": true
     },
     "Marketplace type 5": {
       "collected": 0,
+      "unique_collected": 0,
+      "duplicate_rows": 0,
       "expected": 0,
       "complete": true
     },
     "Marketplace type 6": {
       "collected": 0,
+      "unique_collected": 0,
+      "duplicate_rows": 0,
       "expected": 0,
       "complete": true
     },
     "Marketplace type 7": {
       "collected": 0,
+      "unique_collected": 0,
+      "duplicate_rows": 0,
       "expected": 0,
       "complete": true
     },
     "Marketplace type 8": {
       "collected": 0,
+      "unique_collected": 0,
+      "duplicate_rows": 0,
       "expected": 0,
       "complete": true
     },
     "Marketplace type 9": {
       "collected": 0,
+      "unique_collected": 0,
+      "duplicate_rows": 0,
       "expected": 0,
       "complete": true
     },
     "Marketplace type 10": {
-      "collected": 1481,
-      "expected": 1481,
+      "collected": 1479,
+      "unique_collected": 1479,
+      "duplicate_rows": 0,
+      "expected": 1479,
       "complete": true
     },
     "Marketplace type 11": {
       "collected": 0,
+      "unique_collected": 0,
+      "duplicate_rows": 0,
       "expected": 0,
       "complete": true
     },
     "Marketplace type 12": {
       "collected": 0,
-      "expected": 0,
-      "complete": true
+      "unique_collected": 0,
+      "duplicate_rows": 0,
+      "expected": null,
+      "complete": false
     },
     "Marketplace type 13": {
       "collected": 0,
-      "expected": 0,
-      "complete": true
+      "unique_collected": 0,
+      "duplicate_rows": 0,
+      "expected": null,
+      "complete": false
     },
     "Marketplace type 14": {
       "collected": 0,
-      "expected": 0,
-      "complete": true
+      "unique_collected": 0,
+      "duplicate_rows": 0,
+      "expected": null,
+      "complete": false
     },
     "Marketplace type 15": {
       "collected": 0,
-      "expected": 0,
-      "complete": true
+      "unique_collected": 0,
+      "duplicate_rows": 0,
+      "expected": null,
+      "complete": false
     },
     "Marketplace type 16": {
       "collected": 0,
-      "expected": 0,
-      "complete": true
+      "unique_collected": 0,
+      "duplicate_rows": 0,
+      "expected": null,
+      "complete": false
     },
     "Marketplace type 17": {
       "collected": 0,
-      "expected": 0,
-      "complete": true
+      "unique_collected": 0,
+      "duplicate_rows": 0,
+      "expected": null,
+      "complete": false
     },
     "Marketplace type 18": {
       "collected": 0,
-      "expected": 0,
-      "complete": true
+      "unique_collected": 0,
+      "duplicate_rows": 0,
+      "expected": null,
+      "complete": false
     },
     "Marketplace type 19": {
       "collected": 0,
-      "expected": 0,
-      "complete": true
+      "unique_collected": 0,
+      "duplicate_rows": 0,
+      "expected": null,
+      "complete": false
     },
     "Marketplace type 20": {
       "collected": 0,
-      "expected": 0,
-      "complete": true
+      "unique_collected": 0,
+      "duplicate_rows": 0,
+      "expected": null,
+      "complete": false
     },
     "Futures DCA": {
-      "collected": 1481,
-      "expected": 1481,
+      "collected": 1479,
+      "unique_collected": 1479,
+      "duplicate_rows": 0,
+      "expected": 1479,
       "complete": true
     }
   },
+  "collection_method": {
+    "page_size": 100,
+    "max_pages_per_category": 400,
+    "max_attempts_per_page": 4,
+    "sort": "pnl",
+    "strategy_types_scanned": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20
+    ],
+    "completeness_rule": "Each category must expose a total and the unique collected strategy IDs must cover that total; exhausted retries or page cap means incomplete.",
+    "limitations": [
+      "Marketplace sorting by PNL can change during pagination; total/unique checks detect many, but not every, skip/duplicate caused by live resorting.",
+      "Only strategy types 1 through 20 are queried; types above 20 are not covered unless Binance documents/discovers them.",
+      "The endpoint total can change during a live scan, so completeness is relative to the first successful page response."
+    ]
+  },
   "history_retention_days": 30,
-  "snapshot": "results/history/2026/10/09/20261009T055005Z.csv.gz",
+  "snapshot": "results/history/2026/10/09/20261009T071555Z.csv.gz",
   "old_snapshots_removed": 0,
   "binance_marketplace_refresh": "hourly",
   "fields": [

@@ -1,109 +1,404 @@
 {
-  "endpoint_diagnostics": [],
+  "endpoint_diagnostics": [
+    {
+      "endpoint": "https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryTopStrategy",
+      "category": "Marketplace type 12",
+      "page": 1,
+      "attempt": 1,
+      "error": "JSON payload has no list-valued data field"
+    },
+    {
+      "endpoint": "https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryTopStrategy",
+      "category": "Marketplace type 12",
+      "page": 1,
+      "attempt": 2,
+      "error": "JSON payload has no list-valued data field"
+    },
+    {
+      "endpoint": "https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryTopStrategy",
+      "category": "Marketplace type 12",
+      "page": 1,
+      "attempt": 3,
+      "error": "JSON payload has no list-valued data field"
+    },
+    {
+      "endpoint": "https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryTopStrategy",
+      "category": "Marketplace type 12",
+      "page": 1,
+      "attempt": 4,
+      "error": "JSON payload has no list-valued data field"
+    },
+    {
+      "endpoint": "https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryTopStrategy",
+      "category": "Marketplace type 13",
+      "page": 1,
+      "attempt": 1,
+      "error": "JSON payload has no list-valued data field"
+    },
+    {
+      "endpoint": "https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryTopStrategy",
+      "category": "Marketplace type 13",
+      "page": 1,
+      "attempt": 2,
+      "error": "JSON payload has no list-valued data field"
+    },
+    {
+      "endpoint": "https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryTopStrategy",
+      "category": "Marketplace type 13",
+      "page": 1,
+      "attempt": 3,
+      "error": "JSON payload has no list-valued data field"
+    },
+    {
+      "endpoint": "https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryTopStrategy",
+      "category": "Marketplace type 13",
+      "page": 1,
+      "attempt": 4,
+      "error": "JSON payload has no list-valued data field"
+    },
+    {
+      "endpoint": "https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryTopStrategy",
+      "category": "Marketplace type 14",
+      "page": 1,
+      "attempt": 1,
+      "error": "JSON payload has no list-valued data field"
+    },
+    {
+      "endpoint": "https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryTopStrategy",
+      "category": "Marketplace type 14",
+      "page": 1,
+      "attempt": 2,
+      "error": "JSON payload has no list-valued data field"
+    },
+    {
+      "endpoint": "https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryTopStrategy",
+      "category": "Marketplace type 14",
+      "page": 1,
+      "attempt": 3,
+      "error": "JSON payload has no list-valued data field"
+    },
+    {
+      "endpoint": "https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryTopStrategy",
+      "category": "Marketplace type 14",
+      "page": 1,
+      "attempt": 4,
+      "error": "JSON payload has no list-valued data field"
+    },
+    {
+      "endpoint": "https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryTopStrategy",
+      "category": "Marketplace type 15",
+      "page": 1,
+      "attempt": 1,
+      "error": "JSON payload has no list-valued data field"
+    },
+    {
+      "endpoint": "https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryTopStrategy",
+      "category": "Marketplace type 15",
+      "page": 1,
+      "attempt": 2,
+      "error": "JSON payload has no list-valued data field"
+    },
+    {
+      "endpoint": "https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryTopStrategy",
+      "category": "Marketplace type 15",
+      "page": 1,
+      "attempt": 3,
+      "error": "JSON payload has no list-valued data field"
+    },
+    {
+      "endpoint": "https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryTopStrategy",
+      "category": "Marketplace type 15",
+      "page": 1,
+      "attempt": 4,
+      "error": "JSON payload has no list-valued data field"
+    },
+    {
+      "endpoint": "https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryTopStrategy",
+      "category": "Marketplace type 16",
+      "page": 1,
+      "attempt": 1,
+      "error": "JSON payload has no list-valued data field"
+    },
+    {
+      "endpoint": "https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryTopStrategy",
+      "category": "Marketplace type 16",
+      "page": 1,
+      "attempt": 2,
+      "error": "JSON payload has no list-valued data field"
+    },
+    {
+      "endpoint": "https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryTopStrategy",
+      "category": "Marketplace type 16",
+      "page": 1,
+      "attempt": 3,
+      "error": "JSON payload has no list-valued data field"
+    },
+    {
+      "endpoint": "https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryTopStrategy",
+      "category": "Marketplace type 16",
+      "page": 1,
+      "attempt": 4,
+      "error": "JSON payload has no list-valued data field"
+    },
+    {
+      "endpoint": "https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryTopStrategy",
+      "category": "Marketplace type 17",
+      "page": 1,
+      "attempt": 1,
+      "error": "JSON payload has no list-valued data field"
+    },
+    {
+      "endpoint": "https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryTopStrategy",
+      "category": "Marketplace type 17",
+      "page": 1,
+      "attempt": 2,
+      "error": "JSON payload has no list-valued data field"
+    },
+    {
+      "endpoint": "https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryTopStrategy",
+      "category": "Marketplace type 17",
+      "page": 1,
+      "attempt": 3,
+      "error": "JSON payload has no list-valued data field"
+    },
+    {
+      "endpoint": "https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryTopStrategy",
+      "category": "Marketplace type 17",
+      "page": 1,
+      "attempt": 4,
+      "error": "JSON payload has no list-valued data field"
+    },
+    {
+      "endpoint": "https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryTopStrategy",
+      "category": "Marketplace type 18",
+      "page": 1,
+      "attempt": 1,
+      "error": "JSON payload has no list-valued data field"
+    },
+    {
+      "endpoint": "https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryTopStrategy",
+      "category": "Marketplace type 18",
+      "page": 1,
+      "attempt": 2,
+      "error": "JSON payload has no list-valued data field"
+    },
+    {
+      "endpoint": "https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryTopStrategy",
+      "category": "Marketplace type 18",
+      "page": 1,
+      "attempt": 3,
+      "error": "JSON payload has no list-valued data field"
+    },
+    {
+      "endpoint": "https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryTopStrategy",
+      "category": "Marketplace type 18",
+      "page": 1,
+      "attempt": 4,
+      "error": "JSON payload has no list-valued data field"
+    },
+    {
+      "endpoint": "https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryTopStrategy",
+      "category": "Marketplace type 19",
+      "page": 1,
+      "attempt": 1,
+      "error": "JSON payload has no list-valued data field"
+    },
+    {
+      "endpoint": "https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryTopStrategy",
+      "category": "Marketplace type 19",
+      "page": 1,
+      "attempt": 2,
+      "error": "JSON payload has no list-valued data field"
+    },
+    {
+      "endpoint": "https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryTopStrategy",
+      "category": "Marketplace type 19",
+      "page": 1,
+      "attempt": 3,
+      "error": "JSON payload has no list-valued data field"
+    },
+    {
+      "endpoint": "https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryTopStrategy",
+      "category": "Marketplace type 19",
+      "page": 1,
+      "attempt": 4,
+      "error": "JSON payload has no list-valued data field"
+    },
+    {
+      "endpoint": "https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryTopStrategy",
+      "category": "Marketplace type 20",
+      "page": 1,
+      "attempt": 1,
+      "error": "JSON payload has no list-valued data field"
+    },
+    {
+      "endpoint": "https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryTopStrategy",
+      "category": "Marketplace type 20",
+      "page": 1,
+      "attempt": 2,
+      "error": "JSON payload has no list-valued data field"
+    },
+    {
+      "endpoint": "https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryTopStrategy",
+      "category": "Marketplace type 20",
+      "page": 1,
+      "attempt": 3,
+      "error": "JSON payload has no list-valued data field"
+    },
+    {
+      "endpoint": "https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryTopStrategy",
+      "category": "Marketplace type 20",
+      "page": 1,
+      "attempt": 4,
+      "error": "JSON payload has no list-valued data field"
+    }
+  ],
   "collection": {
     "Spot Grid": {
-      "collected": 13188,
-      "expected": 13188,
+      "collected": 13549,
+      "unique_collected": 13549,
+      "duplicate_rows": 0,
+      "expected": 13549,
       "complete": true
     },
     "Marketplace type 2": {
-      "collected": 13842,
-      "expected": 13842,
+      "collected": 14154,
+      "unique_collected": 14154,
+      "duplicate_rows": 0,
+      "expected": 14154,
       "complete": true
     },
     "Marketplace type 3": {
-      "collected": 553,
-      "expected": 553,
+      "collected": 568,
+      "unique_collected": 568,
+      "duplicate_rows": 0,
+      "expected": 568,
       "complete": true
     },
     "Marketplace type 4": {
       "collected": 0,
+      "unique_collected": 0,
+      "duplicate_rows": 0,
       "expected": 0,
       "complete": true
     },
     "Marketplace type 5": {
       "collected": 0,
+      "unique_collected": 0,
+      "duplicate_rows": 0,
       "expected": 0,
       "complete": true
     },
     "Marketplace type 6": {
       "collected": 0,
+      "unique_collected": 0,
+      "duplicate_rows": 0,
       "expected": 0,
       "complete": true
     },
     "Marketplace type 7": {
       "collected": 0,
+      "unique_collected": 0,
+      "duplicate_rows": 0,
       "expected": 0,
       "complete": true
     },
     "Marketplace type 8": {
       "collected": 0,
+      "unique_collected": 0,
+      "duplicate_rows": 0,
       "expected": 0,
       "complete": true
     },
     "Marketplace type 9": {
       "collected": 0,
+      "unique_collected": 0,
+      "duplicate_rows": 0,
       "expected": 0,
       "complete": true
     },
     "Marketplace type 10": {
-      "collected": 1481,
-      "expected": 1481,
+      "collected": 1479,
+      "unique_collected": 1479,
+      "duplicate_rows": 0,
+      "expected": 1479,
       "complete": true
     },
     "Marketplace type 11": {
       "collected": 0,
+      "unique_collected": 0,
+      "duplicate_rows": 0,
       "expected": 0,
       "complete": true
     },
     "Marketplace type 12": {
       "collected": 0,
-      "expected": 0,
-      "complete": true
+      "unique_collected": 0,
+      "duplicate_rows": 0,
+      "expected": null,
+      "complete": false
     },
     "Marketplace type 13": {
       "collected": 0,
-      "expected": 0,
-      "complete": true
+      "unique_collected": 0,
+      "duplicate_rows": 0,
+      "expected": null,
+      "complete": false
     },
     "Marketplace type 14": {
       "collected": 0,
-      "expected": 0,
-      "complete": true
+      "unique_collected": 0,
+      "duplicate_rows": 0,
+      "expected": null,
+      "complete": false
     },
     "Marketplace type 15": {
       "collected": 0,
-      "expected": 0,
-      "complete": true
+      "unique_collected": 0,
+      "duplicate_rows": 0,
+      "expected": null,
+      "complete": false
     },
     "Marketplace type 16": {
       "collected": 0,
-      "expected": 0,
-      "complete": true
+      "unique_collected": 0,
+      "duplicate_rows": 0,
+      "expected": null,
+      "complete": false
     },
     "Marketplace type 17": {
       "collected": 0,
-      "expected": 0,
-      "complete": true
+      "unique_collected": 0,
+      "duplicate_rows": 0,
+      "expected": null,
+      "complete": false
     },
     "Marketplace type 18": {
       "collected": 0,
-      "expected": 0,
-      "complete": true
+      "unique_collected": 0,
+      "duplicate_rows": 0,
+      "expected": null,
+      "complete": false
     },
     "Marketplace type 19": {
       "collected": 0,
-      "expected": 0,
-      "complete": true
+      "unique_collected": 0,
+      "duplicate_rows": 0,
+      "expected": null,
+      "complete": false
     },
     "Marketplace type 20": {
       "collected": 0,
-      "expected": 0,
-      "complete": true
+      "unique_collected": 0,
+      "duplicate_rows": 0,
+      "expected": null,
+      "complete": false
     },
     "Futures DCA": {
-      "collected": 1481,
-      "expected": 1481,
+      "collected": 1479,
+      "unique_collected": 1479,
+      "duplicate_rows": 0,
+      "expected": 1479,
       "complete": true
     }
   },
