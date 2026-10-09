@@ -9,8 +9,9 @@ archivé chaque heure dans results/history/*.csv.gz.
 
 Convention de lecture (aucune colonne de provenance dans le fichier final) :
   - gridProfit rempli   -> valeur EXACTE lue chez Binance (gridProfitSource = BINANCE_EXACT)
-  - gridProfit vide     -> estimation ; ratio et floatingProfit viennent alors de
-                           gridProfitEstimateMid (Low / High donnent l'incertitude)
+  - gridProfit vide     -> estimation uniquement dans les colonnes Low / Mid / High
+  - le ratio principal et floatingProfit restent vides si le Grid Profit n'est pas exact.
+    Une estimation ne doit jamais être présentée comme un ratio officiel ou un floating profit fiable.
 
 ANOMALIES : une donnée non fiable est mise à vide, jamais inventée
   - estimations négatives ou désordonnées (Low > Mid > High) -> vides
@@ -110,10 +111,17 @@ def main(src, dst):
     for s in (low, mid, high, qty):
         s[~est_ok] = np.nan
 
+    # Le ratio principal est un indicateur central : ne jamais le calculer à
+    # partir d'un Grid Profit reconstruit. Les estimations restent visibles dans
+    # Low / Mid / High, mais ne sont pas assez fiables pour un ratio sans colonne
+    # de provenance dans le tableau final.
     gp_used = gp_exact.where(exact, mid)
-    ratio = (gp_used / total.where(total > 0))
+    ratio = (gp_exact / total.where(total > 0))
     ratio = ratio.where(ratio.between(0, MAX_GRID_RATIO))
-    floating = (total - gp_used).where(ratio.notna())
+
+    # Floating Profit n'est dérivé que lorsque Grid Profit est exact et que les
+    # deux valeurs sont sur la même base comptable Binance.
+    floating = (total - gp_exact).where(exact & ratio.notna())
 
     # --- score
     lo_hi = df.priceRange.map(parse_range)
