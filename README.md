@@ -11,13 +11,13 @@ Collecte et classement des stratégies publiquement visibles dans le Binance Bot
 - Contrôle des estimations : `results/grid_profit_validation.json`
 - Historique compact : `results/history/YYYY/MM/DD/*.csv.gz`
 
-Le rapport principal est généré par `src/audit_all.py`, contrôlé par `src/validate_results.py`, puis normalisé par `src/finalize_multicriteria.py`. Le fichier final ne contient que les 29 colonnes définies dans le script de finalisation.
+Le rapport principal est généré par `src/audit_all.py`, contrôlé par `src/validate_results.py`, puis finalisé par `src/build_multicriteria.py`. Le fichier final conserve les 29 colonnes définies dans ce script.
 
 ## Critères et interprétation
 
 Le filtre final ne conserve que les stratégies ayant un `strategyId`, un symbole négociable et un levier connu inférieur ou égal à 1. Les stratégies à levier inconnu des familles autres que Spot Grid sont exclues plutôt que supposées sans levier.
 
-Le classement donne la priorité au ratio **Grid Profit / Total Profit**, puis au profit par grille après frais, à la position du prix dans la plage, à la durée, à l'activité, au profit moyen par transaction et au drawdown sur 7 jours. Le score est un outil de présélection, pas une garantie de rendement.
+Le classement donne la priorité au ratio **Grid Profit / Total Profit**, puis au profit par grille après frais, à la position du prix dans la plage, à la durée, à l'activité, au profit moyen par transaction et au drawdown sur 7 jours. Le score est un outil de présélection, pas une garantie de rendement. Un rang est attribué uniquement aux bots qui ont un score calculable; les autres restent présents dans le CSV, mais leurs colonnes `score` et `rank` sont vides. Le résumé indique le nombre de bots classés et non classés.
 
 ### Données officielles et estimations
 
@@ -27,7 +27,6 @@ Le classement donne la priorité au ratio **Grid Profit / Total Profit**, puis a
 - Dans le tableau final, `gridProfitTotalProfitRatio` est renseigné uniquement lorsque le Grid Profit est exact. Si le Grid Profit est estimé, le ratio principal reste vide : l'estimation ne doit pas être confondue avec un ratio officiel, car la présentation finale ne possède pas de colonne distincte pour sa provenance.
 - `floatingProfit` reste vide dès que le Grid Profit n'est pas exact. Le résidu entre un profit total et un Grid Profit estimé n'est pas un Floating Profit fiable.
 - Le nombre de transactions ne suffit pas à retrouver le profit exact de chaque cycle. Une reconstruction fondée sur la géométrie de la grille demeure une estimation et ne doit jamais être présentée comme une donnée officielle.
-- `floatingProfit` reste vide lorsqu'il ne peut pas être calculé à partir de valeurs exactes et comparables. Le résidu entre un profit total et un Grid Profit estimé n'est pas un Floating Profit fiable.
 - `profitPerGridAfterFees` utilise la formule documentée de la grille et les frais Spot de référence. Les frais effectifs peuvent varier selon la paire, le niveau VIP et les réductions de frais.
 
 Une collecte n'est considérée exhaustive que si `scan_meta.json` indique `collection_complete: true`. Cela signifie que le nombre de lignes récupérées correspond au total annoncé par les endpoints publics interrogés; cela ne prouve pas que Binance expose toutes les familles de bots existantes dans une API publique.
