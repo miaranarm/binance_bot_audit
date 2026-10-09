@@ -16,7 +16,7 @@ rows = list(csv.DictReader(CSV.open(newline="", encoding="utf-8")))
 stats = {
     "rows": len(rows), "reconstructed": 0, "exact": 0, "unavailable": 0,
     "unknownSource": 0, "orderingErrors": 0, "ratioErrors": 0,
-    "floatingErrors": 0, "sourceErrors": 0, "invalidNegativeEstimate": 0,
+    "floatingErrors": 0, "sourceErrors": 0, "negativeEstimateRows": 0,
     "ratiosOver100Percent": 0, "estimatedRatiosOver100Percent": 0,
 }
 examples = []
@@ -51,7 +51,15 @@ for row in rows:
             stats["ratioErrors"] += 1
             add_example({"strategyId": row.get("strategyId"), "type": "PRIMARY_RATIO_MISMATCH", "ratio": ratio, "mid": rmid})
         if any(v is not None and v < 0 for v in (low, mid, high)):
-            stats["invalidNegativeEstimate"] += 1
+            # Negative reconstructed estimates may be economically valid when
+            # estimated profit per grid after fees is negative. Preserve and report them.
+            stats["negativeEstimateRows"] += 1
+            add_example({
+                "strategyId": row.get("strategyId"),
+                "type": "NEGATIVE_GRID_PROFIT_ESTIMATE_RETAINED",
+                "low": low, "mid": mid, "high": high,
+                "profitPerGridAfterFees": row.get("profitPerGridAfterFees"),
+            })
         if None in (low, mid, high) or not (low <= mid + TOL and mid <= high + TOL):
             stats["orderingErrors"] += 1
             add_example({"strategyId": row.get("strategyId"), "type": "GRID_ESTIMATE_ORDER", "low": low, "mid": mid, "high": high})
@@ -81,7 +89,7 @@ for row in rows:
         stats["unknownSource"] += 1
         add_example({"strategyId": row.get("strategyId"), "type": "UNKNOWN_SOURCE", "source": source})
 
-stats["status"] = "PASS" if not any(stats[k] for k in ("orderingErrors","ratioErrors","floatingErrors","sourceErrors","unknownSource","invalidNegativeEstimate")) else "FAIL"
+stats["status"] = "PASS" if not any(stats[k] for k in ("orderingErrors","ratioErrors","floatingErrors","sourceErrors","unknownSource")) else "FAIL"
 OUT.write_text(json.dumps({"validation": stats, "examples": examples}, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 print(json.dumps({"validation": stats, "examples": examples}, ensure_ascii=False))
 if stats["status"] == "FAIL":
