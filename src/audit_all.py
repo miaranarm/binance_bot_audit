@@ -29,6 +29,17 @@ FIELDS = [
 
 RETENTION_DAYS = 30
 
+
+def debug_write(line):
+    """Write bounded diagnostics from module-level metric helpers."""
+    path = Path(__file__).resolve().parent.parent / "strategy_detail_debug.log"
+    try:
+        with path.open("a", encoding="utf-8") as handle:
+            handle.write(str(line)[:50000] + "\\n")
+    except Exception:
+        # Diagnostics must never interrupt the public-marketplace scan.
+        pass
+
 # Diagnostic only: public Binance responses may expose capital fields under
 # names that differ between Marketplace endpoints. Do not use these fields
 # in the CSV until their accounting meaning and units are verified.
