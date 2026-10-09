@@ -72,3 +72,14 @@ A response that returns HTTP 200 but has an application-level failure, login pro
 
 **No existing calculation method is to be removed or replaced during this investigation.** The current estimated Grid Profit reconstruction, its low/mid/high range, the estimated Grid-Profit/Total-Profit ratio range, calculated Profit/Grid, and all existing provenance/status fields remain in place. This PR narrows what may be labelled as an exact Binance accounting value; it does not retire the estimate path. A future official source may replace an existing estimate only after cross-checking multiple actual bots and documenting the source, unit, accounting basis and reconciliation results. The existing CSV/table presentation must remain unchanged.
 
+
+## Post-merge validation — workflow #430 (2026-10-09)
+
+- Run: https://github.com/miaranarm/binance_bot_audit/actions/runs/37961802717
+- Tested branch/commit: `fix/exact-grid-profit-provenance` / `228ec1460458505573fcc192e2d17139ed588290`.
+- The workflow completed successfully. The raw Grid Profit validator and final CSV validator both passed; the final CSV retained **29 columns** and **12,515 unique rows** with leverage <= 1.
+- The validator reported: **exact Grid Profit = 0**, **reconstructed estimates = 11,213**, **unavailable = 1,302**, **unknown source = 0**, **ordering errors = 0**, **ratio errors = 0**, **floating-PnL errors = 0**, **source errors = 0**. Overall validator status: `PASS`.
+- The 11,213 reconstructed rows are still estimates, not Binance-reported exact Grid Profit. The 1,302 unavailable rows remain unavailable; no values were promoted to exact.
+- The scan collected 30,032 raw listing rows and retained 12,515 bots with leverage <= 1. Collection was explicitly **incomplete** for Marketplace types 12–20, so the run does not prove complete coverage of every bot family.
+- The capital diagnostics sampled bots `3232564`, `6850680`, and `9161957`. Public listing payloads exposed `minInvestment` and null `initialMargin` for these Spot Grid examples; the diagnostic found no detail-response capital fields. These are candidate observations only, not proof that `minInvestment` equals total deployed capital.
+- Conclusion after this run: the provenance guard and existing estimate pipeline passed automated checks, but the central research question remains unresolved. No exact public Grid Profit field or sufficient matched-fill-and-fee data was found in the tested responses. Do not change the CSV presentation or remove any estimate method.
