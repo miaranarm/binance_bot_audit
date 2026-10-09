@@ -906,14 +906,21 @@ def capture_marketplace_detail_calls(page, rows):
             seen.add(sid)
             candidates.append((path, symbol, sid, row.get("_category"), running, matched, pnl))
 
-        # Deterministic sample of ACTIVE Grid strategies, plus a small
-        # historical probe set. New marketplace IDs frequently resolve to
-        # "Pending Trigger" placeholders even when the marketplace row has
-        # runtime/PNL. Older long-running public bots are therefore valuable
-        # diagnostic targets for discovering the real detail endpoint.
-        candidates.sort(key=lambda item: (-int(item[2]) if str(item[2]).isdigit() else 0, item[2]))
-        spot = [x for x in candidates if "spot grid" in str(x[3]).lower()][:8]
-        futures = [x for x in candidates if "futures grid" in str(x[3]).lower()][:8]
+        # Deterministic diagnostic sample: deliberately probe the OLDEST public
+        # strategy IDs first, because the newest Marketplace IDs often resolve
+        # to "Pending Trigger" placeholders. Also keep a separate recent sample
+        # to detect if Binance changed the detail-page behavior for new bots.
+        # Sorting descending here would accidentally select only the newest IDs
+        # and defeat the historical-endpoint investigation.
+        candidates.sort(key=lambda item: (int(item[2]) if str(item[2]).isdigit() else 10**18, item[2]))
+        spot_all = [x for x in candidates if "spot grid" in str(x[3]).lower()]
+        futures_all = [x for x in candidates if "futures grid" in str(x[3]).lower()]
+        spot_old = spot_all[:8]
+        futures_old = futures_all[:8]
+        spot_recent = sorted(spot_all, key=lambda item: int(item[2]) if str(item[2]).isdigit() else -1, reverse=True)[:2]
+        futures_recent = sorted(futures_all, key=lambda item: int(item[2]) if str(item[2]).isdigit() else -1, reverse=True)[:2]
+        spot = spot_old + [x for x in spot_recent if x[2] not in {y[2] for y in spot_old}]
+        futures = futures_old + [x for x in futures_recent if x[2] not in {y[2] for y in futures_old}]
         candidates = spot + futures
 
         known_probe_ids = [
