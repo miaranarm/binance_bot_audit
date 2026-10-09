@@ -175,6 +175,25 @@ def main():
                 out[field] = "" if value is None else value
             writer.writerow(out)
     TMP.replace(SRC)
+
+    # Keep the human-readable summary consistent with the final ranking rather
+    # than leaving the preliminary ROI/PNL ranking produced by audit_all.py.
+    summary = Path("results/current_multicriteria_summary.txt")
+    with summary.open("w", encoding="utf-8") as handle:
+        handle.write(f"COUNT={len(enriched)}\\n")
+        handle.write("UNIVERSE=Binance public Bot Marketplace\\n")
+        handle.write("FILTER=unique strategyId; known leverage <= 1; non-empty symbol\\n")
+        handle.write("SCORING=GRID_TOTAL_RATIO35 GRID_NET_PER_GRID15 PRICE_RANGE_CENTRE15 RUNTIME10 TRADES_PER_DAY10 GRID_PROFIT_PER_TRADE5 MDD7D10\\n")
+        for rank, row in enumerate(enriched[:20], 1):
+            handle.write(
+                f"{rank}. {row.get('strategyId', '')} {row.get('symbol', '')} "
+                f"score={row.get('score', 0):.4f} "
+                f"gridProfit={row.get('gridProfit', '')} "
+                f"ratio={row.get('gridProfitTotalProfitRatio', '')} "
+                f"roiBinance={row.get('roi (fourni par Binance)', '')} "
+                f"pnl={row.get('pnl', '')} tradesPerDay={row.get('Trades / J', '')} "
+                f"mdd7d={row.get('mdd7d', '')}\\n"
+            )
     print(f"CSV strict finalisé: {len(enriched)} bots uniques, levier <= 1; {len(FIELDS)} colonnes.")
     print("Scores: ratio Grid/Total 35%, profit/grille 15%, prix centré 15%, durée 10%, activité 10%, profit/trade 5%, MDD 10%.")
 
