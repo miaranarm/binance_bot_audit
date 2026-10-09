@@ -99,6 +99,9 @@ jobs:
       - name: Finalize strict current_multicriteria.csv schema and ranking
         run: python src/finalize_multicriteria.py
 
+      - name: Validate final CSV schema and invariants
+        run: python src/validate_final_csv.py
+
       - name: Verify strategy detail diagnostics
         run: |
           echo "PWD=$(pwd)"
