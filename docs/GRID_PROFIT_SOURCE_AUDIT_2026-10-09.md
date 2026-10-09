@@ -17,6 +17,19 @@ Find a Binance-origin field/API that provides **Grid Profit** separately from **
 - Public `queryTopStrategy` exposes fields such as `roi`, `pnl`, `runningTime`, `strategyParams`, `matchedCount`, and `minInvestment`; no separate Grid Profit field was present in its captured schema.
 - Public `queryRoiChart` provides ROI/PnL time-series data, not the separate Grid Profit / Total Profit / Floating Profit breakdown.
 
+## Official Binance accounting definitions
+
+Binance's [Spot Grid Trading Parameters](https://www.binance.com/en/support/faq/detail/688ff6ff08734848915de76a07b953dd), updated 2026-01-07, defines:
+
+- **Grid Profit** as the sum of profit from completed buy/sell matched pairs, in the quote asset.
+- Each matched-pair profit uses the filled sell value minus the filled buy value and the applicable trading fees (including conversion of base-asset fees at the relevant last price).
+- **Total Profit = Grid Profit + Unrealized PnL** for Spot Grid.
+- **Profit/Grid** can be calculated from the grid bounds, grid count, grid mode and fee rate.
+
+This confirms the accounting meaning and supports the existing calculated **Profit/Grid** field. It does **not** provide enough information to calculate a bot's cumulative exact Grid Profit from public Marketplace ROI, PNL and matched-trade count alone. To reproduce cumulative Grid Profit exactly, the audit needs the actual filled buy/sell amounts and applicable fees for matched pairs, or a Binance response that supplies the aggregate metric directly.
+
+For Futures Grid, Binance documents a different breakdown: total profit includes net realized profit, unrealized PnL and funding fees. Do not apply the Spot Grid formula to Futures Grid rows.
+
 ## Conclusion
 
 **No exact public Grid Profit source has been identified in this capture.** The page labels are not enough: placeholder zeros on pending-trigger pages must not be accepted as exact values, and total PNL/ROI cannot safely be relabelled as Grid Profit.
