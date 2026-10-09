@@ -28,7 +28,7 @@ SCORE 0-100 (indicatif, ne constitue pas un conseil d'investissement)
   Nombre de trades ................................... 10   palier 300 trades
   Profit par grille après frais ...................... 10   0 sous 0,3 % ; plein tarif de 0,5 à 1,5 % ; 80 % au-delà
   Activité (trades / jour) ........................... 10   percentile
-  Barrages : prix hors plage -> 0 (bot inactif) ; profit par grille <= 0,3 % -> score x 0,5.
+  Éligibilité : Grid Profit exact, ratio calculable, Profit/Grid > 0,3 %, ROI/MDD/durée valides. Prix hors plage -> score 0.
 """
 import os
 import sys
