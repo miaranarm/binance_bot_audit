@@ -124,38 +124,6 @@ def main(src, dst):
     # deux valeurs sont sur la même base comptable Binance.
     floating = (total - gp_exact).where(exact & total.notna())
 
-    # --- score
-    lo_hi = df.priceRange.map(parse_range)
-    lo = pd.Series([x[0] for x in lo_hi], index=df.index)
-    hi = pd.Series([x[1] for x in lo_hi], index=df.index)
-    pos = ((price - lo) / (hi - lo)).where(hi > lo)
-    ppg_min = df.profitPerGridAfterFees.map(parse_ppg_min) if "profitPerGridAfterFees" in df else pd.Series(np.nan, index=df.index)
-
-    # Un score de sélection n'est crédible que si son critère n°1 est
-    # mesuré à partir de valeurs exactes. Ne pas remplacer une donnée absente
-    # par zéro, ni utiliser le Grid Profit estimé pour classer les bots.
-    # Le seuil Profit/Grid > 0,3 % est une condition d'éligibilité, pas un bonus.
-    valid = pd.Series(False, index=df.index)  # classement désactivé pendant la fiabilisation
-
-    a1 = ratio.clip(0, 1)
-
-    days_c = days.clip(lower=MIN_DAYS_ANNUALIZE)
-    grid_annual = (gp_exact / capital / days_c * 365 * 100).clip(upper=MAX_ANNUAL_PCT)
-    calmar = grid_annual / (mdd * 100).clip(lower=1)
-    a2 = pd.Series(0.0, index=df.index)
-    m = valid & calmar.notna()
-    a2[m] = calmar[m].rank(pct=True)
-
-    b = (1 - (pos - 0.5).abs() * 2).clip(0, 1).fillna(0)
-    c1 = (days / 365).clip(0, 1).fillna(0)
-    c2 = (matched / 300).clip(0, 1).fillna(0)
-    d = pd.Series(np.select(
-        [ppg_min.isna(), ppg_min <= 0.3, ppg_min < 0.5, ppg_min <= 1.5],
-        [0.0, 0.0, (ppg_min - 0.3) / 0.2, 1.0], 0.8), index=df.index)
-    e = pd.Series(0.0, index=df.index)
-    m = valid & trades_day.notna()
-    e[m] = trades_day[m].rank(pct=True)
-
     # Le score et le classement sont volontairement neutralisés jusqu'à ce que
     # les métriques prioritaires soient fiabilisées. Ils ne doivent pas masquer
     # ni réordonner l'univers complet des bots.
