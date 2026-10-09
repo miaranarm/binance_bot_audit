@@ -35,9 +35,12 @@ for row in rows:
 
     if source == "RECONSTRUCTED":
         stats["reconstructed"] += 1
-        if grid is None or floating is None:
+        # At the scanner stage the midpoint is still present in gridProfit;
+        # the finalizer moves it to the estimate columns and blanks the headline
+        # Grid Profit and floatingProfit fields for non-exact rows.
+        if grid is None or floating is not None:
             stats["sourceErrors"] += 1
-            add_example({"strategyId": row.get("strategyId"), "type": "MISSING_RECONSTRUCTED_METRIC", "gridProfit": grid, "floatingProfit": floating})
+            add_example({"strategyId": row.get("strategyId"), "type": "BAD_RECONSTRUCTED_METRIC_STATE", "gridProfit": grid, "floatingProfit": floating})
         if ratio_status != "ESTIMATED_NOT_EXACT" or ratio_source != "RECONSTRUCTED_GRID_PROFIT_DIV_BINANCE_MARKETPLACE_TOTAL_PROFIT":
             stats["sourceErrors"] += 1
             add_example({"strategyId": row.get("strategyId"), "type": "BAD_RECONSTRUCTED_RATIO_PROVENANCE", "status": ratio_status, "source": ratio_source})
