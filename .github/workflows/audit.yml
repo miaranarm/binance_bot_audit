@@ -10,6 +10,7 @@ on:
 permissions:
   contents: write
 
+# Fresh main push restarts the audit on current code; concurrency cancels stale runs.
 concurrency:
   group: binance-public-bot-audit
   cancel-in-progress: true
