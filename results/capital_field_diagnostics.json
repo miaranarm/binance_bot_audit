@@ -1,0 +1,1283 @@
+{
+  "generated_utc": "2026-10-09T15:00:24.399506+00:00",
+  "purpose": "Find public Binance fields that may represent actual bot investment/capital; diagnostic only, not a validated capital metric.",
+  "sample_strategy_ids": [
+    "6850680",
+    "3232564",
+    "9161957"
+  ],
+  "field_name_candidates": [
+    "capitalinvested",
+    "initialcapital",
+    "initialinvestment",
+    "initialmargin",
+    "investedamount",
+    "investment",
+    "investmentamount",
+    "investmentusd",
+    "investmentvalue",
+    "minimuminvestment",
+    "mininvestment",
+    "startinvestment",
+    "totalcapital",
+    "totalinvest",
+    "totalinvestment"
+  ],
+  "marketplace_listing_fields": [
+    {
+      "strategyId": "3232564",
+      "symbol": "XRPBTC",
+      "category": "Spot Grid",
+      "source": "BINANCE_MARKETPLACE_LISTING_PAYLOAD",
+      "fields": [
+        {
+          "path": "$.strategyParams.initialMargin",
+          "key": "initialMargin",
+          "value": null
+        },
+        {
+          "path": "$.minInvestment",
+          "key": "minInvestment",
+          "value": "1109.82308220000000"
+        },
+        {
+          "path": "$.initialMargin",
+          "key": "initialMargin",
+          "value": null
+        }
+      ],
+      "minInvestment": "1109.82308220000000",
+      "roi": "178.14",
+      "pnl": "1471.20131065"
+    },
+    {
+      "strategyId": "6850680",
+      "symbol": "TRXETH",
+      "category": "Spot Grid",
+      "source": "BINANCE_MARKETPLACE_LISTING_PAYLOAD",
+      "fields": [
+        {
+          "path": "$.strategyParams.initialMargin",
+          "key": "initialMargin",
+          "value": null
+        },
+        {
+          "path": "$.minInvestment",
+          "key": "minInvestment",
+          "value": "724.32806572500000"
+        },
+        {
+          "path": "$.initialMargin",
+          "key": "initialMargin",
+          "value": null
+        }
+      ],
+      "minInvestment": "724.32806572500000",
+      "roi": "15.44",
+      "pnl": "111.61772954"
+    },
+    {
+      "strategyId": "9161957",
+      "symbol": "TSTUSDT",
+      "category": "Spot Grid",
+      "source": "BINANCE_MARKETPLACE_LISTING_PAYLOAD",
+      "fields": [
+        {
+          "path": "$.strategyParams.initialMargin",
+          "key": "initialMargin",
+          "value": null
+        },
+        {
+          "path": "$.minInvestment",
+          "key": "minInvestment",
+          "value": "20.20986000000000"
+        },
+        {
+          "path": "$.initialMargin",
+          "key": "initialMargin",
+          "value": null
+        }
+      ],
+      "minInvestment": "20.20986000000000",
+      "roi": "131.48",
+      "pnl": "27.61273089"
+    }
+  ],
+  "detail_response_fields": [
+    {
+      "strategyId": "197546",
+      "url": "https://bin.bnbstatic.com/api/i18n/-/web/cms/en/spot-strategy-ui",
+      "httpStatus": 200,
+      "fields": [
+        {
+          "path": "$.investment",
+          "key": "investment",
+          "value": "Investment"
+        }
+      ]
+    },
+    {
+      "strategyId": "197546",
+      "url": "https://bin.bnbstatic.com/api/i18n/-/web/cms/en/strategy-widget",
+      "httpStatus": 200,
+      "fields": [
+        {
+          "path": "$.investment",
+          "key": "investment",
+          "value": "Investment"
+        },
+        {
+          "path": "$.min-investment",
+          "key": "min-investment",
+          "value": "Min. Investment"
+        },
+        {
+          "path": "$.total-investment",
+          "key": "total-investment",
+          "value": "Total Investment"
+        },
+        {
+          "path": "$.investment-amount",
+          "key": "investment-amount",
+          "value": "Investment Amount"
+        }
+      ]
+    },
+    {
+      "strategyId": "197546",
+      "url": "https://bin.bnbstatic.com/api/i18n/-/web/cms/en/mainuc-strategy-ui",
+      "httpStatus": 200,
+      "fields": [
+        {
+          "path": "$.total-investment",
+          "key": "total-investment",
+          "value": "Total Investment"
+        },
+        {
+          "path": "$.initial-investment",
+          "key": "initial-investment",
+          "value": "Initial Investment"
+        }
+      ]
+    },
+    {
+      "strategyId": "197546",
+      "url": "https://bin.bnbstatic.com/api/i18n/-/web/cms/en/futures-strategy-ui",
+      "httpStatus": 200,
+      "fields": [
+        {
+          "path": "$.investment",
+          "key": "investment",
+          "value": "Total Investment"
+        },
+        {
+          "path": "$.min-investment",
+          "key": "min-investment",
+          "value": "Min Investment"
+        },
+        {
+          "path": "$.investment-amount",
+          "key": "investment-amount",
+          "value": "Investment Amount"
+        }
+      ]
+    },
+    {
+      "strategyId": "197546",
+      "url": "https://bin.bnbstatic.com/api/i18n/-/web/cms/en/mainuc-strategy-ui",
+      "httpStatus": 200,
+      "fields": [
+        {
+          "path": "$.total-investment",
+          "key": "total-investment",
+          "value": "Total Investment"
+        },
+        {
+          "path": "$.initial-investment",
+          "key": "initial-investment",
+          "value": "Initial Investment"
+        }
+      ]
+    },
+    {
+      "strategyId": "197546",
+      "url": "https://www.binance.com/en/trading-bots/spot/grid/detail?symbol=ETHUSDT&strategyId=197546",
+      "source": "BINANCE_DETAIL_VISIBLE_TEXT",
+      "fields": [
+        {
+          "label": "Total Investment",
+          "value": 0.0
+        }
+      ]
+    },
+    {
+      "strategyId": "1548524",
+      "url": "https://bin.bnbstatic.com/api/i18n/-/web/cms/en/spot-strategy-ui",
+      "httpStatus": 200,
+      "fields": [
+        {
+          "path": "$.investment",
+          "key": "investment",
+          "value": "Investment"
+        }
+      ]
+    },
+    {
+      "strategyId": "1548524",
+      "url": "https://bin.bnbstatic.com/api/i18n/-/web/cms/en/strategy-widget",
+      "httpStatus": 200,
+      "fields": [
+        {
+          "path": "$.investment",
+          "key": "investment",
+          "value": "Investment"
+        },
+        {
+          "path": "$.min-investment",
+          "key": "min-investment",
+          "value": "Min. Investment"
+        },
+        {
+          "path": "$.total-investment",
+          "key": "total-investment",
+          "value": "Total Investment"
+        },
+        {
+          "path": "$.investment-amount",
+          "key": "investment-amount",
+          "value": "Investment Amount"
+        }
+      ]
+    },
+    {
+      "strategyId": "1548524",
+      "url": "https://bin.bnbstatic.com/api/i18n/-/web/cms/en/futures-strategy-ui",
+      "httpStatus": 200,
+      "fields": [
+        {
+          "path": "$.investment",
+          "key": "investment",
+          "value": "Total Investment"
+        },
+        {
+          "path": "$.min-investment",
+          "key": "min-investment",
+          "value": "Min Investment"
+        },
+        {
+          "path": "$.investment-amount",
+          "key": "investment-amount",
+          "value": "Investment Amount"
+        }
+      ]
+    },
+    {
+      "strategyId": "1548524",
+      "url": "https://bin.bnbstatic.com/api/i18n/-/web/cms/en/mainuc-strategy-ui",
+      "httpStatus": 200,
+      "fields": [
+        {
+          "path": "$.total-investment",
+          "key": "total-investment",
+          "value": "Total Investment"
+        },
+        {
+          "path": "$.initial-investment",
+          "key": "initial-investment",
+          "value": "Initial Investment"
+        }
+      ]
+    },
+    {
+      "strategyId": "1548524",
+      "url": "https://www.binance.com/en/trading-bots/spot/grid/detail?symbol=JASMYUSDT&strategyId=1548524",
+      "source": "BINANCE_DETAIL_VISIBLE_TEXT",
+      "fields": [
+        {
+          "label": "Total Investment",
+          "value": 0.0
+        }
+      ]
+    },
+    {
+      "strategyId": "1764430",
+      "url": "https://bin.bnbstatic.com/api/i18n/-/web/cms/en/spot-strategy-ui",
+      "httpStatus": 200,
+      "fields": [
+        {
+          "path": "$.investment",
+          "key": "investment",
+          "value": "Investment"
+        }
+      ]
+    },
+    {
+      "strategyId": "1764430",
+      "url": "https://bin.bnbstatic.com/api/i18n/-/web/cms/en/futures-strategy-ui",
+      "httpStatus": 200,
+      "fields": [
+        {
+          "path": "$.investment",
+          "key": "investment",
+          "value": "Total Investment"
+        },
+        {
+          "path": "$.min-investment",
+          "key": "min-investment",
+          "value": "Min Investment"
+        },
+        {
+          "path": "$.investment-amount",
+          "key": "investment-amount",
+          "value": "Investment Amount"
+        }
+      ]
+    },
+    {
+      "strategyId": "1764430",
+      "url": "https://bin.bnbstatic.com/api/i18n/-/web/cms/en/strategy-widget",
+      "httpStatus": 200,
+      "fields": [
+        {
+          "path": "$.investment",
+          "key": "investment",
+          "value": "Investment"
+        },
+        {
+          "path": "$.min-investment",
+          "key": "min-investment",
+          "value": "Min. Investment"
+        },
+        {
+          "path": "$.total-investment",
+          "key": "total-investment",
+          "value": "Total Investment"
+        },
+        {
+          "path": "$.investment-amount",
+          "key": "investment-amount",
+          "value": "Investment Amount"
+        }
+      ]
+    },
+    {
+      "strategyId": "1764430",
+      "url": "https://bin.bnbstatic.com/api/i18n/-/web/cms/en/mainuc-strategy-ui",
+      "httpStatus": 200,
+      "fields": [
+        {
+          "path": "$.total-investment",
+          "key": "total-investment",
+          "value": "Total Investment"
+        },
+        {
+          "path": "$.initial-investment",
+          "key": "initial-investment",
+          "value": "Initial Investment"
+        }
+      ]
+    },
+    {
+      "strategyId": "1764430",
+      "url": "https://www.binance.com/en/trading-bots/spot/grid/detail?symbol=LTCUSDT&strategyId=1764430",
+      "source": "BINANCE_DETAIL_VISIBLE_TEXT",
+      "fields": [
+        {
+          "label": "Total Investment",
+          "value": 0.0
+        }
+      ]
+    },
+    {
+      "strategyId": "1810594",
+      "url": "https://bin.bnbstatic.com/api/i18n/-/web/cms/en/futures-strategy-ui",
+      "httpStatus": 200,
+      "fields": [
+        {
+          "path": "$.investment",
+          "key": "investment",
+          "value": "Total Investment"
+        },
+        {
+          "path": "$.min-investment",
+          "key": "min-investment",
+          "value": "Min Investment"
+        },
+        {
+          "path": "$.investment-amount",
+          "key": "investment-amount",
+          "value": "Investment Amount"
+        }
+      ]
+    },
+    {
+      "strategyId": "1810594",
+      "url": "https://bin.bnbstatic.com/api/i18n/-/web/cms/en/spot-strategy-ui",
+      "httpStatus": 200,
+      "fields": [
+        {
+          "path": "$.investment",
+          "key": "investment",
+          "value": "Investment"
+        }
+      ]
+    },
+    {
+      "strategyId": "1810594",
+      "url": "https://bin.bnbstatic.com/api/i18n/-/web/cms/en/strategy-widget",
+      "httpStatus": 200,
+      "fields": [
+        {
+          "path": "$.investment",
+          "key": "investment",
+          "value": "Investment"
+        },
+        {
+          "path": "$.min-investment",
+          "key": "min-investment",
+          "value": "Min. Investment"
+        },
+        {
+          "path": "$.total-investment",
+          "key": "total-investment",
+          "value": "Total Investment"
+        },
+        {
+          "path": "$.investment-amount",
+          "key": "investment-amount",
+          "value": "Investment Amount"
+        }
+      ]
+    },
+    {
+      "strategyId": "1810594",
+      "url": "https://bin.bnbstatic.com/api/i18n/-/web/cms/en/mainuc-strategy-ui",
+      "httpStatus": 200,
+      "fields": [
+        {
+          "path": "$.total-investment",
+          "key": "total-investment",
+          "value": "Total Investment"
+        },
+        {
+          "path": "$.initial-investment",
+          "key": "initial-investment",
+          "value": "Initial Investment"
+        }
+      ]
+    },
+    {
+      "strategyId": "1810594",
+      "url": "https://www.binance.com/en/trading-bots/spot/grid/detail?symbol=DOGEUSDT&strategyId=1810594",
+      "source": "BINANCE_DETAIL_VISIBLE_TEXT",
+      "fields": [
+        {
+          "label": "Total Investment",
+          "value": 0.0
+        }
+      ]
+    },
+    {
+      "strategyId": "2198857",
+      "url": "https://bin.bnbstatic.com/api/i18n/-/web/cms/en/futures-strategy-ui",
+      "httpStatus": 200,
+      "fields": [
+        {
+          "path": "$.investment",
+          "key": "investment",
+          "value": "Total Investment"
+        },
+        {
+          "path": "$.min-investment",
+          "key": "min-investment",
+          "value": "Min Investment"
+        },
+        {
+          "path": "$.investment-amount",
+          "key": "investment-amount",
+          "value": "Investment Amount"
+        }
+      ]
+    },
+    {
+      "strategyId": "2198857",
+      "url": "https://bin.bnbstatic.com/api/i18n/-/web/cms/en/spot-strategy-ui",
+      "httpStatus": 200,
+      "fields": [
+        {
+          "path": "$.investment",
+          "key": "investment",
+          "value": "Investment"
+        }
+      ]
+    },
+    {
+      "strategyId": "2198857",
+      "url": "https://bin.bnbstatic.com/api/i18n/-/web/cms/en/strategy-widget",
+      "httpStatus": 200,
+      "fields": [
+        {
+          "path": "$.investment",
+          "key": "investment",
+          "value": "Investment"
+        },
+        {
+          "path": "$.min-investment",
+          "key": "min-investment",
+          "value": "Min. Investment"
+        },
+        {
+          "path": "$.total-investment",
+          "key": "total-investment",
+          "value": "Total Investment"
+        },
+        {
+          "path": "$.investment-amount",
+          "key": "investment-amount",
+          "value": "Investment Amount"
+        }
+      ]
+    },
+    {
+      "strategyId": "2198857",
+      "url": "https://bin.bnbstatic.com/api/i18n/-/web/cms/en/mainuc-strategy-ui",
+      "httpStatus": 200,
+      "fields": [
+        {
+          "path": "$.total-investment",
+          "key": "total-investment",
+          "value": "Total Investment"
+        },
+        {
+          "path": "$.initial-investment",
+          "key": "initial-investment",
+          "value": "Initial Investment"
+        }
+      ]
+    },
+    {
+      "strategyId": "2198857",
+      "url": "https://www.binance.com/en/trading-bots/spot/grid/detail?symbol=CAKEUSDT&strategyId=2198857",
+      "source": "BINANCE_DETAIL_VISIBLE_TEXT",
+      "fields": [
+        {
+          "label": "Total Investment",
+          "value": 0.0
+        }
+      ]
+    },
+    {
+      "strategyId": "2222438",
+      "url": "https://bin.bnbstatic.com/api/i18n/-/web/cms/en/spot-strategy-ui",
+      "httpStatus": 200,
+      "fields": [
+        {
+          "path": "$.investment",
+          "key": "investment",
+          "value": "Investment"
+        }
+      ]
+    },
+    {
+      "strategyId": "2222438",
+      "url": "https://bin.bnbstatic.com/api/i18n/-/web/cms/en/mainuc-strategy-ui",
+      "httpStatus": 200,
+      "fields": [
+        {
+          "path": "$.total-investment",
+          "key": "total-investment",
+          "value": "Total Investment"
+        },
+        {
+          "path": "$.initial-investment",
+          "key": "initial-investment",
+          "value": "Initial Investment"
+        }
+      ]
+    },
+    {
+      "strategyId": "2222438",
+      "url": "https://bin.bnbstatic.com/api/i18n/-/web/cms/en/strategy-widget",
+      "httpStatus": 200,
+      "fields": [
+        {
+          "path": "$.investment",
+          "key": "investment",
+          "value": "Investment"
+        },
+        {
+          "path": "$.min-investment",
+          "key": "min-investment",
+          "value": "Min. Investment"
+        },
+        {
+          "path": "$.total-investment",
+          "key": "total-investment",
+          "value": "Total Investment"
+        },
+        {
+          "path": "$.investment-amount",
+          "key": "investment-amount",
+          "value": "Investment Amount"
+        }
+      ]
+    },
+    {
+      "strategyId": "2222438",
+      "url": "https://bin.bnbstatic.com/api/i18n/-/web/cms/en/futures-strategy-ui",
+      "httpStatus": 200,
+      "fields": [
+        {
+          "path": "$.investment",
+          "key": "investment",
+          "value": "Total Investment"
+        },
+        {
+          "path": "$.min-investment",
+          "key": "min-investment",
+          "value": "Min Investment"
+        },
+        {
+          "path": "$.investment-amount",
+          "key": "investment-amount",
+          "value": "Investment Amount"
+        }
+      ]
+    },
+    {
+      "strategyId": "2222438",
+      "url": "https://www.binance.com/en/trading-bots/spot/grid/detail?symbol=DOGEUSDT&strategyId=2222438",
+      "source": "BINANCE_DETAIL_VISIBLE_TEXT",
+      "fields": [
+        {
+          "label": "Total Investment",
+          "value": 0.0
+        }
+      ]
+    },
+    {
+      "strategyId": "2647824",
+      "url": "https://bin.bnbstatic.com/api/i18n/-/web/cms/en/futures-strategy-ui",
+      "httpStatus": 200,
+      "fields": [
+        {
+          "path": "$.investment",
+          "key": "investment",
+          "value": "Total Investment"
+        },
+        {
+          "path": "$.min-investment",
+          "key": "min-investment",
+          "value": "Min Investment"
+        },
+        {
+          "path": "$.investment-amount",
+          "key": "investment-amount",
+          "value": "Investment Amount"
+        }
+      ]
+    },
+    {
+      "strategyId": "2647824",
+      "url": "https://bin.bnbstatic.com/api/i18n/-/web/cms/en/spot-strategy-ui",
+      "httpStatus": 200,
+      "fields": [
+        {
+          "path": "$.investment",
+          "key": "investment",
+          "value": "Investment"
+        }
+      ]
+    },
+    {
+      "strategyId": "2647824",
+      "url": "https://bin.bnbstatic.com/api/i18n/-/web/cms/en/strategy-widget",
+      "httpStatus": 200,
+      "fields": [
+        {
+          "path": "$.investment",
+          "key": "investment",
+          "value": "Investment"
+        },
+        {
+          "path": "$.min-investment",
+          "key": "min-investment",
+          "value": "Min. Investment"
+        },
+        {
+          "path": "$.total-investment",
+          "key": "total-investment",
+          "value": "Total Investment"
+        },
+        {
+          "path": "$.investment-amount",
+          "key": "investment-amount",
+          "value": "Investment Amount"
+        }
+      ]
+    },
+    {
+      "strategyId": "2647824",
+      "url": "https://bin.bnbstatic.com/api/i18n/-/web/cms/en/mainuc-strategy-ui",
+      "httpStatus": 200,
+      "fields": [
+        {
+          "path": "$.total-investment",
+          "key": "total-investment",
+          "value": "Total Investment"
+        },
+        {
+          "path": "$.initial-investment",
+          "key": "initial-investment",
+          "value": "Initial Investment"
+        }
+      ]
+    },
+    {
+      "strategyId": "2647824",
+      "url": "https://www.binance.com/en/trading-bots/spot/grid/detail?symbol=SOLUSDT&strategyId=2647824",
+      "source": "BINANCE_DETAIL_VISIBLE_TEXT",
+      "fields": [
+        {
+          "label": "Total Investment",
+          "value": 0.0
+        }
+      ]
+    },
+    {
+      "strategyId": "2654917",
+      "url": "https://bin.bnbstatic.com/api/i18n/-/web/cms/en/futures-strategy-ui",
+      "httpStatus": 200,
+      "fields": [
+        {
+          "path": "$.investment",
+          "key": "investment",
+          "value": "Total Investment"
+        },
+        {
+          "path": "$.min-investment",
+          "key": "min-investment",
+          "value": "Min Investment"
+        },
+        {
+          "path": "$.investment-amount",
+          "key": "investment-amount",
+          "value": "Investment Amount"
+        }
+      ]
+    },
+    {
+      "strategyId": "2654917",
+      "url": "https://bin.bnbstatic.com/api/i18n/-/web/cms/en/spot-strategy-ui",
+      "httpStatus": 200,
+      "fields": [
+        {
+          "path": "$.investment",
+          "key": "investment",
+          "value": "Investment"
+        }
+      ]
+    },
+    {
+      "strategyId": "2654917",
+      "url": "https://bin.bnbstatic.com/api/i18n/-/web/cms/en/strategy-widget",
+      "httpStatus": 200,
+      "fields": [
+        {
+          "path": "$.investment",
+          "key": "investment",
+          "value": "Investment"
+        },
+        {
+          "path": "$.min-investment",
+          "key": "min-investment",
+          "value": "Min. Investment"
+        },
+        {
+          "path": "$.total-investment",
+          "key": "total-investment",
+          "value": "Total Investment"
+        },
+        {
+          "path": "$.investment-amount",
+          "key": "investment-amount",
+          "value": "Investment Amount"
+        }
+      ]
+    },
+    {
+      "strategyId": "2654917",
+      "url": "https://bin.bnbstatic.com/api/i18n/-/web/cms/en/mainuc-strategy-ui",
+      "httpStatus": 200,
+      "fields": [
+        {
+          "path": "$.total-investment",
+          "key": "total-investment",
+          "value": "Total Investment"
+        },
+        {
+          "path": "$.initial-investment",
+          "key": "initial-investment",
+          "value": "Initial Investment"
+        }
+      ]
+    },
+    {
+      "strategyId": "2654917",
+      "url": "https://www.binance.com/en/trading-bots/spot/grid/detail?symbol=BTCUSDT&strategyId=2654917",
+      "source": "BINANCE_DETAIL_VISIBLE_TEXT",
+      "fields": [
+        {
+          "label": "Total Investment",
+          "value": 0.0
+        }
+      ]
+    },
+    {
+      "strategyId": "10150437",
+      "url": "https://bin.bnbstatic.com/api/i18n/-/web/cms/en/futures-strategy-ui",
+      "httpStatus": 200,
+      "fields": [
+        {
+          "path": "$.investment",
+          "key": "investment",
+          "value": "Total Investment"
+        },
+        {
+          "path": "$.min-investment",
+          "key": "min-investment",
+          "value": "Min Investment"
+        },
+        {
+          "path": "$.investment-amount",
+          "key": "investment-amount",
+          "value": "Investment Amount"
+        }
+      ]
+    },
+    {
+      "strategyId": "10150437",
+      "url": "https://bin.bnbstatic.com/api/i18n/-/web/cms/en/spot-strategy-ui",
+      "httpStatus": 200,
+      "fields": [
+        {
+          "path": "$.investment",
+          "key": "investment",
+          "value": "Investment"
+        }
+      ]
+    },
+    {
+      "strategyId": "10150437",
+      "url": "https://bin.bnbstatic.com/api/i18n/-/web/cms/en/strategy-widget",
+      "httpStatus": 200,
+      "fields": [
+        {
+          "path": "$.investment",
+          "key": "investment",
+          "value": "Investment"
+        },
+        {
+          "path": "$.min-investment",
+          "key": "min-investment",
+          "value": "Min. Investment"
+        },
+        {
+          "path": "$.total-investment",
+          "key": "total-investment",
+          "value": "Total Investment"
+        },
+        {
+          "path": "$.investment-amount",
+          "key": "investment-amount",
+          "value": "Investment Amount"
+        }
+      ]
+    },
+    {
+      "strategyId": "10150437",
+      "url": "https://bin.bnbstatic.com/api/i18n/-/web/cms/en/mainuc-strategy-ui",
+      "httpStatus": 200,
+      "fields": [
+        {
+          "path": "$.total-investment",
+          "key": "total-investment",
+          "value": "Total Investment"
+        },
+        {
+          "path": "$.initial-investment",
+          "key": "initial-investment",
+          "value": "Initial Investment"
+        }
+      ]
+    },
+    {
+      "strategyId": "10150437",
+      "url": "https://www.binance.com/en/trading-bots/spot/grid/detail?symbol=MSTRBUSDT&strategyId=10150437",
+      "source": "BINANCE_DETAIL_VISIBLE_TEXT",
+      "fields": [
+        {
+          "label": "Total Investment",
+          "value": 0.0
+        }
+      ]
+    },
+    {
+      "strategyId": "10150419",
+      "url": "https://bin.bnbstatic.com/api/i18n/-/web/cms/en/futures-strategy-ui",
+      "httpStatus": 200,
+      "fields": [
+        {
+          "path": "$.investment",
+          "key": "investment",
+          "value": "Total Investment"
+        },
+        {
+          "path": "$.min-investment",
+          "key": "min-investment",
+          "value": "Min Investment"
+        },
+        {
+          "path": "$.investment-amount",
+          "key": "investment-amount",
+          "value": "Investment Amount"
+        }
+      ]
+    },
+    {
+      "strategyId": "10150419",
+      "url": "https://bin.bnbstatic.com/api/i18n/-/web/cms/en/spot-strategy-ui",
+      "httpStatus": 200,
+      "fields": [
+        {
+          "path": "$.investment",
+          "key": "investment",
+          "value": "Investment"
+        }
+      ]
+    },
+    {
+      "strategyId": "10150419",
+      "url": "https://bin.bnbstatic.com/api/i18n/-/web/cms/en/strategy-widget",
+      "httpStatus": 200,
+      "fields": [
+        {
+          "path": "$.investment",
+          "key": "investment",
+          "value": "Investment"
+        },
+        {
+          "path": "$.min-investment",
+          "key": "min-investment",
+          "value": "Min. Investment"
+        },
+        {
+          "path": "$.total-investment",
+          "key": "total-investment",
+          "value": "Total Investment"
+        },
+        {
+          "path": "$.investment-amount",
+          "key": "investment-amount",
+          "value": "Investment Amount"
+        }
+      ]
+    },
+    {
+      "strategyId": "10150419",
+      "url": "https://bin.bnbstatic.com/api/i18n/-/web/cms/en/mainuc-strategy-ui",
+      "httpStatus": 200,
+      "fields": [
+        {
+          "path": "$.total-investment",
+          "key": "total-investment",
+          "value": "Total Investment"
+        },
+        {
+          "path": "$.initial-investment",
+          "key": "initial-investment",
+          "value": "Initial Investment"
+        }
+      ]
+    },
+    {
+      "strategyId": "10150419",
+      "url": "https://www.binance.com/en/trading-bots/spot/grid/detail?symbol=SUIUSDT&strategyId=10150419",
+      "source": "BINANCE_DETAIL_VISIBLE_TEXT",
+      "fields": [
+        {
+          "label": "Total Investment",
+          "value": 0.0
+        }
+      ]
+    },
+    {
+      "strategyId": "6850680",
+      "url": "https://bin.bnbstatic.com/api/i18n/-/web/cms/en/futures-strategy-ui",
+      "httpStatus": 200,
+      "fields": [
+        {
+          "path": "$.investment",
+          "key": "investment",
+          "value": "Total Investment"
+        },
+        {
+          "path": "$.min-investment",
+          "key": "min-investment",
+          "value": "Min Investment"
+        },
+        {
+          "path": "$.investment-amount",
+          "key": "investment-amount",
+          "value": "Investment Amount"
+        }
+      ]
+    },
+    {
+      "strategyId": "6850680",
+      "url": "https://bin.bnbstatic.com/api/i18n/-/web/cms/en/spot-strategy-ui",
+      "httpStatus": 200,
+      "fields": [
+        {
+          "path": "$.investment",
+          "key": "investment",
+          "value": "Investment"
+        }
+      ]
+    },
+    {
+      "strategyId": "6850680",
+      "url": "https://bin.bnbstatic.com/api/i18n/-/web/cms/en/strategy-widget",
+      "httpStatus": 200,
+      "fields": [
+        {
+          "path": "$.investment",
+          "key": "investment",
+          "value": "Investment"
+        },
+        {
+          "path": "$.min-investment",
+          "key": "min-investment",
+          "value": "Min. Investment"
+        },
+        {
+          "path": "$.total-investment",
+          "key": "total-investment",
+          "value": "Total Investment"
+        },
+        {
+          "path": "$.investment-amount",
+          "key": "investment-amount",
+          "value": "Investment Amount"
+        }
+      ]
+    },
+    {
+      "strategyId": "6850680",
+      "url": "https://bin.bnbstatic.com/api/i18n/-/web/cms/en/mainuc-strategy-ui",
+      "httpStatus": 200,
+      "fields": [
+        {
+          "path": "$.total-investment",
+          "key": "total-investment",
+          "value": "Total Investment"
+        },
+        {
+          "path": "$.initial-investment",
+          "key": "initial-investment",
+          "value": "Initial Investment"
+        }
+      ]
+    },
+    {
+      "strategyId": "6850680",
+      "url": "https://www.binance.com/en/trading-bots/spot/grid/detail?symbol=TRXETH&strategyId=6850680",
+      "source": "BINANCE_DETAIL_VISIBLE_TEXT",
+      "fields": [
+        {
+          "label": "Total Investment",
+          "value": 0.0
+        }
+      ]
+    },
+    {
+      "strategyId": "3232564",
+      "url": "https://bin.bnbstatic.com/api/i18n/-/web/cms/en/futures-strategy-ui",
+      "httpStatus": 200,
+      "fields": [
+        {
+          "path": "$.investment",
+          "key": "investment",
+          "value": "Total Investment"
+        },
+        {
+          "path": "$.min-investment",
+          "key": "min-investment",
+          "value": "Min Investment"
+        },
+        {
+          "path": "$.investment-amount",
+          "key": "investment-amount",
+          "value": "Investment Amount"
+        }
+      ]
+    },
+    {
+      "strategyId": "3232564",
+      "url": "https://bin.bnbstatic.com/api/i18n/-/web/cms/en/spot-strategy-ui",
+      "httpStatus": 200,
+      "fields": [
+        {
+          "path": "$.investment",
+          "key": "investment",
+          "value": "Investment"
+        }
+      ]
+    },
+    {
+      "strategyId": "3232564",
+      "url": "https://bin.bnbstatic.com/api/i18n/-/web/cms/en/strategy-widget",
+      "httpStatus": 200,
+      "fields": [
+        {
+          "path": "$.investment",
+          "key": "investment",
+          "value": "Investment"
+        },
+        {
+          "path": "$.min-investment",
+          "key": "min-investment",
+          "value": "Min. Investment"
+        },
+        {
+          "path": "$.total-investment",
+          "key": "total-investment",
+          "value": "Total Investment"
+        },
+        {
+          "path": "$.investment-amount",
+          "key": "investment-amount",
+          "value": "Investment Amount"
+        }
+      ]
+    },
+    {
+      "strategyId": "3232564",
+      "url": "https://bin.bnbstatic.com/api/i18n/-/web/cms/en/mainuc-strategy-ui",
+      "httpStatus": 200,
+      "fields": [
+        {
+          "path": "$.total-investment",
+          "key": "total-investment",
+          "value": "Total Investment"
+        },
+        {
+          "path": "$.initial-investment",
+          "key": "initial-investment",
+          "value": "Initial Investment"
+        }
+      ]
+    },
+    {
+      "strategyId": "3232564",
+      "url": "https://www.binance.com/en/trading-bots/spot/grid/detail?symbol=XRPBTC&strategyId=3232564",
+      "source": "BINANCE_DETAIL_VISIBLE_TEXT",
+      "fields": [
+        {
+          "label": "Total Investment",
+          "value": 0.0
+        }
+      ]
+    },
+    {
+      "strategyId": "9161957",
+      "url": "https://bin.bnbstatic.com/api/i18n/-/web/cms/en/futures-strategy-ui",
+      "httpStatus": 200,
+      "fields": [
+        {
+          "path": "$.investment",
+          "key": "investment",
+          "value": "Total Investment"
+        },
+        {
+          "path": "$.min-investment",
+          "key": "min-investment",
+          "value": "Min Investment"
+        },
+        {
+          "path": "$.investment-amount",
+          "key": "investment-amount",
+          "value": "Investment Amount"
+        }
+      ]
+    },
+    {
+      "strategyId": "9161957",
+      "url": "https://bin.bnbstatic.com/api/i18n/-/web/cms/en/spot-strategy-ui",
+      "httpStatus": 200,
+      "fields": [
+        {
+          "path": "$.investment",
+          "key": "investment",
+          "value": "Investment"
+        }
+      ]
+    },
+    {
+      "strategyId": "9161957",
+      "url": "https://bin.bnbstatic.com/api/i18n/-/web/cms/en/strategy-widget",
+      "httpStatus": 200,
+      "fields": [
+        {
+          "path": "$.investment",
+          "key": "investment",
+          "value": "Investment"
+        },
+        {
+          "path": "$.min-investment",
+          "key": "min-investment",
+          "value": "Min. Investment"
+        },
+        {
+          "path": "$.total-investment",
+          "key": "total-investment",
+          "value": "Total Investment"
+        },
+        {
+          "path": "$.investment-amount",
+          "key": "investment-amount",
+          "value": "Investment Amount"
+        }
+      ]
+    },
+    {
+      "strategyId": "9161957",
+      "url": "https://bin.bnbstatic.com/api/i18n/-/web/cms/en/mainuc-strategy-ui",
+      "httpStatus": 200,
+      "fields": [
+        {
+          "path": "$.total-investment",
+          "key": "total-investment",
+          "value": "Total Investment"
+        },
+        {
+          "path": "$.initial-investment",
+          "key": "initial-investment",
+          "value": "Initial Investment"
+        }
+      ]
+    },
+    {
+      "strategyId": "9161957",
+      "url": "https://www.binance.com/en/trading-bots/spot/grid/detail?symbol=TSTUSDT&strategyId=9161957",
+      "source": "BINANCE_DETAIL_VISIBLE_TEXT",
+      "fields": [
+        {
+          "label": "Total Investment",
+          "value": 0.0
+        }
+      ]
+    }
+  ],
+  "interpretation_rule": "A field name alone does not prove its accounting basis or units. Do not treat minInvestment, inferred PNL/ROI capital, initial capital, current capital, or margin as interchangeable without endpoint-level verification."
+}
