@@ -454,28 +454,36 @@ def grid_metrics(item, prices):
     estimate_qty = None
     estimate_qty_source = ""
 
-    # Exact ratios are calculated only from accounting values captured on the
-    # same verified detail/chart source. Do NOT scale a detail-asset Grid Profit
-    # into Marketplace USD PNL and then label that converted amount BINANCE_EXACT:
-    # unit/valuation compatibility is not established by the public payload.
-    exact_total = detail_total
-    if exact_total is None and detail_grid is not None and floating_pnl is not None:
-        exact_total = detail_grid + floating_pnl
-    if detail_grid is not None and exact_total not in (None, 0):
-        ratio_value = detail_grid / exact_total
-        ratio = f"{ratio_value:.6f}"
-        ratio_source = "BINANCE_DETAIL_GRID_DIV_TOTAL_EXACT"
-        ratio_status = "EXACT"
-
-    # The same-source detail identity also permits an exact ratio when
-    # Grid Profit is reconstructed as detail Total Profit minus detail Floating
-    # PnL. Keep this ratio separate from the USD amount in the Marketplace CSV.
-    if ratio_status != "EXACT" and detail_total not in (None, 0) and floating_pnl is not None:
-        detail_grid_reconstructed = detail_total - floating_pnl
-        ratio_value = detail_grid_reconstructed / detail_total
-        ratio = f"{ratio_value:.6f}"
-        ratio_source = "BINANCE_DETAIL_TOTAL_MINUS_FLOATING_DIV_TOTAL_EXACT"
-        ratio_status = "EXACT"
+    # An exact Grid/Total ratio is allowed only when the numerator, denominator,
+    # and exported totalProfit share the same verified accounting basis.
+    # Spot Grid totalProfit is sourced from Marketplace PNL (USD); the public
+    # detail/chart payload does not prove its unit/valuation basis matches that
+    # marketplace value, so a detail-only ratio must NOT be labelled exact there.
+    # For categories where totalProfit itself comes from the verified detail
+    # total, we can retain the exact detail amount or reconstruct it from
+    # detail Total Profit minus detail Floating PnL.
+    if total_source == "BINANCE_DETAIL_TOTAL_PROFIT" and detail_total not in (None, 0):
+        if detail_grid is not None:
+            grid_profit = detail_grid
+            grid_profit_source = "BINANCE_EXACT"
+            estimate_low = estimate_mid = estimate_high = detail_grid
+            estimate_method = "BINANCE_EXACT_DETAIL"
+            estimate_confidence = "HIGH"
+            ratio_value = detail_grid / detail_total
+            ratio = f"{ratio_value:.6f}"
+            ratio_source = "BINANCE_DETAIL_GRID_DIV_TOTAL_EXACT"
+            ratio_status = "EXACT"
+        elif floating_pnl is not None:
+            detail_grid_reconstructed = detail_total - floating_pnl
+            grid_profit = detail_grid_reconstructed
+            grid_profit_source = "BINANCE_EXACT"
+            estimate_low = estimate_mid = estimate_high = detail_grid_reconstructed
+            estimate_method = "BINANCE_EXACT_DETAIL_RECONSTRUCTION"
+            estimate_confidence = "HIGH"
+            ratio_value = detail_grid_reconstructed / detail_total
+            ratio = f"{ratio_value:.6f}"
+            ratio_source = "BINANCE_DETAIL_TOTAL_MINUS_FLOATING_DIV_TOTAL_EXACT"
+            ratio_status = "EXACT"
 
     # No exact Grid Profit: reconstruct a bounded estimate from the documented
     # grid mechanics. This is not hidden as exact; the interval is persisted.
