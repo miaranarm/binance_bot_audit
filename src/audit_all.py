@@ -504,13 +504,11 @@ def grid_metrics(item, prices):
             ratio_estimate_low = estimate_low / total_profit if total_profit else None
             ratio_estimate_mid = estimate_mid / total_profit if total_profit else None
             ratio_estimate_high = estimate_high / total_profit if total_profit else None
-            # Do not overwrite an independently verified same-source exact
-            # ratio with the ratio of a reconstructed USD amount to Marketplace
-            # PNL. Keep both values and provenance in the existing CSV.
-            if ratio_status != "EXACT":
-                ratio_source = "RECONSTRUCTED_GRID_PROFIT_DIV_BINANCE_MARKETPLACE_TOTAL_PROFIT"
-                ratio_status = "ESTIMATED_NOT_EXACT"
-                ratio = "" if ratio_estimate_mid is None else f"{ratio_estimate_mid:.6f}"
+            # This path runs only when no compatible exact Grid Profit was
+            # established above, so the ratio must be explicitly estimated too.
+            ratio_source = "RECONSTRUCTED_GRID_PROFIT_DIV_BINANCE_MARKETPLACE_TOTAL_PROFIT"
+            ratio_status = "ESTIMATED_NOT_EXACT"
+            ratio = "" if ratio_estimate_mid is None else f"{ratio_estimate_mid:.6f}"
 
     # Reconstructed Grid Profit is intentionally promoted into the CSV, but
     # remains explicitly marked RECONSTRUCTED / ESTIMATED_NOT_EXACT.
