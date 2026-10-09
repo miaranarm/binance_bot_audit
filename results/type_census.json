@@ -395,10 +395,10 @@
       "complete": false
     },
     "Futures DCA": {
-      "collected": 1453,
-      "unique_collected": 1453,
+      "collected": 1498,
+      "unique_collected": 1498,
       "duplicate_rows": 0,
-      "expected": 1453,
+      "expected": 1498,
       "complete": true
     }
   },

@@ -1,7 +1,7 @@
 {
-  "scan_utc": "2026-10-09T15:22:36.139130+00:00",
-  "raw_rows": 30754,
-  "tradable_leverage_le_1": 13425,
+  "scan_utc": "2026-10-09T15:32:31.024438+00:00",
+  "raw_rows": 30799,
+  "tradable_leverage_le_1": 13427,
   "collection_complete": false,
   "incomplete_categories": [
     "Marketplace type 12",
@@ -156,10 +156,10 @@
       "complete": false
     },
     "Futures DCA": {
-      "collected": 1453,
-      "unique_collected": 1453,
+      "collected": 1498,
+      "unique_collected": 1498,
       "duplicate_rows": 0,
-      "expected": 1453,
+      "expected": 1498,
       "complete": true
     }
   },
@@ -198,7 +198,7 @@
     ]
   },
   "history_retention_days": 30,
-  "snapshot": "results/history/2026/10/09/20261009T152236Z.csv.gz",
+  "snapshot": "results/history/2026/10/09/20261009T153231Z.csv.gz",
   "old_snapshots_removed": 0,
   "binance_marketplace_refresh": "hourly",
   "fields": [
