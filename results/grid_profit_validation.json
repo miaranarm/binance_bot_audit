@@ -1,9 +1,9 @@
 {
   "validation": {
     "rows": 12515,
-    "reconstructed": 11236,
+    "reconstructed": 11199,
     "exact": 0,
-    "unavailable": 1279,
+    "unavailable": 1316,
     "unknownSource": 0,
     "orderingErrors": 0,
     "ratioErrors": 0,
@@ -11,88 +11,88 @@
     "sourceErrors": 0,
     "negativeEstimateRows": 19,
     "ratiosOver100Percent": 0,
-    "estimatedRatiosOver100Percent": 4796,
+    "estimatedRatiosOver100Percent": 4771,
     "status": "PASS"
   },
   "examples": [
     {
       "strategyId": "9323916",
       "type": "NEGATIVE_GRID_PROFIT_ESTIMATE_RETAINED",
-      "low": -21.714585268044395,
-      "mid": -16.520919985380946,
-      "high": -11.329214206698675,
+      "low": -21.71247422537387,
+      "mid": -16.519313859055487,
+      "high": -11.328112806219751,
       "profitPerGridAfterFees": "-0.0329% - -0.0186%"
     },
     {
       "strategyId": "9315767",
       "type": "NEGATIVE_GRID_PROFIT_ESTIMATE_RETAINED",
-      "low": -45.45362581370834,
-      "mid": -1.2039711793247112,
-      "high": 43.045044234879775,
+      "low": -45.46360397030589,
+      "mid": -1.204235479757321,
+      "high": 43.05449365028801,
       "profitPerGridAfterFees": "-0.0296% - 0.0394%"
     },
     {
       "strategyId": "9330013",
       "type": "NEGATIVE_GRID_PROFIT_ESTIMATE_RETAINED",
-      "low": -28.844280548141707,
-      "mid": 12.564299041145805,
-      "high": 53.97989583179515,
+      "low": -28.850368259144698,
+      "mid": 12.566950791165707,
+      "high": 53.991288523848844,
       "profitPerGridAfterFees": "-0.0211% - 0.0566%"
     },
     {
       "strategyId": "9281972",
       "type": "NEGATIVE_GRID_PROFIT_ESTIMATE_RETAINED",
-      "low": -17.261988266623963,
-      "mid": -6.247124409019673,
-      "high": 4.756750663343779,
+      "low": -17.26151333772585,
+      "mid": -6.246952531952785,
+      "high": 4.756619790913777,
       "profitPerGridAfterFees": "-0.0213% - 0.0068%"
     },
     {
       "strategyId": "9818230",
       "type": "NEGATIVE_GRID_PROFIT_ESTIMATE_RETAINED",
-      "low": -87.42272537717379,
-      "mid": -62.28361201316175,
-      "high": -37.17725319425162,
+      "low": -87.44769836514607,
+      "mid": -62.301403816002065,
+      "high": -37.187873168553004,
       "profitPerGridAfterFees": "-0.0742% - -0.0401%"
     },
     {
       "strategyId": "9665408",
       "type": "NEGATIVE_GRID_PROFIT_ESTIMATE_RETAINED",
-      "low": -6.082782857140907,
-      "mid": -0.6224337666030103,
-      "high": 4.8371473612435425,
+      "low": -6.082314571140069,
+      "mid": -0.6223858482363359,
+      "high": 4.836774971098035,
       "profitPerGridAfterFees": "-0.0114% - 0.0101%"
     },
     {
       "strategyId": "9677989",
       "type": "NEGATIVE_GRID_PROFIT_ESTIMATE_RETAINED",
-      "low": -12.151615608648168,
-      "mid": 1.1203489914450548,
-      "high": 14.393984507250332,
+      "low": -12.150864228927952,
+      "mid": 1.120279716087864,
+      "high": 14.393094473496783,
       "profitPerGridAfterFees": "-0.0119% - 0.0162%"
     },
     {
       "strategyId": "9879083",
       "type": "NEGATIVE_GRID_PROFIT_ESTIMATE_RETAINED",
-      "low": -17.430085435074066,
-      "mid": -14.444323248391639,
-      "high": -11.461628100416291,
+      "low": -17.428410176852935,
+      "mid": -14.442934960803454,
+      "high": -11.460526488678683,
       "profitPerGridAfterFees": "-0.0481% - -0.0345%"
     },
     {
       "strategyId": "9941823",
       "type": "NEGATIVE_GRID_PROFIT_ESTIMATE_RETAINED",
-      "low": -2.082418088041548,
-      "mid": 2.2554356995288343,
-      "high": 6.595715991349926,
+      "low": -2.082333133495922,
+      "mid": 2.255343686538675,
+      "high": 6.595446911832061,
       "profitPerGridAfterFees": "-0.0100% - 0.0402%"
     },
     {
       "strategyId": "9738576",
       "type": "NEGATIVE_GRID_PROFIT_ESTIMATE_RETAINED",
-      "low": -18.626290055990285,
-      "mid": -5.158883520276902,
-      "high": 8.248185196485874,
+      "low": -18.62594621624917,
+      "mid": -5.158788287722876,
+      "high": 8.24803293568385,
       "profitPerGridAfterFees": "-0.0300% - 0.0169%"
     }
   ]
