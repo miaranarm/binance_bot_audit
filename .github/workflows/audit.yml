@@ -103,6 +103,7 @@ jobs:
             -not -name 'scan_meta.json' \
             -not -name 'type_census.json' \
             -not -name 'grid_profit_validation.json' \
+            -not -name 'capital_field_diagnostics.json' \
             -delete
           rm -f strategy_detail_debug.log
 
