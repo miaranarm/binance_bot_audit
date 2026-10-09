@@ -1,7 +1,7 @@
 {
-  "scan_utc": "2026-10-09T07:15:55.914082+00:00",
-  "raw_rows": 31229,
-  "tradable_leverage_le_1": 13761,
+  "scan_utc": "2026-10-09T07:36:55.261517+00:00",
+  "raw_rows": 31722,
+  "tradable_leverage_le_1": 13993,
   "collection_complete": false,
   "incomplete_categories": [
     "Marketplace type 12",
@@ -16,24 +16,24 @@
   ],
   "collection": {
     "Spot Grid": {
-      "collected": 13549,
-      "unique_collected": 13549,
+      "collected": 13778,
+      "unique_collected": 13778,
       "duplicate_rows": 0,
-      "expected": 13549,
+      "expected": 13778,
       "complete": true
     },
     "Marketplace type 2": {
-      "collected": 14154,
-      "unique_collected": 14154,
+      "collected": 14321,
+      "unique_collected": 14321,
       "duplicate_rows": 0,
-      "expected": 14154,
+      "expected": 14321,
       "complete": true
     },
     "Marketplace type 3": {
-      "collected": 568,
-      "unique_collected": 568,
+      "collected": 589,
+      "unique_collected": 589,
       "duplicate_rows": 0,
-      "expected": 568,
+      "expected": 589,
       "complete": true
     },
     "Marketplace type 4": {
@@ -79,10 +79,10 @@
       "complete": true
     },
     "Marketplace type 10": {
-      "collected": 1479,
-      "unique_collected": 1479,
+      "collected": 1517,
+      "unique_collected": 1517,
       "duplicate_rows": 0,
-      "expected": 1479,
+      "expected": 1517,
       "complete": true
     },
     "Marketplace type 11": {
@@ -156,10 +156,10 @@
       "complete": false
     },
     "Futures DCA": {
-      "collected": 1479,
-      "unique_collected": 1479,
+      "collected": 1517,
+      "unique_collected": 1517,
       "duplicate_rows": 0,
-      "expected": 1479,
+      "expected": 1517,
       "complete": true
     }
   },
@@ -198,7 +198,7 @@
     ]
   },
   "history_retention_days": 30,
-  "snapshot": "results/history/2026/10/09/20261009T071555Z.csv.gz",
+  "snapshot": "results/history/2026/10/09/20261009T073655Z.csv.gz",
   "old_snapshots_removed": 0,
   "binance_marketplace_refresh": "hourly",
   "fields": [
