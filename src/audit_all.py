@@ -443,15 +443,14 @@ def grid_metrics(item, prices):
     # Reconstructed Grid Profit is intentionally promoted into the CSV, but
     # remains explicitly marked RECONSTRUCTED / ESTIMATED_NOT_EXACT.
 
+    # Floating/unrealized PnL is only derivable when Grid Profit is exact
+    # and Total Profit uses the same Binance accounting basis. Subtracting an
+    # estimated Grid Profit from Total Profit would create a misleading value.
     floating_profit = None
     floating_basis = None
-    if total_profit is not None and grid_profit is not None:
+    if total_profit is not None and grid_profit is not None and grid_profit_source == "BINANCE_EXACT":
         floating_profit = total_profit - grid_profit
-        floating_basis = (
-            "BINANCE_EXACT_GRID_PROFIT"
-            if grid_profit_source == "BINANCE_EXACT"
-            else "TOTAL_MINUS_RECONSTRUCTED_GRID_PROFIT"
-        )
+        floating_basis = "TOTAL_MINUS_EXACT_GRID_PROFIT"
 
     return (
         ratio, price_range, profit_grid, profit_grid_source, ratio_source,
