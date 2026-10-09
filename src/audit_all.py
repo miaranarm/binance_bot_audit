@@ -891,7 +891,31 @@ def capture_marketplace_detail_calls(page, rows):
                                     " keyPaths=" + json.dumps(summarize_json_schema(payload_schema)[:60]))
                 except Exception as exc:
                     debug_write("PUBLIC_BAPI_SCHEMA_ERROR url=" + url + " " + str(exc))
-            if "/bapi/" in url:
+            if "/bapi/" in url.lower():
+                # Inventory every Binance BAPI response during detail-page
+                # navigation, including endpoints whose paths do not contain
+                # "strategy", "grid", "profit", "position" or "order". The
+                # previous filter could silently miss the actual detail API.
+                debug_write("DETAIL_BAPI_RESPONSE sid=" + str(active_sid["value"]) +
+                            " status=" + str(response.status) +
+                            " contentType=" + content_type +
+                            " url=" + url[:1800] +
+                            " bytes=" + str(len(body)))
+                try:
+                    payload_schema = json.loads(body)
+                    schema_key = (url.split("?")[0], response.status)
+                    if schema_key not in PUBLIC_BAPI_ENDPOINT_SEEN:
+                        PUBLIC_BAPI_ENDPOINT_SEEN.add(schema_key)
+                        data_value = payload_schema.get("data") if isinstance(payload_schema, dict) else None
+                        sample_record = data_value[0] if isinstance(data_value, list) and data_value else data_value
+                        debug_write("DETAIL_BAPI_SCHEMA sid=" + str(active_sid["value"]) +
+                                    " url=" + url.split("?")[0] +
+                                    " status=" + str(response.status) +
+                                    " rootKeys=" + json.dumps(list(payload_schema.keys()) if isinstance(payload_schema, dict) else []) +
+                                    " dataSampleKeys=" + json.dumps(list(sample_record.keys()) if isinstance(sample_record, dict) else []) +
+                                    " keyPaths=" + json.dumps(summarize_json_schema(payload_schema)[:100]))
+                except Exception as exc:
+                    debug_write("DETAIL_BAPI_SCHEMA_ERROR url=" + url[:1800] + " " + str(exc))
                 print("BAPI_RESPONSE url=" + url + " status=" + str(response.status) + " bytes=" + str(len(body)))
             if "/api/v2/query" in url.lower() or "/api/v1/feature-gate/check" in url.lower() or "/api/v2/strategy/query" in url.lower():
                 debug_write("DETAIL_SERVICE_BODY url=" + url + " status=" + str(response.status) + " body=" + body[:50000])
@@ -976,6 +1000,10 @@ def capture_marketplace_detail_calls(page, rows):
         try:
             url = request.url
             low = url.lower()
+            if "/bapi/" in low:
+                debug_write("DETAIL_BAPI_REQUEST sid=" + str(active_sid["value"]) +
+                            " url=" + url[:1800] + " method=" + str(request.method) +
+                            " post=" + str(request.post_data or "")[:5000])
             if any(token in low for token in ("strategy", "detail", "grid")):
                 debug_write("DETAIL_REQUEST url=" + url + " method=" + str(request.method) + " post=" + str(request.post_data or ""))
         except Exception as exc:
