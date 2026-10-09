@@ -9,12 +9,12 @@ EXPECTED = [
     "rank", "strategyId", "category", "strategyType", "symbol", "leverage",
     "minInvestment", "runningTime", "runningTime en J",
     "roi (fourni par Binance)", "roi (calculé)", "pnl", "matchedTrades",
-    "Trades / J", "mdd7d", "gridProfit", "gridMode", "gridCount",
-    "qtyPerOrderEstimate", "gridProfitEstimateLow", "gridProfitEstimateMid",
-    "gridProfitEstimateHigh", "totalProfit", "gridProfitTotalProfitRatio",
-    "floatingProfit", "currentPrice", "priceRange", "profitPerGridAfterFees", "score",
+    "Trades / J", "mdd7d", "gridProfit", "gridProfitSource", "gridProfitEstimateStatus",
+    "gridMode", "gridCount", "qtyPerOrderEstimate", "gridProfitEstimateLow",
+    "gridProfitEstimateMid", "gridProfitEstimateHigh", "totalProfit",
+    "gridProfitTotalProfitRatio", "floatingProfit", "floatingProfitSource",
+    "currentPrice", "priceRange", "profitPerGridAfterFees", "score",
 ]
-
 
 def numeric(value):
     try:
@@ -23,7 +23,6 @@ def numeric(value):
     except (TypeError, ValueError):
         return None
 
-
 def main():
     if not CSV_PATH.exists() or CSV_PATH.stat().st_size == 0:
         raise SystemExit(f"ERROR: {CSV_PATH} missing or empty")
@@ -31,8 +30,8 @@ def main():
         reader = csv.DictReader(handle)
         if reader.fieldnames != EXPECTED:
             raise SystemExit(
-                "ERROR: CSV schema mismatch\n"
-                f"Expected: {EXPECTED}\nActual: {reader.fieldnames}"
+                "ERROR: CSV schema mismatch\\n"
+                f"Expected: {EXPECTED}\\nActual: {reader.fieldnames}"
             )
         rows = list(reader)
     if not rows:
@@ -64,8 +63,15 @@ def main():
         high = numeric(row.get("gridProfitEstimateHigh"))
         if None not in (low, mid, high) and not (low <= mid + 1e-8 and mid <= high + 1e-8):
             raise SystemExit(f"ERROR: Grid Profit interval unordered for {row.get('strategyId')}")
-    print(f"PASS: {len(rows)} unique bots, leverage <= 1, exact {len(EXPECTED)}-column schema.")
-
+        gp = numeric(row.get("gridProfit"))
+        status = row.get("gridProfitEstimateStatus")
+        if status == "ESTIMATED_NOT_EXACT" and mid is not None and gp is not None and abs(gp-mid) > max(1e-6, abs(mid)*1e-6):
+            raise SystemExit(f"ERROR: reconstructed Grid Profit not aligned with midpoint for {row.get('strategyId')}")
+        if status == "EXACT" and gp is None:
+            raise SystemExit(f"ERROR: exact Grid Profit missing for {row.get('strategyId')}")
+        if status == "ESTIMATED_NOT_EXACT" and row.get("gridProfitSource") != "RECONSTRUCTED":
+            raise SystemExit(f"ERROR: estimated Grid Profit source mismatch for {row.get('strategyId')}")
+    print(f"PASS: {len(rows)} unique bots, leverage <= 1, {len(EXPECTED)} columns; Grid Profit provenance checked.")
 
 if __name__ == "__main__":
     main()
