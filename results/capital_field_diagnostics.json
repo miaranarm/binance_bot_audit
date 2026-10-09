@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-10-09T15:00:24.399506+00:00",
+  "generated_utc": "2026-10-09T15:11:56.896888+00:00",
   "purpose": "Find public Binance fields that may represent actual bot investment/capital; diagnostic only, not a validated capital metric.",
   "sample_strategy_ids": [
     "6850680",
@@ -200,13 +200,24 @@
       ]
     },
     {
-      "strategyId": "197546",
-      "url": "https://www.binance.com/en/trading-bots/spot/grid/detail?symbol=ETHUSDT&strategyId=197546",
-      "source": "BINANCE_DETAIL_VISIBLE_TEXT",
+      "strategyId": "1548524",
+      "url": "https://bin.bnbstatic.com/api/i18n/-/web/cms/en/futures-strategy-ui",
+      "httpStatus": 200,
       "fields": [
         {
-          "label": "Total Investment",
-          "value": 0.0
+          "path": "$.investment",
+          "key": "investment",
+          "value": "Total Investment"
+        },
+        {
+          "path": "$.min-investment",
+          "key": "min-investment",
+          "value": "Min Investment"
+        },
+        {
+          "path": "$.investment-amount",
+          "key": "investment-amount",
+          "value": "Investment Amount"
         }
       ]
     },
@@ -251,28 +262,6 @@
     },
     {
       "strategyId": "1548524",
-      "url": "https://bin.bnbstatic.com/api/i18n/-/web/cms/en/futures-strategy-ui",
-      "httpStatus": 200,
-      "fields": [
-        {
-          "path": "$.investment",
-          "key": "investment",
-          "value": "Total Investment"
-        },
-        {
-          "path": "$.min-investment",
-          "key": "min-investment",
-          "value": "Min Investment"
-        },
-        {
-          "path": "$.investment-amount",
-          "key": "investment-amount",
-          "value": "Investment Amount"
-        }
-      ]
-    },
-    {
-      "strategyId": "1548524",
       "url": "https://bin.bnbstatic.com/api/i18n/-/web/cms/en/mainuc-strategy-ui",
       "httpStatus": 200,
       "fields": [
@@ -289,29 +278,6 @@
       ]
     },
     {
-      "strategyId": "1548524",
-      "url": "https://www.binance.com/en/trading-bots/spot/grid/detail?symbol=JASMYUSDT&strategyId=1548524",
-      "source": "BINANCE_DETAIL_VISIBLE_TEXT",
-      "fields": [
-        {
-          "label": "Total Investment",
-          "value": 0.0
-        }
-      ]
-    },
-    {
-      "strategyId": "1764430",
-      "url": "https://bin.bnbstatic.com/api/i18n/-/web/cms/en/spot-strategy-ui",
-      "httpStatus": 200,
-      "fields": [
-        {
-          "path": "$.investment",
-          "key": "investment",
-          "value": "Investment"
-        }
-      ]
-    },
-    {
       "strategyId": "1764430",
       "url": "https://bin.bnbstatic.com/api/i18n/-/web/cms/en/futures-strategy-ui",
       "httpStatus": 200,
@@ -330,6 +296,18 @@
           "path": "$.investment-amount",
           "key": "investment-amount",
           "value": "Investment Amount"
+        }
+      ]
+    },
+    {
+      "strategyId": "1764430",
+      "url": "https://bin.bnbstatic.com/api/i18n/-/web/cms/en/spot-strategy-ui",
+      "httpStatus": 200,
+      "fields": [
+        {
+          "path": "$.investment",
+          "key": "investment",
+          "value": "Investment"
         }
       ]
     },
@@ -374,39 +352,6 @@
           "path": "$.initial-investment",
           "key": "initial-investment",
           "value": "Initial Investment"
-        }
-      ]
-    },
-    {
-      "strategyId": "1764430",
-      "url": "https://www.binance.com/en/trading-bots/spot/grid/detail?symbol=LTCUSDT&strategyId=1764430",
-      "source": "BINANCE_DETAIL_VISIBLE_TEXT",
-      "fields": [
-        {
-          "label": "Total Investment",
-          "value": 0.0
-        }
-      ]
-    },
-    {
-      "strategyId": "1810594",
-      "url": "https://bin.bnbstatic.com/api/i18n/-/web/cms/en/futures-strategy-ui",
-      "httpStatus": 200,
-      "fields": [
-        {
-          "path": "$.investment",
-          "key": "investment",
-          "value": "Total Investment"
-        },
-        {
-          "path": "$.min-investment",
-          "key": "min-investment",
-          "value": "Min Investment"
-        },
-        {
-          "path": "$.investment-amount",
-          "key": "investment-amount",
-          "value": "Investment Amount"
         }
       ]
     },
@@ -468,12 +413,23 @@
     },
     {
       "strategyId": "1810594",
-      "url": "https://www.binance.com/en/trading-bots/spot/grid/detail?symbol=DOGEUSDT&strategyId=1810594",
-      "source": "BINANCE_DETAIL_VISIBLE_TEXT",
+      "url": "https://bin.bnbstatic.com/api/i18n/-/web/cms/en/futures-strategy-ui",
+      "httpStatus": 200,
       "fields": [
         {
-          "label": "Total Investment",
-          "value": 0.0
+          "path": "$.investment",
+          "key": "investment",
+          "value": "Total Investment"
+        },
+        {
+          "path": "$.min-investment",
+          "key": "min-investment",
+          "value": "Min Investment"
+        },
+        {
+          "path": "$.investment-amount",
+          "key": "investment-amount",
+          "value": "Investment Amount"
         }
       ]
     },
@@ -556,13 +512,24 @@
       ]
     },
     {
-      "strategyId": "2198857",
-      "url": "https://www.binance.com/en/trading-bots/spot/grid/detail?symbol=CAKEUSDT&strategyId=2198857",
-      "source": "BINANCE_DETAIL_VISIBLE_TEXT",
+      "strategyId": "2222438",
+      "url": "https://bin.bnbstatic.com/api/i18n/-/web/cms/en/futures-strategy-ui",
+      "httpStatus": 200,
       "fields": [
         {
-          "label": "Total Investment",
-          "value": 0.0
+          "path": "$.investment",
+          "key": "investment",
+          "value": "Total Investment"
+        },
+        {
+          "path": "$.min-investment",
+          "key": "min-investment",
+          "value": "Min Investment"
+        },
+        {
+          "path": "$.investment-amount",
+          "key": "investment-amount",
+          "value": "Investment Amount"
         }
       ]
     },
@@ -575,23 +542,6 @@
           "path": "$.investment",
           "key": "investment",
           "value": "Investment"
-        }
-      ]
-    },
-    {
-      "strategyId": "2222438",
-      "url": "https://bin.bnbstatic.com/api/i18n/-/web/cms/en/mainuc-strategy-ui",
-      "httpStatus": 200,
-      "fields": [
-        {
-          "path": "$.total-investment",
-          "key": "total-investment",
-          "value": "Total Investment"
-        },
-        {
-          "path": "$.initial-investment",
-          "key": "initial-investment",
-          "value": "Initial Investment"
         }
       ]
     },
@@ -624,34 +574,18 @@
     },
     {
       "strategyId": "2222438",
-      "url": "https://bin.bnbstatic.com/api/i18n/-/web/cms/en/futures-strategy-ui",
+      "url": "https://bin.bnbstatic.com/api/i18n/-/web/cms/en/mainuc-strategy-ui",
       "httpStatus": 200,
       "fields": [
         {
-          "path": "$.investment",
-          "key": "investment",
+          "path": "$.total-investment",
+          "key": "total-investment",
           "value": "Total Investment"
         },
         {
-          "path": "$.min-investment",
-          "key": "min-investment",
-          "value": "Min Investment"
-        },
-        {
-          "path": "$.investment-amount",
-          "key": "investment-amount",
-          "value": "Investment Amount"
-        }
-      ]
-    },
-    {
-      "strategyId": "2222438",
-      "url": "https://www.binance.com/en/trading-bots/spot/grid/detail?symbol=DOGEUSDT&strategyId=2222438",
-      "source": "BINANCE_DETAIL_VISIBLE_TEXT",
-      "fields": [
-        {
-          "label": "Total Investment",
-          "value": 0.0
+          "path": "$.initial-investment",
+          "key": "initial-investment",
+          "value": "Initial Investment"
         }
       ]
     },
@@ -734,39 +668,6 @@
       ]
     },
     {
-      "strategyId": "2647824",
-      "url": "https://www.binance.com/en/trading-bots/spot/grid/detail?symbol=SOLUSDT&strategyId=2647824",
-      "source": "BINANCE_DETAIL_VISIBLE_TEXT",
-      "fields": [
-        {
-          "label": "Total Investment",
-          "value": 0.0
-        }
-      ]
-    },
-    {
-      "strategyId": "2654917",
-      "url": "https://bin.bnbstatic.com/api/i18n/-/web/cms/en/futures-strategy-ui",
-      "httpStatus": 200,
-      "fields": [
-        {
-          "path": "$.investment",
-          "key": "investment",
-          "value": "Total Investment"
-        },
-        {
-          "path": "$.min-investment",
-          "key": "min-investment",
-          "value": "Min Investment"
-        },
-        {
-          "path": "$.investment-amount",
-          "key": "investment-amount",
-          "value": "Investment Amount"
-        }
-      ]
-    },
-    {
       "strategyId": "2654917",
       "url": "https://bin.bnbstatic.com/api/i18n/-/web/cms/en/spot-strategy-ui",
       "httpStatus": 200,
@@ -824,12 +725,23 @@
     },
     {
       "strategyId": "2654917",
-      "url": "https://www.binance.com/en/trading-bots/spot/grid/detail?symbol=BTCUSDT&strategyId=2654917",
-      "source": "BINANCE_DETAIL_VISIBLE_TEXT",
+      "url": "https://bin.bnbstatic.com/api/i18n/-/web/cms/en/futures-strategy-ui",
+      "httpStatus": 200,
       "fields": [
         {
-          "label": "Total Investment",
-          "value": 0.0
+          "path": "$.investment",
+          "key": "investment",
+          "value": "Total Investment"
+        },
+        {
+          "path": "$.min-investment",
+          "key": "min-investment",
+          "value": "Min Investment"
+        },
+        {
+          "path": "$.investment-amount",
+          "key": "investment-amount",
+          "value": "Investment Amount"
         }
       ]
     },
@@ -912,13 +824,14 @@
       ]
     },
     {
-      "strategyId": "10150437",
-      "url": "https://www.binance.com/en/trading-bots/spot/grid/detail?symbol=MSTRBUSDT&strategyId=10150437",
-      "source": "BINANCE_DETAIL_VISIBLE_TEXT",
+      "strategyId": "10150419",
+      "url": "https://bin.bnbstatic.com/api/i18n/-/web/cms/en/spot-strategy-ui",
+      "httpStatus": 200,
       "fields": [
         {
-          "label": "Total Investment",
-          "value": 0.0
+          "path": "$.investment",
+          "key": "investment",
+          "value": "Investment"
         }
       ]
     },
@@ -941,18 +854,6 @@
           "path": "$.investment-amount",
           "key": "investment-amount",
           "value": "Investment Amount"
-        }
-      ]
-    },
-    {
-      "strategyId": "10150419",
-      "url": "https://bin.bnbstatic.com/api/i18n/-/web/cms/en/spot-strategy-ui",
-      "httpStatus": 200,
-      "fields": [
-        {
-          "path": "$.investment",
-          "key": "investment",
-          "value": "Investment"
         }
       ]
     },
@@ -997,17 +898,6 @@
           "path": "$.initial-investment",
           "key": "initial-investment",
           "value": "Initial Investment"
-        }
-      ]
-    },
-    {
-      "strategyId": "10150419",
-      "url": "https://www.binance.com/en/trading-bots/spot/grid/detail?symbol=SUIUSDT&strategyId=10150419",
-      "source": "BINANCE_DETAIL_VISIBLE_TEXT",
-      "fields": [
-        {
-          "label": "Total Investment",
-          "value": 0.0
         }
       ]
     },
@@ -1090,17 +980,6 @@
       ]
     },
     {
-      "strategyId": "6850680",
-      "url": "https://www.binance.com/en/trading-bots/spot/grid/detail?symbol=TRXETH&strategyId=6850680",
-      "source": "BINANCE_DETAIL_VISIBLE_TEXT",
-      "fields": [
-        {
-          "label": "Total Investment",
-          "value": 0.0
-        }
-      ]
-    },
-    {
       "strategyId": "3232564",
       "url": "https://bin.bnbstatic.com/api/i18n/-/web/cms/en/futures-strategy-ui",
       "httpStatus": 200,
@@ -1179,17 +1058,6 @@
       ]
     },
     {
-      "strategyId": "3232564",
-      "url": "https://www.binance.com/en/trading-bots/spot/grid/detail?symbol=XRPBTC&strategyId=3232564",
-      "source": "BINANCE_DETAIL_VISIBLE_TEXT",
-      "fields": [
-        {
-          "label": "Total Investment",
-          "value": 0.0
-        }
-      ]
-    },
-    {
       "strategyId": "9161957",
       "url": "https://bin.bnbstatic.com/api/i18n/-/web/cms/en/futures-strategy-ui",
       "httpStatus": 200,
@@ -1264,17 +1132,6 @@
           "path": "$.initial-investment",
           "key": "initial-investment",
           "value": "Initial Investment"
-        }
-      ]
-    },
-    {
-      "strategyId": "9161957",
-      "url": "https://www.binance.com/en/trading-bots/spot/grid/detail?symbol=TSTUSDT&strategyId=9161957",
-      "source": "BINANCE_DETAIL_VISIBLE_TEXT",
-      "fields": [
-        {
-          "label": "Total Investment",
-          "value": 0.0
         }
       ]
     }
