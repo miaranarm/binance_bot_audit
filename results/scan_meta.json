@@ -1,7 +1,7 @@
 {
-  "scan_utc": "2026-10-09T10:15:59.426285+00:00",
-  "raw_rows": 31823,
-  "tradable_leverage_le_1": 14001,
+  "scan_utc": "2026-10-09T10:36:18.951951+00:00",
+  "raw_rows": 5826,
+  "tradable_leverage_le_1": 4334,
   "collection_complete": false,
   "incomplete_categories": [
     "Marketplace type 12",
@@ -12,28 +12,29 @@
     "Marketplace type 17",
     "Marketplace type 18",
     "Marketplace type 19",
-    "Marketplace type 20"
+    "Marketplace type 20",
+    "Spot Grid"
   ],
   "collection": {
     "Spot Grid": {
-      "collected": 13784,
-      "unique_collected": 13784,
+      "collected": 4300,
+      "unique_collected": 4300,
       "duplicate_rows": 0,
       "expected": 13784,
-      "complete": true
+      "complete": false
     },
     "Marketplace type 2": {
-      "collected": 14361,
-      "unique_collected": 14361,
+      "collected": 0,
+      "unique_collected": 0,
       "duplicate_rows": 0,
-      "expected": 14361,
+      "expected": 0,
       "complete": true
     },
     "Marketplace type 3": {
-      "collected": 596,
-      "unique_collected": 596,
+      "collected": 0,
+      "unique_collected": 0,
       "duplicate_rows": 0,
-      "expected": 596,
+      "expected": 0,
       "complete": true
     },
     "Marketplace type 4": {
@@ -79,10 +80,10 @@
       "complete": true
     },
     "Marketplace type 10": {
-      "collected": 1541,
-      "unique_collected": 1541,
+      "collected": 0,
+      "unique_collected": 0,
       "duplicate_rows": 0,
-      "expected": 1541,
+      "expected": 0,
       "complete": true
     },
     "Marketplace type 11": {
@@ -156,10 +157,10 @@
       "complete": false
     },
     "Futures DCA": {
-      "collected": 1541,
-      "unique_collected": 1541,
+      "collected": 1526,
+      "unique_collected": 1526,
       "duplicate_rows": 0,
-      "expected": 1541,
+      "expected": 1526,
       "complete": true
     }
   },
@@ -198,7 +199,7 @@
     ]
   },
   "history_retention_days": 30,
-  "snapshot": "results/history/2026/10/09/20261009T101559Z.csv.gz",
+  "snapshot": "results/history/2026/10/09/20261009T103618Z.csv.gz",
   "old_snapshots_removed": 0,
   "binance_marketplace_refresh": "hourly",
   "fields": [
