@@ -977,6 +977,7 @@ def capture_marketplace_detail_calls(page, rows):
         candidates = spot + futures
 
         known_probe_ids = [
+            ("TRXETH", "6850680", "Spot Grid"),
             ("XRPBTC", "3232564", "Spot Grid"),
             ("TSTUSDT", "9161957", "Spot Grid"),
         ]
@@ -1019,6 +1020,21 @@ def capture_marketplace_detail_calls(page, rows):
                     visible_grid = parse_visible_metric(body_text, "Grid Profit")
                     visible_total = parse_visible_metric(body_text, "Total Profit")
                     visible_float = parse_visible_metric(body_text, "Floating Profit")
+                    visible_capital = []
+                    for capital_label in ("Total Investment", "Initial Investment", "Investment Amount", "Capital Invested"):
+                        capital_value = parse_visible_metric(body_text, capital_label)
+                        if capital_value is not None:
+                            visible_capital.append({"label": capital_label, "value": capital_value})
+                    if visible_capital:
+                        CAPITAL_FIELD_DIAGNOSTICS.append({
+                            "strategyId": str(sid),
+                            "url": url,
+                            "source": "BINANCE_DETAIL_VISIBLE_TEXT",
+                            "fields": visible_capital,
+                        })
+                        debug_write("CAPITAL_VISIBLE sid=" + str(sid) +
+                                    " url=" + url + " fields=" +
+                                    json.dumps(visible_capital, ensure_ascii=False))
                     pending_detail = ("Pending Trigger" in body_text or "Duration --" in body_text)
                     if pending_detail:
                         debug_write("DETAIL_VISIBLE_REJECTED_PENDING sid=" + str(sid))
