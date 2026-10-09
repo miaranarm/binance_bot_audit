@@ -48,3 +48,27 @@ This is a finding about the endpoints and pages observed in this run, not proof 
 ## Next investigation
 
 Continue looking for an endpoint or authenticated/public response that explicitly returns matched-grid profit and the corresponding total/floating PNL breakdown for an actual running Spot Grid bot. If authentication is required, document the access boundary and do not attempt to bypass it. Until that evidence is found, retain the current estimates rather than presenting them as Binance-reported facts.
+
+## Additional official-source cross-check (2026-10-09)
+
+Binance's [Bot Marketplace landing-page FAQ](https://www.binance.com/en/support/faq/detail/f0c2bd5bc16c40b9998d22549e91cd1c) clarifies an important distinction:
+
+- For **Spot Grid**, Marketplace PNL is defined as **Current Value − Total Investment**. It is a total-value measure, not the Grid Profit component.
+- For **Futures Grid**, Marketplace PNL may be **Matched PNL + Funding Fee**, and Binance notes that unmatched PNL is not included in that Marketplace PNL definition. This differs from the detail-page accounting breakdown, where Total Profit includes net realized profit, Unrealized PnL and Funding Fees.
+- Consequently, the same field label `pnl` cannot be treated as one uniform accounting basis across Spot and Futures strategies. Any exact ratio or reconciliation must be strategy-family-specific and source-specific.
+
+Binance's [Futures Grid FAQ](https://www.binance.com/en/support/faq/detail/f4c453bab89648beb722aa26634120c3) further distinguishes matched profit, unmatched PnL, realized profit, unrealized PnL and funding fees. For Futures Grid, the audit must not substitute Spot Grid's `Total Profit = Grid Profit + Unrealized PnL` identity without accounting for funding and Binance's definition of matched profit.
+
+### Consequence for the next endpoint investigation
+
+The current public Marketplace fields are not sufficient to reconstruct exact Spot Grid Grid Profit by themselves. The next useful evidence would be either:
+
+1. a successful response for an actual running bot that explicitly returns Grid Profit and its accounting asset; or
+2. complete matched fill pairs and fee amounts, with a verified matching rule and conversion prices, sufficient to reproduce Binance's aggregate.
+
+A response that returns HTTP 200 but has an application-level failure, login prompt, pending-trigger placeholder or empty metric is not qualifying evidence. A field name alone is also insufficient: its endpoint, bot ID, asset/unit, accounting basis and relationship to the displayed Total Profit must be verified.
+
+## Calculation-preservation requirement
+
+**No existing calculation method is to be removed or replaced during this investigation.** The current estimated Grid Profit reconstruction, its low/mid/high range, the estimated Grid-Profit/Total-Profit ratio range, calculated Profit/Grid, and all existing provenance/status fields remain in place. This PR narrows what may be labelled as an exact Binance accounting value; it does not retire the estimate path. A future official source may replace an existing estimate only after cross-checking multiple actual bots and documenting the source, unit, accounting basis and reconciliation results. The existing CSV/table presentation must remain unchanged.
+
