@@ -107,7 +107,8 @@ def leverage(x):
     params = x.get("strategyParams") or {}
     value = params.get("leverage", x.get("leverage"))
     if value in (None, "", "null"):
-        return 1.0
+        # Spot Grid is unleveraged by design; unknown leverage for other families fails closed.
+        return 1.0 if "spot grid" in str(x.get("_category", "")).lower() else 99.0
     try:
         return float(value)
     except Exception:
@@ -564,8 +565,12 @@ def build_current(rows, prices):
             "mdd7d": num(x.get("mdd7d", x.get("sevenDayMdd", x.get("7dMdd", 0)))),
             "gridProfit": "" if grid_profit is None else grid_profit,
             "gridProfitSource": grid_profit_source,
-            "gridMode": estimate_grid_mode,
-            "gridCount": "" if estimate_grid_count is None else estimate_grid_count,
+            "gridMode": _grid_mode(x.get("strategyParams") or {}) or estimate_grid_mode,
+            "gridCount": (
+                first_num(x.get("strategyParams") or {}, ["gridCount", "gridNum", "numberOfGrids", "gridNumber"])
+                if first_num(x.get("strategyParams") or {}, ["gridCount", "gridNum", "numberOfGrids", "gridNumber"]) is not None
+                else ("" if estimate_grid_count is None else estimate_grid_count)
+            ),
             "qtyPerOrderEstimate": "" if estimate_qty is None else estimate_qty,
             "qtyPerOrderSource": estimate_qty_source,
             "gridProfitEstimateLow": "" if estimate_low is None else estimate_low,
