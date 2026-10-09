@@ -130,12 +130,20 @@ def main(src, dst):
     pos = ((price - lo) / (hi - lo)).where(hi > lo)
     ppg_min = df.profitPerGridAfterFees.map(parse_ppg_min) if "profitPerGridAfterFees" in df else pd.Series(np.nan, index=df.index)
 
-    valid = roi.notna() & mdd.notna() & (days > 0) & ~suspect
+    # Un score de sélection n'est crédible que si son critère n°1 est
+    # mesuré à partir de valeurs exactes. Ne pas remplacer une donnée absente
+    # par zéro, ni utiliser le Grid Profit estimé pour classer les bots.
+    # Le seuil Profit/Grid > 0,3 % est une condition d'éligibilité, pas un bonus.
+    valid = (
+        roi.notna() & mdd.notna() & (days > 0) & ~suspect
+        & exact & ratio.notna() & gp_exact.notna()
+        & ppg_min.notna() & (ppg_min > 0.3)
+    )
 
-    a1 = ratio.clip(0, 1).fillna(0)
+    a1 = ratio.clip(0, 1)
 
     days_c = days.clip(lower=MIN_DAYS_ANNUALIZE)
-    grid_annual = (gp_used / capital / days_c * 365 * 100).clip(upper=MAX_ANNUAL_PCT)
+    grid_annual = (gp_exact / capital / days_c * 365 * 100).clip(upper=MAX_ANNUAL_PCT)
     calmar = grid_annual / (mdd * 100).clip(lower=1)
     a2 = pd.Series(0.0, index=df.index)
     m = valid & calmar.notna()
@@ -152,7 +160,7 @@ def main(src, dst):
     e[m] = trades_day[m].rank(pct=True)
 
     score = 20 * a1 + 15 * a2 + 20 * b + 15 * c1 + 10 * c2 + 10 * d + 10 * e
-    score[ppg_min <= 0.3] *= 0.5                       # règle impérative : > 0,3 %
+    # Les bots à Profit/Grid <= 0,3 % ne sont pas éligibles au score.
     score[(pos < 0) | (pos > 1)] = 0.0                 # hors plage : bot inactif
     score[~valid] = np.nan
     score = score.round(1)
