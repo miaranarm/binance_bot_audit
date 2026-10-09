@@ -177,7 +177,13 @@ def main(src, dst):
         "profitPerGridAfterFees": df.get("profitPerGridAfterFees"), "score": score,
     })
     out = out.sort_values("score", ascending=False, na_position="last", kind="stable").reset_index(drop=True)
-    out.insert(0, "rank", np.arange(1, len(out) + 1))
+    # Le rang n'existe que si le score est calculable. Un bot sans Grid Profit
+    # exact reste dans le CSV pour conserver les données, mais ne reçoit pas
+    # artificiellement un rang de classement.
+    scored = out["score"].notna()
+    ranks = pd.Series(np.nan, index=out.index, dtype="float64")
+    ranks.loc[scored] = np.arange(1, int(scored.sum()) + 1)
+    out.insert(0, "rank", ranks)
     out = out[COLUMNS]
 
     folder = os.path.dirname(dst) or "."
@@ -187,11 +193,15 @@ def main(src, dst):
     os.replace(tmp, dst)
 
     with open(os.path.join(folder, "current_multicriteria_summary.txt"), "w", encoding="utf-8") as h:
-        h.write(f"COUNT={len(out)}\nUNIVERSE=Binance public Bot Marketplace, leverage <= 1, unique strategyId\n")
-        h.write("SCORING=GRID_TOTAL_RATIO20 GRID_RETURN_PER_RISK15 PRICE_CENTRE20 AGE15 TRADES10 PROFIT_PER_GRID10 TRADES_PER_DAY10 (indicatif)\n")
-        for _, r in out.head(20).iterrows():
-            h.write(f"{int(r['rank'])}. {r.strategyId} {r.symbol} score={r.score} ratio={r.gridProfitTotalProfitRatio} "
-                    f"roi={r['roi (fourni par Binance)']} jours={r['runningTime en J']:.0f} mdd7d={r.mdd7d}\n")
+        h.write(f"COUNT={len(out)}\\nUNIVERSE=Binance public Bot Marketplace, leverage <= 1, unique strategyId\\n")
+        h.write(f"SCORED={int(scored.sum())}\\nUNSCORED={int((~scored).sum())}\\n")
+        h.write("SCORING=GRID_TOTAL_RATIO20 GRID_RETURN_PER_RISK15 PRICE_CENTRE20 AGE15 TRADES10 PROFIT_PER_GRID10 TRADES_PER_DAY10 (indicatif)\\n")
+        if not scored.any():
+            h.write("NO_RANKED_BOTS=aucun bot ne satisfait actuellement les conditions de score, notamment Grid Profit exact et Profit/Grid > 0.3%\\n")
+        else:
+            for _, r in out.loc[scored].head(20).iterrows():
+                h.write(f"{int(r['rank'])}. {r.strategyId} {r.symbol} score={r.score} ratio={r.gridProfitTotalProfitRatio} "
+                        f"roi={r['roi (fourni par Binance)']} jours={r['runningTime en J']:.0f} mdd7d={r.mdd7d}\\n")
 
     print(f"{len(out)} stratégies -> {dst}")
     print(f"gridProfit exact : {int(exact.sum())} | estimé (Mid) : {int((~exact & est_ok & mid.notna()).sum())} "
