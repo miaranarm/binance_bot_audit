@@ -396,7 +396,7 @@ def grid_metrics(item, prices):
         else:
             grid_profit = detail_grid
             grid_profit_source = "BINANCE_EXACT"
-        estimate_low = estimate_high = grid_profit
+        estimate_low = estimate_mid = estimate_high = grid_profit
         estimate_method = "BINANCE_EXACT_DETAIL"
         estimate_confidence = "HIGH"
 
@@ -413,7 +413,7 @@ def grid_metrics(item, prices):
         else:
             grid_profit = detail_grid_reconstructed
             grid_profit_source = "BINANCE_EXACT"
-        estimate_low = estimate_high = grid_profit
+        estimate_low = estimate_mid = estimate_high = grid_profit
         estimate_method = "BINANCE_EXACT_DETAIL_RECONSTRUCTION"
         estimate_confidence = "HIGH"
 
