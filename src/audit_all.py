@@ -40,6 +40,24 @@ CAPITAL_FIELD_NAMES = {
     "minimuminvestment", "investment", "totalinvest",
 }
 CAPITAL_FIELD_DIAGNOSTICS = []
+PUBLIC_BAPI_ENDPOINT_SCHEMAS = []
+PUBLIC_BAPI_ENDPOINT_SEEN = set()
+
+
+def summarize_json_schema(payload, path="$", depth=0, max_depth=3, paths=None):
+    """Compact schema-only summary; never stores full public API response bodies."""
+    if paths is None:
+        paths = []
+    if isinstance(payload, dict):
+        for key, value in payload.items():
+            child = f"{path}.{key}"
+            if len(paths) < 100:
+                paths.append(child)
+            if depth < max_depth and isinstance(value, (dict, list)):
+                summarize_json_schema(value, child, depth + 1, max_depth, paths)
+    elif isinstance(payload, list) and payload:
+        summarize_json_schema(payload[0], f"{path}[0]", depth + 1, max_depth, paths)
+    return paths
 
 
 def collect_capital_fields(payload, path="$"):
@@ -814,10 +832,10 @@ def capture_marketplace_detail_calls(page, rows):
             body = response.text()
             lowered = body.lower()
             url = response.url
-            # Capture candidate investment/capital fields from every JSON
-            # response observed while a sampled public bot detail is open.
-            # This is an audit trail only; it does not alter any CSV metric.
-            if active_sid["value"]:
+            # Capture candidate capital fields only from data endpoints.
+            # Localization JSON contains labels such as "Total Investment", not
+            # actual monetary values, and must never count as capital evidence.
+            if active_sid["value"] and "/api/i18n/" not in url.lower():
                 try:
                     payload_for_capital = json.loads(body)
                     candidate_fields = collect_capital_fields(payload_for_capital)
@@ -833,6 +851,36 @@ def capture_marketplace_detail_calls(page, rows):
                                     json.dumps(candidate_fields, ensure_ascii=False)[:20000])
                 except Exception:
                     pass
+
+            # Record the public Marketplace API response schema, not its full
+            # payload. This reveals which fields Binance actually publishes
+            # (including PNL/ROI chart fields) without confusing translations
+            # or analytics calls with bot data.
+            lower_url = url.lower()
+            if ("/bapi/futures/v1/public/future/common/strategy/landing-page/" in lower_url
+                    or "/bapi/futures/v1/public/future/common/grid/" in lower_url):
+                try:
+                    payload_schema = json.loads(body)
+                    schema_key = (url.split("?")[0], response.status)
+                    if schema_key not in PUBLIC_BAPI_ENDPOINT_SEEN:
+                        PUBLIC_BAPI_ENDPOINT_SEEN.add(schema_key)
+                        data_value = payload_schema.get("data") if isinstance(payload_schema, dict) else None
+                        sample_record = data_value[0] if isinstance(data_value, list) and data_value else data_value
+                        PUBLIC_BAPI_ENDPOINT_SCHEMAS.append({
+                            "url": url.split("?")[0],
+                            "httpStatus": response.status,
+                            "rootKeys": list(payload_schema.keys()) if isinstance(payload_schema, dict) else [],
+                            "keyPaths": summarize_json_schema(payload_schema),
+                            "dataSampleKeys": list(sample_record.keys()) if isinstance(sample_record, dict) else [],
+                            "capitalCandidateFields": collect_capital_fields(payload_schema),
+                        })
+                        debug_write("PUBLIC_BAPI_SCHEMA url=" + url.split("?")[0] +
+                                    " status=" + str(response.status) +
+                                    " rootKeys=" + json.dumps(list(payload_schema.keys()) if isinstance(payload_schema, dict) else []) +
+                                    " dataSampleKeys=" + json.dumps(list(sample_record.keys()) if isinstance(sample_record, dict) else []) +
+                                    " keyPaths=" + json.dumps(summarize_json_schema(payload_schema)[:60]))
+                except Exception as exc:
+                    debug_write("PUBLIC_BAPI_SCHEMA_ERROR url=" + url + " " + str(exc))
             if "/bapi/" in url:
                 print("BAPI_RESPONSE url=" + url + " status=" + str(response.status) + " bytes=" + str(len(body)))
             if "/api/v2/query" in url.lower() or "/api/v1/feature-gate/check" in url.lower() or "/api/v2/strategy/query" in url.lower():
@@ -1144,6 +1192,7 @@ def main():
                 "field_name_candidates": sorted(CAPITAL_FIELD_NAMES),
                 "marketplace_listing_fields": marketplace_capital_fields,
                 "detail_response_fields": CAPITAL_FIELD_DIAGNOSTICS,
+                "public_bapi_endpoint_schemas": PUBLIC_BAPI_ENDPOINT_SCHEMAS,
                 "interpretation_rule": "A field name alone does not prove its accounting basis or units. Do not treat minInvestment, inferred PNL/ROI capital, initial capital, current capital, or margin as interchangeable without endpoint-level verification.",
             }, handle, ensure_ascii=False, indent=2)
 
