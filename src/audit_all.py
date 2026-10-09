@@ -384,10 +384,45 @@ def grid_metrics(item, prices):
 
     marketplace_pnl = num(item.get("pnl"), None)
 
-    # Exact accounting metrics must come from the bot detail-page capture.
-    # Do not recursively search marketplace listing payloads: matching field
-    # names can occur in nested analytics/sample objects and do not prove that
-    # the value belongs to this bot or uses the required accounting basis.
+    # Preserve the previous broad extraction path as a diagnostic candidate
+    # source. It must NOT be promoted to an exact accounting metric: recursive
+    # keys in Marketplace payloads may belong to unrelated nested objects.
+    legacy_candidate_grid = first_num(item, [
+        "_detail_grid_profit", "gridProfit", "strategyStats.gridProfit", "stats.gridProfit"
+    ])
+    if legacy_candidate_grid is None:
+        legacy_candidate_grid = find_exact_numeric_key(item, ["gridProfit"])
+
+    legacy_candidate_total = first_num(item, [
+        "_detail_total_profit", "totalProfit", "strategyStats.totalProfit", "stats.totalProfit"
+    ])
+    if legacy_candidate_total is None:
+        legacy_candidate_total = find_exact_numeric_key(item, ["totalProfit"])
+
+    legacy_candidate_floating = first_num(item, [
+        "_detail_floating_pnl", "floatingPnl", "floatingPNL", "unrealizedPnl",
+        "unrealizedPNL", "floatProfit", "floatingProfit",
+        "strategyStats.floatingPnl", "strategyStats.unrealizedPnl",
+        "stats.floatingPnl", "stats.unrealizedPnl",
+    ])
+    if legacy_candidate_floating is None:
+        legacy_candidate_floating = find_exact_numeric_key(
+            item, ["floatingPnl", "unrealizedPnl", "floatProfit", "floatingProfit"]
+        )
+
+    if any(v is not None for v in (
+        legacy_candidate_grid, legacy_candidate_total, legacy_candidate_floating
+    )):
+        debug_write(
+            "UNVERIFIED_MARKETPLACE_METRIC_CANDIDATE sid="
+            + str(item.get("strategyId") or "") +
+            " gridProfit=" + str(legacy_candidate_grid) +
+            " totalProfit=" + str(legacy_candidate_total) +
+            " floatingPnl=" + str(legacy_candidate_floating)
+        )
+
+    # Exact accounting metrics still come only from values captured on a
+    # verified strategy/grid detail or ROI-chart endpoint.
     detail_grid = num(item.get("_detail_grid_profit"), None)
     detail_total = num(item.get("_detail_total_profit"), None)
     floating_pnl = num(item.get("_detail_floating_pnl"), None)
