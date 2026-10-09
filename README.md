@@ -15,19 +15,20 @@ Le rapport principal est généré par `src/audit_all.py`, contrôlé par `src/v
 
 ## Critères et interprétation
 
-Le filtre final ne conserve que les stratégies ayant un `strategyId`, un symbole négociable et un levier connu inférieur ou égal à 1. Les stratégies à levier inconnu des familles autres que Spot Grid sont exclues plutôt que supposées sans levier.
+Le périmètre de collecte est le Bot Marketplace public Binance. Le scanner conserve les stratégies ayant un `strategyId`, un symbole et un levier connu inférieur ou égal à 1 ; les stratégies dont le levier est inconnu hors Spot Grid ne sont pas présumées sans levier. Après cette règle de périmètre, **aucune stratégie ne doit être retirée selon son ancienneté, le prix hors plage ou le profit par grille après frais**. Le générateur final déduplique les `strategyId`, conserve les lignes du périmètre collecté et ne filtre pas sur les métriques de performance.
 
-Le classement donne la priorité au ratio **Grid Profit / Total Profit**, puis au profit par grille après frais, à la position du prix dans la plage, à la durée, à l'activité, au profit moyen par transaction et au drawdown sur 7 jours. Le score est un outil de présélection, pas une garantie de rendement. Un rang est attribué uniquement aux bots qui ont un score calculable; les autres restent présents dans le CSV, mais leurs colonnes `score` et `rank` sont vides. Le résumé indique le nombre de bots classés et non classés.
+Pendant la phase de fiabilisation, le score et le rang restent volontairement vides : ils ne doivent pas masquer ou réordonner la liste complète. La liste est triée par `strategyId` pour assurer un ordre stable, pas par performance.
 
 ### Données officielles et estimations
 
 - `roi (fourni par Binance)` conserve le ROI publié par Binance.
 - `roi (calculé)` est calculé comme PNL / investissement minimum × 100. L'investissement minimum peut différer du capital réellement investi : ce champ est un indicateur de comparaison, pas une reproduction garantie du ROI Binance.
 - `gridProfit` est exact uniquement quand une donnée publique Binance suffisamment explicite permet de l'établir. Sinon, il reste vide dans la colonne principale et le point central estimé est accompagné d'une fourchette basse/centrale/haute lorsqu'elle peut être calculée.
-- Dans le tableau final, `gridProfitTotalProfitRatio` est renseigné uniquement lorsque le Grid Profit est exact. Si le Grid Profit est estimé, le ratio principal reste vide : l'estimation ne doit pas être confondue avec un ratio officiel, car la présentation finale ne possède pas de colonne distincte pour sa provenance.
+- `gridProfitTotalProfitRatio` est calculé dès que le Total Profit est non nul. Quand le Grid Profit est exact, le ratio est numérique ; quand le Grid Profit est estimé, le ratio central est préfixé par `≈` pour signaler l'estimation, tandis que `gridProfit` reste vide. Cela conserve les 29 colonnes actuelles tout en distinguant une estimation d'une valeur exacte.
+- Aucun plafond arbitraire de 100 % ou 500 % n'est appliqué au ratio. Un ratio supérieur à 100 % est conservé et doit être interprété en regard du signe et de la base comptable du Total Profit, du Floating Profit et des sources Binance. Si le Total Profit est nul, le ratio est indéfini et reste vide.
 - `floatingProfit` reste vide dès que le Grid Profit n'est pas exact. Le résidu entre un profit total et un Grid Profit estimé n'est pas un Floating Profit fiable.
 - Le nombre de transactions ne suffit pas à retrouver le profit exact de chaque cycle. Une reconstruction fondée sur la géométrie de la grille demeure une estimation et ne doit jamais être présentée comme une donnée officielle.
-- `profitPerGridAfterFees` utilise la formule documentée de la grille et les frais Spot de référence. Les frais effectifs peuvent varier selon la paire, le niveau VIP et les réductions de frais.
+- `profitPerGridAfterFees` utilise la formule documentée de la grille et les frais Spot de référence. Les frais effectifs peuvent varier selon la paire, le niveau VIP et les réductions de frais. Cette valeur ne sert pas de filtre : les valeurs faibles ou négatives restent dans la liste lorsqu'elles sont calculables.
 
 Une collecte n'est considérée exhaustive que si `scan_meta.json` indique `collection_complete: true`. Cela signifie que le nombre de lignes récupérées correspond au total annoncé par les endpoints publics interrogés; cela ne prouve pas que Binance expose toutes les familles de bots existantes dans une API publique.
 
