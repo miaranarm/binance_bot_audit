@@ -124,13 +124,7 @@ jobs:
           set -e
           # Raw browser/network captures are already uploaded as short-lived Actions artifacts.
           # Keep only the current report, compact scan diagnostics and retained hourly history.
-          find results -maxdepth 1 -type f \
-            ! -name 'current_multicriteria.csv' \\
-            ! -name 'current_multicriteria_summary.txt' \\
-            ! -name 'scan_meta.json' \\
-            ! -name 'type_census.json' \\
-            ! -name 'grid_profit_validation.json' \\
-            -delete
+          find results -maxdepth 1 -type f -not -name 'current_multicriteria.csv' -not -name 'current_multicriteria_summary.txt' -not -name 'scan_meta.json' -not -name 'type_census.json' -not -name 'grid_profit_validation.json' -delete
           rm -f strategy_detail_debug.log roi_chart_probe.json
 
       - name: Upload 90-day archival snapshot
