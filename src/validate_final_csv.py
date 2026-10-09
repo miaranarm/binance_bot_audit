@@ -51,10 +51,15 @@ def main():
         fail("empty strategyId")
     if len(ids) != len(set(ids)):
         fail("duplicate strategyId")
-    if [numeric(r.get("rank")) for r in rows] != list(range(1, len(rows) + 1)):
-        fail("rank is not contiguous from 1")
-
     scores = [numeric(r.get("score")) for r in rows]
+    ranks = [numeric(r.get("rank")) for r in rows]
+    scored_count = sum(s is not None for s in scores)
+    expected_ranks = list(range(1, scored_count + 1)) + [None] * (len(rows) - scored_count)
+    if ranks != expected_ranks:
+        fail("rank must be contiguous for scored bots and blank for unscored bots")
+    if any((score is None) != (rank is None) for score, rank in zip(scores, ranks)):
+        fail("rank/score eligibility mismatch")
+
     previous = None
     for r, score in zip(rows, scores):
         sid = r.get("strategyId")
