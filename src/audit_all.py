@@ -904,6 +904,23 @@ def capture_marketplace_detail_calls(page, rows):
                 try:
                     payload_schema = json.loads(body)
                     schema_key = (url.split("?")[0], response.status)
+                    # Preserve the small, actionable error envelope from BAPI
+                    # responses. This helps distinguish login-gated detail data,
+                    # endpoint failures and genuine empty metric payloads without
+                    # storing whole response bodies.
+                    if isinstance(payload_schema, dict):
+                        api_success = payload_schema.get("success")
+                        api_code = payload_schema.get("code")
+                        api_message = payload_schema.get("message", payload_schema.get("msg", ""))
+                        api_detail = payload_schema.get("messageDetail", "")
+                        if response.status >= 400 or api_success is False or (api_code not in (None, 0, "0", "000000")):
+                            debug_write("DETAIL_BAPI_ERROR sid=" + str(active_sid["value"]) +
+                                        " status=" + str(response.status) +
+                                        " url=" + url.split("?")[0] +
+                                        " code=" + str(api_code)[:200] +
+                                        " success=" + str(api_success) +
+                                        " message=" + str(api_message)[:500] +
+                                        " detail=" + str(api_detail)[:500])
                     if schema_key not in PUBLIC_BAPI_ENDPOINT_SEEN:
                         PUBLIC_BAPI_ENDPOINT_SEEN.add(schema_key)
                         data_value = payload_schema.get("data") if isinstance(payload_schema, dict) else None
