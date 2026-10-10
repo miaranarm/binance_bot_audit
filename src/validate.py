@@ -40,7 +40,11 @@ def check_raw(path):
         rows = list(csv.DictReader(handle))
     stats = dict.fromkeys(("reconstructed", "exact", "unavailable", "unknownSource", "orderingErrors",
                            "ratioErrors", "floatingErrors", "sourceErrors", "negativeEstimateRows",
-                           "ratiosOver100Percent", "estimatedRatiosOver100Percent"), 0)
+                           "ratiosOver100Percent", "estimatedRatiosOver100Percent",
+                           "estimatedRatioOver100PositiveTotal", "estimatedRatioOver100NegativeTotal",
+                           "estimatedRatioOver100PositiveGridProfit", "estimatedRatioOver100NegativeGridProfit",
+                           "estimatedRatioOver100ImpliedFloatingNegative", "estimatedRatioOver100ImpliedFloatingNonNegative"), 0)
+    stats["estimatedRatioOver100Examples"] = []
     stats["rows"] = len(rows)
     examples = []
 
@@ -77,6 +81,20 @@ def check_raw(path):
                 bad("RATIO_ESTIMATE_ORDER", "orderingErrors", row, low=rlow, mid=rmid, high=rhigh)
             if rmid is not None and rmid > 1:
                 stats["estimatedRatiosOver100Percent"] += 1
+                if total is not None and mid is not None:
+                    implied_floating = total - mid
+                    stats["estimatedRatioOver100PositiveTotal" if total > 0 else "estimatedRatioOver100NegativeTotal" if total < 0 else "estimatedRatioOver100PositiveTotal"] += 1
+                    stats["estimatedRatioOver100PositiveGridProfit" if mid > 0 else "estimatedRatioOver100NegativeGridProfit" if mid < 0 else "estimatedRatioOver100PositiveGridProfit"] += 1
+                    stats["estimatedRatioOver100ImpliedFloatingNegative" if implied_floating < 0 else "estimatedRatioOver100ImpliedFloatingNonNegative"] += 1
+                    if len(stats["estimatedRatioOver100Examples"]) < 10:
+                        stats["estimatedRatioOver100Examples"].append({
+                            "strategyId": row.get("strategyId"), "symbol": row.get("symbol"),
+                            "category": row.get("category"), "totalProfit": total,
+                            "estimatedGridProfitMid": mid, "estimatedRatio": rmid,
+                            "impliedFloatingProfit": implied_floating,
+                            "confidence": row.get("gridProfitConfidence"),
+                            "method": row.get("gridProfitEstimateMethod"),
+                        })
         elif source == "BINANCE_EXACT":
             stats["exact"] += 1
             if grid is None:
