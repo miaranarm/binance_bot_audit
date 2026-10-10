@@ -103,8 +103,8 @@ def main(src, dst):
 
     with open(os.path.join(folder, "current_multicriteria_summary.txt"), "w", encoding="utf-8") as h:
         h.write(f"COUNT={len(out)}\n"
-                "UNIVERSE=Binance public Bot Marketplace, leverage<=1; complete collected universe; "
-                "no age/price-range/profit-per-grid filters\n"
+                "UNIVERSE=Binance public Bot Marketplace scan result, leverage<=1; verify results/scan_meta.json "
+                "collection_complete before treating the scan as exhaustive; no age/price-range/profit-per-grid filters\n"
                 "RANKING=NONE (rank and score columns kept empty)\n"
                 "RATIO=exact numeric when Grid Profit is exact; estimated ratio prefixed with ≈; "
                 "empty when Total Profit is zero; no 100%/500% cap\n")
