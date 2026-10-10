@@ -1,13 +1,10 @@
 name: Binance Public Bot Audit
 
-# Pipeline unique (remplace audit.yml + pr-validation.yml + pr-e2e-validation.yml) :
-#   audit_all.py -> validate.py raw -> build_multicriteria.py -> validate.py final
-# Hors pull request : commit de results/ sur main. Pull request : même scan complet, sans commit.
+# Collecte horaire; main reste protégée. Les résultats vivants sont publiés sur audit-results.
+# Les snapshots compressés sont conservés dans results/history/ sur cette branche, avec rétention de 30 jours.
 
 on:
   workflow_dispatch:
-  # Déclenchement à distance sans token API : commenter /audit-run sur l'issue d'exploitation
-  # créée par le propriétaire du dépôt.
   issue_comment:
     types: [created]
   schedule:
@@ -21,8 +18,6 @@ on:
 permissions:
   contents: write
 
-# Un push sur main relance l'audit avec le code à jour ; la concurrence annule les runs périmés.
-# Les commentaires étrangers à /audit-run et les PR ont leur propre groupe : ils n'annulent pas le scan horaire.
 concurrency:
   group: >-
     ${{ github.event_name == 'pull_request' && format('audit-pr-{0}', github.ref)
@@ -76,6 +71,17 @@ jobs:
       - run: pip install -r requirements.txt pandas numpy
       - run: playwright install --with-deps chromium
 
+      - name: Restore snapshot history from audit-results
+        run: |
+          set -e
+          if git fetch origin refs/heads/audit-results:refs/remotes/origin/audit-results; then
+            mkdir -p results/history
+            git archive origin/audit-results results/history | tar -x -C .
+            echo "Historique précédent restauré depuis audit-results."
+          else
+            echo "Première exécution : aucun historique sur audit-results."
+          fi
+
       - name: Collect (Grid Profit exact si disponible, sinon estimation)
         run: python src/audit_all.py
       - name: Validate raw CSV
@@ -109,7 +115,6 @@ jobs:
         if: github.event_name != 'pull_request'
         run: |
           set -e
-          # Garde le rapport courant, son résumé, le méta du scan et l'historique horaire (results/history/).
           find results -maxdepth 1 -type f \
             -not -name 'current_multicriteria.csv' \
             -not -name 'current_multicriteria_summary.txt' \
@@ -125,7 +130,7 @@ jobs:
           path: ${{ env.SNAPSHOT }}
           retention-days: 90
 
-      - name: Commit results
+      - name: Publish results to audit-results (main remains protected)
         if: github.event_name != 'pull_request'
         run: |
           set -e
@@ -133,18 +138,9 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add -A results
           if git diff --cached --quiet; then
-            echo "No result changes to commit."
+            echo "No result changes to publish."
             exit 0
           fi
           git commit -m "audit: hourly snapshot [skip ci]"
-          for attempt in 1 2 3; do
-            git fetch origin main
-            git rebase origin/main
-            if git push origin HEAD:main; then
-              echo "Results pushed successfully on attempt ${attempt}."
-              exit 0
-            fi
-            echo "Push rejected on attempt ${attempt}; refreshing origin/main."
-          done
-          echo "::error::Push refusé. Si la branche main est protégée (pull request obligatoire), autoriser github-actions[bot] à contourner la protection."
-          exit 1
+          git push --force origin HEAD:refs/heads/audit-results
+          echo "Résultats publiés sur audit-results; main n'est pas modifiée."
