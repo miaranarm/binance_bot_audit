@@ -1,7 +1,7 @@
 {
-  "scan_utc": "2026-10-10T10:28:02.786789+00:00",
-  "raw_rows": 29127,
-  "tradable_leverage_le_1": 11720,
+  "scan_utc": "2026-10-10T11:27:23.570148+00:00",
+  "raw_rows": 29028,
+  "tradable_leverage_le_1": 11725,
   "collection_complete": false,
   "incomplete_categories": [
     "Marketplace type 12",
@@ -16,24 +16,24 @@
   ],
   "collection": {
     "Spot Grid": {
-      "collected": 11533,
-      "unique_collected": 11533,
+      "collected": 11539,
+      "unique_collected": 11539,
       "duplicate_rows": 0,
-      "expected": 11533,
+      "expected": 11539,
       "complete": true
     },
     "Marketplace type 2": {
-      "collected": 13926,
-      "unique_collected": 13926,
+      "collected": 13872,
+      "unique_collected": 13872,
       "duplicate_rows": 0,
-      "expected": 13926,
+      "expected": 13872,
       "complete": true
     },
     "Marketplace type 3": {
-      "collected": 562,
-      "unique_collected": 562,
+      "collected": 557,
+      "unique_collected": 557,
       "duplicate_rows": 0,
-      "expected": 562,
+      "expected": 557,
       "complete": true
     },
     "Marketplace type 4": {
@@ -79,10 +79,10 @@
       "complete": true
     },
     "Marketplace type 10": {
-      "collected": 1553,
-      "unique_collected": 1553,
+      "collected": 1530,
+      "unique_collected": 1530,
       "duplicate_rows": 0,
-      "expected": 1553,
+      "expected": 1530,
       "complete": true
     },
     "Marketplace type 11": {
@@ -156,19 +156,19 @@
       "complete": false
     },
     "Futures DCA": {
-      "collected": 1553,
-      "unique_collected": 1553,
+      "collected": 1530,
+      "unique_collected": 1530,
       "duplicate_rows": 0,
-      "expected": 1553,
+      "expected": 1530,
       "complete": true
     }
   },
   "grid_profit_exact": 0,
   "detail_capture": {
     "budget_s": 900,
-    "candidates": 11533,
-    "visited": 720,
-    "pending": 720,
+    "candidates": 11539,
+    "visited": 762,
+    "pending": 762,
     "captured": 0,
     "errors": 0,
     "endpoints_with_profit_fields": [],
@@ -428,7 +428,7 @@
       "error": "JSON payload has no list-valued data field"
     }
   ],
-  "snapshot": "results/history/2026/10/10/20261010T102802Z.csv.gz",
+  "snapshot": "results/history/2026/10/10/20261010T112723Z.csv.gz",
   "old_snapshots_removed": 0,
   "profit_per_grid_fee_reference": "0.10% par ordre (Spot) ; les frais réels varient selon paire / VIP / BNB.",
   "limitations": [
@@ -436,9 +436,9 @@
     "Seuls les strategyType 1 à 20 sont interrogés."
   ],
   "validation": {
-    "reconstructed": 11279,
+    "reconstructed": 11278,
     "exact": 0,
-    "unavailable": 441,
+    "unavailable": 447,
     "unknownSource": 0,
     "orderingErrors": 0,
     "ratioErrors": 0,
@@ -446,22 +446,22 @@
     "sourceErrors": 0,
     "negativeEstimateRows": 22,
     "ratiosOver100Percent": 0,
-    "estimatedRatiosOver100Percent": 4669,
-    "estimatedRatioOver100PositiveTotal": 4669,
+    "estimatedRatiosOver100Percent": 4724,
+    "estimatedRatioOver100PositiveTotal": 4724,
     "estimatedRatioOver100NegativeTotal": 0,
-    "estimatedRatioOver100PositiveGridProfit": 4669,
+    "estimatedRatioOver100PositiveGridProfit": 4724,
     "estimatedRatioOver100NegativeGridProfit": 0,
-    "estimatedRatioOver100ImpliedFloatingNegative": 4669,
+    "estimatedRatioOver100ImpliedFloatingNegative": 4724,
     "estimatedRatioOver100ImpliedFloatingNonNegative": 0,
     "estimatedRatioOver100Examples": [
       {
         "strategyId": "8205304",
         "symbol": "LINKETH",
         "category": "Spot Grid",
-        "totalProfit": 164780.94007513,
-        "estimatedGridProfitMid": 195011.36931194522,
-        "estimatedRatio": 1.1834582884587987,
-        "impliedFloatingProfit": -30230.429236815224,
+        "totalProfit": 162360.84817363,
+        "estimatedGridProfitMid": 195165.664267557,
+        "estimatedRatio": 1.202048809567965,
+        "impliedFloatingProfit": -32804.81609392702,
         "confidence": "MEDIUM",
         "method": "BINANCE_FORMULA_RECONSTRUCTION_ROUNDED_ROI_AND_GRID_RANGE"
       },
@@ -469,10 +469,10 @@
         "strategyId": "9799189",
         "symbol": "TAOUSDT",
         "category": "Spot Grid",
-        "totalProfit": 14139.85779851,
-        "estimatedGridProfitMid": 14791.20950111365,
-        "estimatedRatio": 1.0460649401065607,
-        "impliedFloatingProfit": -651.3517026036498,
+        "totalProfit": 14159.0845858,
+        "estimatedGridProfitMid": 14776.83115028506,
+        "estimatedRatio": 1.0436289903306737,
+        "impliedFloatingProfit": -617.7465644850599,
         "confidence": "MEDIUM",
         "method": "BINANCE_FORMULA_RECONSTRUCTION_ROUNDED_ROI_AND_GRID_RANGE"
       },
@@ -480,10 +480,10 @@
         "strategyId": "9992671",
         "symbol": "XRPUSDT",
         "category": "Spot Grid",
-        "totalProfit": 11908.73810097,
-        "estimatedGridProfitMid": 27738.29500578979,
-        "estimatedRatio": 2.3292388136011177,
-        "impliedFloatingProfit": -15829.55690481979,
+        "totalProfit": 11813.00976066,
+        "estimatedGridProfitMid": 28390.37557351754,
+        "estimatedRatio": 2.403314324522437,
+        "impliedFloatingProfit": -16577.36581285754,
         "confidence": "MEDIUM",
         "method": "BINANCE_FORMULA_RECONSTRUCTION_ROUNDED_ROI_AND_GRID_RANGE"
       },
@@ -491,10 +491,10 @@
         "strategyId": "7257253",
         "symbol": "UNIUSDT",
         "category": "Spot Grid",
-        "totalProfit": 8515.22413318,
-        "estimatedGridProfitMid": 10847.504494337749,
-        "estimatedRatio": 1.2738953578532244,
-        "impliedFloatingProfit": -2332.280361157749,
+        "totalProfit": 8531.80450021,
+        "estimatedGridProfitMid": 10789.29621283644,
+        "estimatedRatio": 1.2645972153453438,
+        "impliedFloatingProfit": -2257.491712626439,
         "confidence": "MEDIUM",
         "method": "BINANCE_FORMULA_RECONSTRUCTION_ROUNDED_ROI_AND_GRID_RANGE"
       },
@@ -502,10 +502,10 @@
         "strategyId": "5720791",
         "symbol": "BTCUSDT",
         "category": "Spot Grid",
-        "totalProfit": 8119.89388435,
-        "estimatedGridProfitMid": 18340.22943655501,
-        "estimatedRatio": 2.2586784627694865,
-        "impliedFloatingProfit": -10220.335552205011,
+        "totalProfit": 8118.1662231,
+        "estimatedGridProfitMid": 18334.82241907975,
+        "estimatedRatio": 2.2584931024088366,
+        "impliedFloatingProfit": -10216.656195979747,
         "confidence": "MEDIUM",
         "method": "BINANCE_FORMULA_RECONSTRUCTION_ROUNDED_ROI_AND_GRID_RANGE"
       },
@@ -513,10 +513,10 @@
         "strategyId": "9519684",
         "symbol": "USTCUSDT",
         "category": "Spot Grid",
-        "totalProfit": 6847.60047134,
-        "estimatedGridProfitMid": 10404.08058406459,
-        "estimatedRatio": 1.5193761124951595,
-        "impliedFloatingProfit": -3556.48011272459,
+        "totalProfit": 6861.1660856,
+        "estimatedGridProfitMid": 10349.772709587349,
+        "estimatedRatio": 1.5084568104697431,
+        "impliedFloatingProfit": -3488.606623987349,
         "confidence": "MEDIUM",
         "method": "BINANCE_FORMULA_RECONSTRUCTION_ROUNDED_ROI_AND_GRID_RANGE"
       },
@@ -524,10 +524,10 @@
         "strategyId": "9497184",
         "symbol": "USTCUSDT",
         "category": "Spot Grid",
-        "totalProfit": 6562.19593708,
-        "estimatedGridProfitMid": 11870.17066165001,
-        "estimatedRatio": 1.8088717215188665,
-        "impliedFloatingProfit": -5307.974724570011,
+        "totalProfit": 6576.17570383,
+        "estimatedGridProfitMid": 11794.415635498439,
+        "estimatedRatio": 1.7935067684747699,
+        "impliedFloatingProfit": -5218.239931668439,
         "confidence": "MEDIUM",
         "method": "BINANCE_FORMULA_RECONSTRUCTION_ROUNDED_ROI_AND_GRID_RANGE"
       },
@@ -535,10 +535,10 @@
         "strategyId": "9814487",
         "symbol": "TRUMPUSDT",
         "category": "Spot Grid",
-        "totalProfit": 6020.64753279,
-        "estimatedGridProfitMid": 67853.5428911662,
-        "estimatedRatio": 11.270140383010016,
-        "impliedFloatingProfit": -61832.895358376205,
+        "totalProfit": 6012.1374781,
+        "estimatedGridProfitMid": 68734.3036534921,
+        "estimatedRatio": 11.432590140173245,
+        "impliedFloatingProfit": -62722.1661753921,
         "confidence": "MEDIUM",
         "method": "BINANCE_FORMULA_RECONSTRUCTION_ROUNDED_ROI_AND_GRID_RANGE"
       },
@@ -546,10 +546,10 @@
         "strategyId": "6883234",
         "symbol": "CAKEUSDT",
         "category": "Spot Grid",
-        "totalProfit": 5732.38768883,
-        "estimatedGridProfitMid": 7161.875295194352,
-        "estimatedRatio": 1.2493703643160456,
-        "impliedFloatingProfit": -1429.4876063643514,
+        "totalProfit": 5727.62853835,
+        "estimatedGridProfitMid": 7155.7239608052305,
+        "estimatedRatio": 1.2493345043054473,
+        "impliedFloatingProfit": -1428.0954224552306,
         "confidence": "MEDIUM",
         "method": "BINANCE_FORMULA_RECONSTRUCTION_ROUNDED_ROI_AND_GRID_RANGE"
       },
@@ -557,15 +557,15 @@
         "strategyId": "9276576",
         "symbol": "SOLUSDT",
         "category": "Spot Grid",
-        "totalProfit": 5653.44859474,
-        "estimatedGridProfitMid": 11650.020168022871,
-        "estimatedRatio": 2.06069268567545,
-        "impliedFloatingProfit": -5996.571573282871,
+        "totalProfit": 5638.27949164,
+        "estimatedGridProfitMid": 11703.986015915249,
+        "estimatedRatio": 2.07580806046756,
+        "impliedFloatingProfit": -6065.706524275249,
         "confidence": "MEDIUM",
         "method": "BINANCE_FORMULA_RECONSTRUCTION_ROUNDED_ROI_AND_GRID_RANGE"
       }
     ],
-    "rows": 11720,
+    "rows": 11725,
     "status": "PASS",
     "examples": []
   }

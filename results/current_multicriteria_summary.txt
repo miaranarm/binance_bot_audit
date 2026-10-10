@@ -1,4 +1,4 @@
-COUNT=11720
+COUNT=11725
 UNIVERSE=Binance public Bot Marketplace scan result, leverage<=1; verify results/scan_meta.json collection_complete before treating the scan as exhaustive; no age/price-range/profit-per-grid filters
 RANKING=NONE (rank and score columns kept empty)
 RATIO=exact numeric when Grid Profit is exact; estimated ratio prefixed with ≈; empty when Total Profit is zero; no 100%/500% cap
