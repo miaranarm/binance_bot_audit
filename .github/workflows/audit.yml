@@ -1,0 +1,150 @@
+name: Binance Public Bot Audit
+
+# Pipeline unique (remplace audit.yml + pr-validation.yml + pr-e2e-validation.yml) :
+#   audit_all.py -> validate.py raw -> build_multicriteria.py -> validate.py final
+# Hors pull request : commit de results/ sur main. Pull request : même scan complet, sans commit.
+
+on:
+  workflow_dispatch:
+  # Déclenchement à distance sans token API : commenter /audit-run sur l'issue d'exploitation
+  # créée par le propriétaire du dépôt.
+  issue_comment:
+    types: [created]
+  schedule:
+    - cron: "15 * * * *"
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+    paths: ['src/**', 'tests/**', '.github/workflows/audit.yml', 'requirements.txt']
+
+permissions:
+  contents: write
+
+# Un push sur main relance l'audit avec le code à jour ; la concurrence annule les runs périmés.
+# Les commentaires étrangers à /audit-run et les PR ont leur propre groupe : ils n'annulent pas le scan horaire.
+concurrency:
+  group: >-
+    ${{ github.event_name == 'pull_request' && format('audit-pr-{0}', github.ref)
+    || (github.event_name == 'issue_comment' && github.event.comment.body != '/audit-run') && format('audit-ignored-{0}', github.run_id)
+    || 'binance-public-bot-audit' }}
+  cancel-in-progress: true
+
+jobs:
+  tests:
+    if: github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install -r requirements.txt pandas numpy
+      - run: python -m compileall -q src tests
+      - run: python -m unittest discover -s tests -v
+
+  audit:
+    if: >-
+      (
+        github.event_name == 'issue_comment' &&
+        github.event.comment.body == '/audit-run' &&
+        github.event.comment.user.login == 'miaranarm' &&
+        github.event.issue.user.login == 'miaranarm' &&
+        github.event.issue.pull_request == null
+      ) ||
+      (
+        github.event_name != 'issue_comment' &&
+        (
+          github.event_name != 'push' ||
+          (
+            github.event.head_commit != null &&
+            !contains(github.event.head_commit.message, 'audit: hourly snapshot') &&
+            !contains(github.event.head_commit.message, 'cleanup:')
+          )
+        )
+      )
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install -r requirements.txt pandas numpy
+      - run: playwright install --with-deps chromium
+
+      - name: Collect (Grid Profit exact si disponible, sinon estimation)
+        run: python src/audit_all.py
+      - name: Validate raw CSV
+        run: python src/validate.py raw
+      - name: Build final current_multicriteria.csv (29 columns)
+        run: python src/build_multicriteria.py results/current_multicriteria.csv results/current_multicriteria.csv
+      - name: Validate final CSV
+        run: python src/validate.py final
+
+      - name: Upload scan diagnostics (even if a later step fails)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: scan-meta-${{ github.run_id }}
+          path: results/scan_meta.json
+          if-no-files-found: warn
+          retention-days: 14
+
+      - name: Upload outputs (pull request)
+        if: always() && github.event_name == 'pull_request'
+        uses: actions/upload-artifact@v4
+        with:
+          name: pr-audit-${{ github.run_id }}
+          path: |
+            results/current_multicriteria.csv
+            results/current_multicriteria_summary.txt
+          if-no-files-found: warn
+          retention-days: 14
+
+      - name: Keep only durable results
+        if: github.event_name != 'pull_request'
+        run: |
+          set -e
+          # Garde le rapport courant, son résumé, le méta du scan et l'historique horaire (results/history/).
+          find results -maxdepth 1 -type f \
+            -not -name 'current_multicriteria.csv' \
+            -not -name 'current_multicriteria_summary.txt' \
+            -not -name 'scan_meta.json' \
+            -delete
+          echo "SNAPSHOT=$(python -c "import json; print(json.load(open('results/scan_meta.json'))['snapshot'])")" >> "$GITHUB_ENV"
+
+      - name: Upload 90-day archival snapshot (this hour only)
+        if: github.event_name != 'pull_request'
+        uses: actions/upload-artifact@v4
+        with:
+          name: binance-bots-${{ github.run_id }}
+          path: ${{ env.SNAPSHOT }}
+          retention-days: 90
+
+      - name: Commit results
+        if: github.event_name != 'pull_request'
+        run: |
+          set -e
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A results
+          if git diff --cached --quiet; then
+            echo "No result changes to commit."
+            exit 0
+          fi
+          git commit -m "audit: hourly snapshot [skip ci]"
+          for attempt in 1 2 3; do
+            git fetch origin main
+            git rebase origin/main
+            if git push origin HEAD:main; then
+              echo "Results pushed successfully on attempt ${attempt}."
+              exit 0
+            fi
+            echo "Push rejected on attempt ${attempt}; refreshing origin/main."
+          done
+          echo "::error::Push refusé. Si la branche main est protégée (pull request obligatoire), autoriser github-actions[bot] à contourner la protection."
+          exit 1
