@@ -223,6 +223,17 @@ def _quote_usd_price(symbol, prices, symbol_assets=None):
             base_inverse = prices.get("USDT" + base)
             if base_inverse is not None and base_inverse > 0:
                 return 1.0 / (base_inverse * quote_price)
+    else:
+        # Repli hors exchangeInfo : quelques marchés de référence déjà demandés
+        # permettent de préserver les conversions lors d'une panne des métadonnées.
+        for base in ("BTC", "ETH", "BNB", "XRP", "SOL"):
+            quote_price = prices.get(base + quote_asset)
+            base_usd = prices.get(base + "USDT")
+            if quote_price is not None and quote_price > 0 and base_usd is not None and base_usd > 0:
+                return base_usd / quote_price
+            base_inverse = prices.get("USDT" + base)
+            if quote_price is not None and quote_price > 0 and base_inverse is not None and base_inverse > 0:
+                return 1.0 / (base_inverse * quote_price)
     return None
 
 
@@ -549,6 +560,12 @@ def fetch_prices(page, symbols, symbol_assets=None):
     quote_assets.discard("")
     wanted |= {q + "USDT" for q in quote_assets if q and q not in USD_STABLE}
     wanted |= {"USDT" + q for q in quote_assets if q and q not in USD_STABLE}
+    if not symbol_assets:
+        for quote_asset in quote_assets:
+            if quote_asset and quote_asset not in USD_STABLE:
+                for base in ("BTC", "ETH", "BNB", "XRP", "SOL"):
+                    wanted.add(base + quote_asset)
+                    wanted.add(base + "USDT")
     if symbol_assets:
         for quote_asset in quote_assets:
             if not quote_asset or quote_asset in USD_STABLE:
