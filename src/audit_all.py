@@ -50,8 +50,10 @@ MAX_STRATEGY_TYPE = 100
 RUN_BUDGET_S = 1500             # le job GitHub est limité à 30 min
 DETAIL_BUDGET_S = 900           # temps max consacré aux pages de détail (Grid Profit exact)
 DETAIL_GIVEUP_AFTER = 25       # abandon des pages de détail si aucune métrique lue après N visites
-USD_STABLE = {"USDT", "USDC", "FDUSD", "TUSD", "USDP", "BUSD", "DAI"}
-QUOTES = tuple(sorted(USD_STABLE | {"BTC", "ETH", "BNB", "EUR", "TRY", "BRL"}, key=len, reverse=True))
+USD_STABLE = {"USDT", "USDC", "FDUSD", "TUSD", "USDP", "BUSD", "DAI", "USD1", "U"}
+# USD1 et le suffixe U apparaissent dans les symboles du Marketplace public Binance.
+# JPY est une devise de cotation ; sa conversion USD est reconstruite par cross-rate BTC/ETH.
+QUOTES = tuple(sorted(USD_STABLE | {"BTC", "ETH", "BNB", "EUR", "TRY", "BRL", "JPY"}, key=len, reverse=True))
 
 LOWER = ["lowerLimit", "lowerPrice", "gridLowerLimit", "gridLowerPrice", "minPrice", "lower"]
 UPPER = ["upperLimit", "upperPrice", "gridUpperLimit", "gridUpperPrice", "maxPrice", "upper"]
@@ -152,16 +154,27 @@ def _quote_asset(symbol):
 
 
 def _quote_usd_price(symbol, prices):
+    """USD par unité de devise de cotation, à partir des cotations publiques Binance."""
     quote_asset = _quote_asset(symbol)
     if not quote_asset:
         return None
     if quote_asset in USD_STABLE:
         return 1.0
     direct = prices.get(quote_asset + "USDT")
-    if direct:
+    if direct and direct > 0:
         return direct
     inverse = prices.get("USDT" + quote_asset)
-    return 1.0 / inverse if inverse else None
+    if inverse and inverse > 0:
+        return 1.0 / inverse
+    # Binance ne propose pas toujours JPYUSDT/USDTJPY. Croiser les deux marchés
+    # d’un même actif (BTC ou ETH) évite une conversion FX externe :
+    # USD/JPY = BASEUSDT / BASEJPY.
+    if quote_asset == "JPY":
+        for base in ("BTC", "ETH"):
+            usd_pair, jpy_pair = prices.get(base + "USDT"), prices.get(base + "JPY")
+            if usd_pair and jpy_pair and usd_pair > 0 and jpy_pair > 0:
+                return usd_pair / jpy_pair
+    return None
 
 
 def _grid_mode(params):
@@ -189,6 +202,8 @@ def _roi_interval(raw_roi):
     except (TypeError, ValueError):
         return None
     if value == 0:
+        # Un ROI affiché à 0 est arrondi : il ne permet pas d’inverser PNL/ROI
+        # de façon finie et fiable. estimate_grid_profit essaiera le capital minimum.
         return None
     step = 10 ** (-len(raw.split(".", 1)[1])) if "." in raw else 1.0
     low, high = value - step / 2, value + step / 2
@@ -233,19 +248,29 @@ def estimate_grid_profit(item, total_profit_usd, prices):
     lower, upper, grids = pnum(LOWER), pnum(UPPER), pnum(GRIDS)
     current = pnum(["currentPrice", "lastPrice", "marketPrice", "price", "_audit_current_price"])
     matched = num(item.get("matchedTrades", item.get("matchedCount", item.get("totalMatchedTrades", 0))), 0.0)
-    roi_interval = _roi_interval(item.get("roi", item.get("roiPct", item.get("roiRate", 0))))
+    roi_raw = item.get("roi", item.get("roiPct", item.get("roiRate", 0)))
+    roi_interval = _roi_interval(roi_raw)
+    min_investment = num(item.get("minInvestment", item.get("minimumInvestment")), None)
+    # ROI affiché à zéro : utiliser le capital minimum Binance comme proxy explicite,
+    # plutôt que d’abandonner l’estimation ou de diviser par zéro. Ce proxy reste LOW confidence.
+    use_min_investment = roi_interval is None and min_investment is not None and min_investment > 0
     if (lower is None or upper is None or grids is None or current is None or grids < 2 or lower <= 0
-            or upper <= lower or matched <= 0 or total_profit_usd in (None, 0) or roi_interval is None):
+            or upper <= lower or matched <= 0 or total_profit_usd in (None, 0)
+            or (roi_interval is None and not use_min_investment)):
         return None
     try:
         grids_i, mode = int(round(grids)), _grid_mode(params)
         if grids_i < 2 or not mode:
             return None
-        roi_low, roi_mid, roi_high = roi_interval
-        invs = [float(total_profit_usd) / (r / 100.0) for r in (roi_low, roi_mid, roi_high)]
-        if min(invs) <= 0:
-            return None                      # PNL et ROI de signes opposés : base incohérente
-        inv_mid, inv_low, inv_high = invs[1], min(invs), max(invs)
+        if use_min_investment:
+            # CapitalMinimum est un proxy, pas une déclaration du capital réellement investi.
+            inv_low = inv_mid = inv_high = float(min_investment)
+        else:
+            roi_low, roi_mid, roi_high = roi_interval
+            invs = [float(total_profit_usd) / (r / 100.0) for r in (roi_low, roi_mid, roi_high)]
+            if min(invs) <= 0:
+                return None                  # PNL et ROI de signes opposés : base incohérente
+            inv_mid, inv_low, inv_high = invs[1], min(invs), max(invs)
         quote_usd = _quote_usd_price(str(item.get("symbol") or ""), prices)
         if not quote_usd or quote_usd <= 0:
             return None
@@ -266,14 +291,15 @@ def estimate_grid_profit(item, total_profit_usd, prices):
         # Profits nets négatifs conservés ; bornes sur toutes les combinaisons extrêmes.
         net = [(levels[i + 1] - levels[i]) - FEE * (levels[i] + levels[i + 1]) for i in range(grids_i)]
         possible = [matched * n * q for n in net for q in qtys]
-        raw_roi = str(item.get("roi", "")).strip()
+        raw_roi = str(roi_raw or "").strip()
         precision = len(raw_roi.split(".", 1)[1]) if "." in raw_roi else 0
-        low_conf = abs(roi_mid) < 0.1 or precision <= 1 or not inside
+        low_conf = use_min_investment or abs(roi_mid) < 0.1 or precision <= 1 or not inside
         return {
             "low": min(possible) * quote_usd,
             "mid": matched * qty_mid * (sum(net) / len(net)) * quote_usd,
             "high": max(possible) * quote_usd,
-            "method": "BINANCE_FORMULA_RECONSTRUCTION_ROUNDED_ROI_AND_GRID_RANGE"
+            "method": ("BINANCE_FORMULA_RECONSTRUCTION_MIN_INVESTMENT_FALLBACK" if use_min_investment
+                       else "BINANCE_FORMULA_RECONSTRUCTION_ROUNDED_ROI_AND_GRID_RANGE")
                       + ("" if inside else "_PRICE_OUT_OF_RANGE_START_BOUNDED"),
             "confidence": "LOW" if low_conf else "MEDIUM",
             "gridMode": mode, "gridCount": grids_i, "qty": qty_mid,
@@ -471,7 +497,11 @@ def pages(page, endpoint, base_query, category, streamer, diagnostics, stats=Non
 def fetch_prices(page, symbols):
     wanted = {normalize_symbol(s) for s in symbols if str(s).strip()}
     # Paires de conversion vers USD pour les cotations non stables (BTC, ETH, BNB...).
-    wanted |= {q + "USDT" for q in (_quote_asset(s) for s in wanted) if q and q not in USD_STABLE}
+    quote_assets = {_quote_asset(s) for s in wanted}
+    wanted |= {q + "USDT" for q in quote_assets if q and q not in USD_STABLE}
+    # Cross-rates JPY/USD, lorsque Binance ne publie pas directement JPYUSDT.
+    if "JPY" in quote_assets:
+        wanted |= {"BTCUSDT", "BTCJPY", "ETHUSDT", "ETHJPY"}
     prices = {}
     endpoints = [
         "https://data-api.binance.vision/api/v3/ticker/price", "https://api-gcp.binance.com/api/v3/ticker/price",
