@@ -160,7 +160,8 @@ def check_final(path):
 
         ppg_low, ppg_mid, ppg_high = (num(r.get(k)) for k in (
             "profitPerGridAfterFeesLow", "profitPerGridAfterFeesMid", "profitPerGridAfterFeesHigh"))
-        if ppg_low is not None and ppg_high is not None:
+        geometric_mode = str(r.get("gridMode", "")).strip().upper() == "GEOMETRIC"
+        if ppg_low is not None and ppg_high is not None and not geometric_mode:
             if ppg_mid is None or abs(ppg_mid - (ppg_low + ppg_high) / 2) > 1e-5:
                 raise ValueError(f"profitPerGridAfterFees midpoint mismatch for {sid}")
         if (ppg_low is None) != (ppg_high is None):
