@@ -18,11 +18,12 @@ ESTIMATED_RATIO_SOURCE = "RECONSTRUCTED_GRID_PROFIT_DIV_BINANCE_MARKETPLACE_TOTA
 FINAL_COLUMNS = [
     "strategyId", "category", "strategyType", "symbol", "leverage",
     "minInvestment", "runningTime", "runningTime en J",
-    "roi (fourni par Binance)", "roi (calculé)", "pnl", "matchedTrades",
+    "pnl", "roi (fourni par Binance)", "roi (calculé)", "matchedTrades",
     "Trades / J", "mdd7d", "gridProfit", "gridMode", "gridCount",
     "qtyPerOrderEstimate", "gridProfitEstimateLow", "gridProfitEstimateMid",
     "gridProfitEstimateHigh", "totalProfit", "gridProfitTotalProfitRatio",
-    "floatingProfit", "currentPrice", "priceRange", "profitPerGridAfterFees", "profitPerGridAfterFeesMid",
+    "floatingProfit", "currentPrice", "priceRangeLow", "priceRangeHigh", "Niveau",
+    "profitPerGridAfterFeesLow", "profitPerGridAfterFeesMid", "profitPerGridAfterFeesHigh",
 ]
 
 
@@ -126,7 +127,7 @@ def check_raw(path):
 
 
 def check_final(path):
-    """Schéma figé (27 colonnes), unicité, Spot Grid uniquement et cohérence des calculs."""
+    """Schéma figé (31 colonnes), unicité, Spot Grid uniquement et cohérence des calculs."""
     with Path(path).open(newline="", encoding="utf-8-sig") as handle:
         reader = csv.DictReader(handle)
         if reader.fieldnames != FINAL_COLUMNS:
@@ -143,7 +144,9 @@ def check_final(path):
         if str(r.get("category", "")).strip().lower() != "spot grid":
             raise ValueError(f"non-Spot-Grid strategy in final CSV ({sid}): {r.get('category')}")
         pnl, min_inv, roi_calc = num(r.get("pnl")), num(r.get("minInvestment")), num(r.get("roi (calculé)"))
-        if pnl is not None and min_inv is not None and min_inv > 0:
+        if min_inv is None or min_inv <= 0:
+            raise ValueError(f"minInvestment must be strictly positive for {sid}")
+        if pnl is not None:
             expected_roi = pnl / min_inv * 100
             if roi_calc is None or abs(roi_calc - expected_roi) > max(1e-6, abs(expected_roi) * 1e-6):
                 raise ValueError(f"calculable ROI missing or incorrect for {sid}: expected {expected_roi}, got {roi_calc}")
@@ -155,15 +158,30 @@ def check_final(path):
                 and abs(per_day - trades / (runtime / 86400)) > max(1e-6, abs(per_day) * 1e-6):
             raise ValueError(f"Trades / J mismatch for {sid}")
 
-        ppg_raw = str(r.get("profitPerGridAfterFees", "") or "").strip()
-        ppg_mid = num(r.get("profitPerGridAfterFeesMid"))
-        ppg_numbers = [float(x) for x in re.findall(r"[-+]?(?:\\d+(?:\\.\\d*)?|\\.\\d+)", ppg_raw.replace(",", "."))]
-        expected_ppg_mid = (sum(ppg_numbers) / len(ppg_numbers)) if len(ppg_numbers) in (1, 2) else None
-        if expected_ppg_mid is not None:
-            if ppg_mid is None or abs(ppg_mid - expected_ppg_mid) > 1e-5:
-                raise ValueError(f"profitPerGridAfterFeesMid mismatch for {sid}: expected {expected_ppg_mid}, got {ppg_mid}")
-        elif ppg_mid is not None:
-            raise ValueError(f"profitPerGridAfterFeesMid should be blank when source cannot be parsed for {sid}")
+        ppg_low, ppg_mid, ppg_high = (num(r.get(k)) for k in (
+            "profitPerGridAfterFeesLow", "profitPerGridAfterFeesMid", "profitPerGridAfterFeesHigh"))
+        if ppg_low is not None and ppg_high is not None:
+            if ppg_mid is None or abs(ppg_mid - (ppg_low + ppg_high) / 2) > 1e-5:
+                raise ValueError(f"profitPerGridAfterFees midpoint mismatch for {sid}")
+        if (ppg_low is None) != (ppg_high is None):
+            raise ValueError(f"profitPerGridAfterFees Low/High must both be filled or both blank for {sid}")
+        if str(r.get("gridMode", "")).strip().upper() == "GEOMETRIC" and (ppg_low is not None or ppg_high is not None):
+            raise ValueError(f"geometric grid must put its single profit-per-grid value in Mid only for {sid}")
+
+        lo, hi, current = num(r.get("priceRangeLow")), num(r.get("priceRangeHigh")), num(r.get("currentPrice"))
+        level = str(r.get("Niveau", "") or "").strip()
+        if lo is not None and hi is not None and hi > lo and current is not None:
+            pct = (current - lo) / (hi - lo) * 100
+            if pct < 0:
+                expected_prefix = "Hors plage"
+            elif pct > 100:
+                expected_prefix = "Hors plage"
+            elif abs(pct - 50) < 1e-9:
+                expected_prefix = "Neutre"
+            else:
+                expected_prefix = "Bullish" if pct > 50 else "Bearish"
+            if not level.startswith(expected_prefix):
+                raise ValueError(f"Niveau mismatch for {sid}: expected {expected_prefix}, got {level}")
 
         low, mid, high = (num(r.get(k)) for k in ("gridProfitEstimateLow", "gridProfitEstimateMid", "gridProfitEstimateHigh"))
         if None not in (low, mid, high) and not (low <= mid + 1e-6 and mid <= high + 1e-6):
@@ -193,8 +211,7 @@ def check_final(path):
 
     exact = sum(num(r.get("gridProfit")) is not None for r in rows)
     ppg = sum(bool(r.get("profitPerGridAfterFees")) for r in rows)
-    ppg_mid_count = sum(num(r.get("profitPerGridAfterFeesMid")) is not None for r in rows)
-    return f"PASS: {len(rows)} unique Spot Grid bots (no leverage filter), {len(FINAL_COLUMNS)} columns, {exact} exact Grid Profit, {ppg} with profit/grid, {ppg_mid_count} with profitPerGridAfterFeesMid"
+    return f"PASS: {len(rows)} unique Spot Grid bots (no leverage filter), {len(FINAL_COLUMNS)} columns, {exact} exact Grid Profit, {ppg} with profit/grid"
 
 
 def main(argv):
