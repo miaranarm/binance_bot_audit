@@ -12,15 +12,15 @@ class GridProfitProvenanceTests(unittest.TestCase):
     def metric(self, item):
         result = audit_all.grid_metrics(item, {})
         return {
-            "ratio": result[0],
-            "ratio_source": result[4],
-            "ratio_status": result[8],
-            "grid_profit": result[9],
-            "total_profit": result[10],
-            "grid_source": result[11],
-            "total_source": result[15],
-            "floating_profit": result[16],
-            "floating_basis": result[17],
+            "ratio": result["ratio"],
+            "ratio_source": result["ratioSource"],
+            "ratio_status": result["ratioStatus"],
+            "grid_profit": result["gridProfit"],
+            "total_profit": result["totalProfit"],
+            "grid_source": result["gridSource"],
+            "total_source": result["totalSource"],
+            "floating_profit": result["floating"],
+            "floating_basis": result["floatingBasis"],
         }
 
     def test_spot_marketplace_total_does_not_get_detail_only_exact_ratio(self):
