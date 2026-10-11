@@ -100,14 +100,14 @@ def main(src, dst):
     os.replace(tmp, dst)
 
     with open(os.path.join(folder, "current_multicriteria_summary.txt"), "w", encoding="utf-8") as h:
-        h.write(f"COUNT={len(out)}\\n"
+        h.write(f"COUNT={len(out)}\n"
                 "UNIVERSE=Binance public Bot Marketplace scan result, leverage<=1; verify results/scan_meta.json "
-                "collection_complete before treating the scan as exhaustive; no age/price-range/profit-per-grid filters\\n"
-                "RANKING=NONE (rank and score columns kept empty)\\n"
+                "collection_complete before treating the scan as exhaustive; no age/price-range/profit-per-grid filters\n"
+                "RANKING=NONE (rank and score columns kept empty)\n"
                 "FLOATING_PROFIT=exact Total Profit minus exact Grid Profit when available; otherwise estimated as "
-                "Total Profit minus gridProfitEstimateMid; see floatingProfitSource\\n"
+                "Total Profit minus gridProfitEstimateMid; see floatingProfitSource\n"
                 "RATIO=exact numeric when Grid Profit is exact; estimated ratio prefixed with ≈; "
-                "empty when Total Profit is zero; no 100%/500% cap\\n")
+                "empty when Total Profit is zero; no 100%/500% cap\n")
     print(f"{len(out)} stratégies -> {dst} | Grid Profit exact : {int(exact.sum())} | "
           f"floatingProfit estimé : {int(floating_est.notna().sum())} | ratio estimé : {int(ratio_est.notna().sum())}")
 
