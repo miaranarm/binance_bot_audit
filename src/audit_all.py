@@ -432,7 +432,23 @@ def pages(page, endpoint, base_query, category, streamer, diagnostics, stats=Non
             item.update(_category=category, _streamer=streamer)
             item["_lev"] = leverage(item)
             rows.append(item)
-        if len(data) < PAGE_SIZE or (expected is not None and page_no * PAGE_SIZE >= expected):
+        # Ne jamais arrêter sur une page courte si Binance annonce encore des résultats :
+        # certains endpoints renvoient des pages partielles. Pour un total connu, on s'arrête
+        # seulement quand le nombre d'IDs uniques atteint le total annoncé. Sans total, une page
+        # courte/ vide reste le seul signal de fin disponible.
+        ids_seen = {
+            str(i.get("strategyId") or i.get("algoId") or i.get("strategy_id") or "").strip()
+            for i in rows
+            if str(i.get("strategyId") or i.get("algoId") or i.get("strategy_id") or "").strip()
+        }
+        if expected is not None and len(ids_seen) >= expected:
+            break
+        if expected is None and len(data) < PAGE_SIZE:
+            break
+        if expected is not None and not data:
+            # Binance annonce plus de résultats mais renvoie une page vide : conserver
+            # l'échec explicite plutôt que d'affirmer une collecte exhaustive.
+            failed = len(ids_seen) < expected
             break
     else:
         failed = True
