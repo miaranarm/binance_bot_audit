@@ -165,8 +165,9 @@ def check_final(path):
                 raise ValueError(f"profitPerGridAfterFees midpoint mismatch for {sid}")
         if (ppg_low is None) != (ppg_high is None):
             raise ValueError(f"profitPerGridAfterFees Low/High must both be filled or both blank for {sid}")
-        if str(r.get("gridMode", "")).strip().upper() == "GEOMETRIC" and (ppg_low is not None or ppg_high is not None):
-            raise ValueError(f"geometric grid must put its single profit-per-grid value in Mid only for {sid}")
+        if str(r.get("gridMode", "")).strip().upper() == "GEOMETRIC":
+            if ppg_low is None or ppg_high is None or abs(ppg_low) > 1e-9 or abs(ppg_high) > 1e-9:
+                raise ValueError(f"geometric grid must have profitPerGridAfterFeesLow=0 and High=0 for {sid}")
 
         lo, hi, current = num(r.get("priceRangeLow")), num(r.get("priceRangeHigh")), num(r.get("currentPrice"))
         level = str(r.get("Niveau", "") or "").strip()
@@ -182,6 +183,19 @@ def check_final(path):
                 expected_prefix = "Bullish" if pct > 50 else "Bearish"
             if not level.startswith(expected_prefix):
                 raise ValueError(f"Niveau mismatch for {sid}: expected {expected_prefix}, got {level}")
+            match = re.search(r"—\\s*(-?\\d+(?:\\.\\d+)?)%", level)
+            if not match:
+                raise ValueError(f"Niveau percentage missing or invalid for {sid}: {level}")
+            shown_pct = float(match.group(1))
+            if 0 <= pct <= 100:
+                if abs(pct - 50) < 1e-9:
+                    expected_pct = 50.0
+                elif pct > 50:
+                    expected_pct = (hi - current) / (hi - lo) * 100
+                else:
+                    expected_pct = abs(lo - current) / (hi - lo) * 100
+                if abs(shown_pct - expected_pct) > 0.11:
+                    raise ValueError(f"Niveau percentage mismatch for {sid}: expected {expected_pct:.1f}%, got {shown_pct:.1f}%")
 
         low, mid, high = (num(r.get(k)) for k in ("gridProfitEstimateLow", "gridProfitEstimateMid", "gridProfitEstimateHigh"))
         if None not in (low, mid, high) and not (low <= mid + 1e-6 and mid <= high + 1e-6):
