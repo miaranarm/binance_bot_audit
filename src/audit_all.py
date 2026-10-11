@@ -148,32 +148,81 @@ def leverage(x):
         return 99.0
 
 
-def _quote_asset(symbol):
-    symbol = normalize_symbol(symbol)
-    return next((q for q in QUOTES if symbol.endswith(q) and len(symbol) > len(q)), "")
+def _quote_asset(symbol, symbol_assets=None):
+    """Devise de cotation tirée des métadonnées Binance, sinon repli historique."""
+    normalized = normalize_symbol(symbol)
+    if symbol_assets:
+        market = symbol_assets.get(normalized)
+        if isinstance(market, dict) and market.get("quoteAsset"):
+            return str(market["quoteAsset"]).upper()
+        if isinstance(market, str) and market:
+            return market.upper()
+    return next((q for q in QUOTES if normalized.endswith(q) and len(normalized) > len(q)), "")
 
 
-def _quote_usd_price(symbol, prices):
-    """USD par unité de devise de cotation, à partir des cotations publiques Binance."""
-    quote_asset = _quote_asset(symbol)
+def fetch_exchange_info(page):
+    """Découvre dynamiquement les marchés Spot actifs et leurs actifs base/quote."""
+    endpoints = (
+        "https://data-api.binance.vision/api/v3/exchangeInfo",
+        "https://api.binance.com/api/v3/exchangeInfo",
+        "https://api-gcp.binance.com/api/v3/exchangeInfo",
+    )
+    for endpoint in endpoints:
+        try:
+            response = page.request.get(endpoint, timeout=30000)
+            if not response.ok:
+                continue
+            payload = response.json()
+            symbols = payload.get("symbols", []) if isinstance(payload, dict) else []
+            found = {}
+            for market in symbols:
+                if not isinstance(market, dict):
+                    continue
+                if market.get("status") not in (None, "TRADING"):
+                    continue
+                if market.get("isSpotTradingAllowed") is False:
+                    continue
+                symbol = normalize_symbol(market.get("symbol"))
+                base, quote_asset = market.get("baseAsset"), market.get("quoteAsset")
+                if symbol and base and quote_asset:
+                    found[symbol] = {"baseAsset": str(base).upper(), "quoteAsset": str(quote_asset).upper()}
+            if found:
+                return found
+        except Exception:
+            continue
+    return {}
+
+
+def _quote_usd_price(symbol, prices, symbol_assets=None):
+    """USD par unité de devise de cotation. Préfère les taux directs puis les cross-rates Binance."""
+    quote_asset = _quote_asset(symbol, symbol_assets)
     if not quote_asset:
         return None
     if quote_asset in USD_STABLE:
         return 1.0
     direct = prices.get(quote_asset + "USDT")
-    if direct and direct > 0:
+    if direct is not None and direct > 0:
         return direct
     inverse = prices.get("USDT" + quote_asset)
-    if inverse and inverse > 0:
+    if inverse is not None and inverse > 0:
         return 1.0 / inverse
-    # Binance ne propose pas toujours JPYUSDT/USDTJPY. Croiser les deux marchés
-    # d’un même actif (BTC ou ETH) évite une conversion FX externe :
-    # USD/JPY = BASEUSDT / BASEJPY.
-    if quote_asset == "JPY":
-        for base in ("BTC", "ETH"):
-            usd_pair, jpy_pair = prices.get(base + "USDT"), prices.get(base + "JPY")
-            if usd_pair and jpy_pair and usd_pair > 0 and jpy_pair > 0:
-                return usd_pair / jpy_pair
+    if symbol_assets:
+        candidates = sorted(
+            (market for market, assets in symbol_assets.items()
+             if assets.get("quoteAsset") == quote_asset and assets.get("baseAsset")),
+            key=lambda market: (0 if market.startswith(("BTC", "ETH", "BNB", "XRP", "SOL")) else 1, market),
+        )
+        for market in candidates:
+            base = symbol_assets[market]["baseAsset"]
+            quote_price = prices.get(market)
+            if quote_price is None or quote_price <= 0:
+                continue
+            base_usd = prices.get(base + "USDT")
+            if base_usd is not None and base_usd > 0:
+                return base_usd / quote_price
+            base_inverse = prices.get("USDT" + base)
+            if base_inverse is not None and base_inverse > 0:
+                return 1.0 / (base_inverse * quote_price)
     return None
 
 
@@ -235,7 +284,7 @@ def profit_per_grid(item, lower, upper, grids, mode):
 
 
 # --------------------------------------------------------------------------- estimation du Grid Profit
-def estimate_grid_profit(item, total_profit_usd, prices):
+def estimate_grid_profit(item, total_profit_usd, prices, symbol_assets=None):
     """Estimation bornée du Grid Profit (Spot Grid) ; None si les données ne suffisent pas."""
     if str(item.get("_category") or "").lower() != "spot grid":
         return None
@@ -271,7 +320,7 @@ def estimate_grid_profit(item, total_profit_usd, prices):
             if min(invs) <= 0:
                 return None                  # PNL et ROI de signes opposés : base incohérente
             inv_mid, inv_low, inv_high = invs[1], min(invs), max(invs)
-        quote_usd = _quote_usd_price(str(item.get("symbol") or ""), prices)
+        quote_usd = _quote_usd_price(str(item.get("symbol") or ""), prices, symbol_assets)
         if not quote_usd or quote_usd <= 0:
             return None
         levels = _grid_levels(lower, upper, grids_i, mode)
@@ -319,7 +368,7 @@ def _detail_matches_marketplace(symbol, detail_total, marketplace_pnl):
     return abs(detail_total - marketplace_pnl) <= max(1.0, 0.5 * abs(marketplace_pnl))
 
 
-def grid_metrics(item, prices):
+def grid_metrics(item, prices, symbol_assets=None):
     """Toutes les métriques Grid Profit / ratio / profit par grille d'un bot, avec provenance."""
     params = item.get("strategyParams") or {}
     lower, upper, grids = first_num(params, LOWER), first_num(params, UPPER), first_num(params, GRIDS)
@@ -367,7 +416,7 @@ def grid_metrics(item, prices):
 
     # Sinon : estimation bornée, jamais présentée comme exacte.
     if m["gridProfit"] is None and total_profit not in (None, 0):
-        est = estimate_grid_profit(item, total_profit, prices)
+        est = estimate_grid_profit(item, total_profit, prices, symbol_assets)
         if est:
             m.update(gridProfit=est["mid"], gridSource="RECONSTRUCTED", low=est["low"], mid=est["mid"],
                      high=est["high"], method=est["method"], confidence=est["confidence"],
@@ -494,14 +543,29 @@ def pages(page, endpoint, base_query, category, streamer, diagnostics, stats=Non
     return rows
 
 
-def fetch_prices(page, symbols):
+def fetch_prices(page, symbols, symbol_assets=None):
     wanted = {normalize_symbol(s) for s in symbols if str(s).strip()}
-    # Paires de conversion vers USD pour les cotations non stables (BTC, ETH, BNB...).
-    quote_assets = {_quote_asset(s) for s in wanted}
+    quote_assets = {_quote_asset(s, symbol_assets) for s in wanted}
+    quote_assets.discard("")
     wanted |= {q + "USDT" for q in quote_assets if q and q not in USD_STABLE}
-    # Cross-rates JPY/USD, lorsque Binance ne publie pas directement JPYUSDT.
-    if "JPY" in quote_assets:
-        wanted |= {"BTCUSDT", "BTCJPY", "ETHUSDT", "ETHJPY"}
+    wanted |= {"USDT" + q for q in quote_assets if q and q not in USD_STABLE}
+    if symbol_assets:
+        for quote_asset in quote_assets:
+            if not quote_asset or quote_asset in USD_STABLE:
+                continue
+            markets = [
+                (market, assets) for market, assets in symbol_assets.items()
+                if assets.get("quoteAsset") == quote_asset and assets.get("baseAsset")
+            ]
+            markets.sort(key=lambda pair: (
+                0 if pair[1]["baseAsset"] in {"BTC", "ETH", "BNB", "XRP", "SOL"} else 1,
+                pair[0],
+            ))
+            for market, assets in markets[:12]:
+                wanted.add(market)
+                base = assets["baseAsset"]
+                wanted.add(base + "USDT")
+                wanted.add("USDT" + base)
     prices = {}
     endpoints = [
         "https://data-api.binance.vision/api/v3/ticker/price", "https://api-gcp.binance.com/api/v3/ticker/price",
@@ -636,7 +700,7 @@ def capture_detail_metrics(page, rows, budget_s, now):
 
 
 # --------------------------------------------------------------------------- sorties
-def build_current(rows, prices):
+def build_current(rows, prices, symbol_assets=None):
     """Un enregistrement par strategyId : Spot Grid uniquement, sans filtre de levier ni de performance."""
     current, seen = [], set()
     for x in rows:
@@ -652,7 +716,7 @@ def build_current(rows, prices):
         if price is None:
             price = prices.get(normalize_symbol(symbol))
         x["_audit_current_price"] = price
-        m = grid_metrics(x, prices)
+        m = grid_metrics(x, prices, symbol_assets)
 
         def metric(*keys):
             return blank(num(next((x[k] for k in keys if k in x), None), None))
@@ -726,7 +790,8 @@ def main():
         page = browser.new_page()
         rows = pages(page, TOP, {"strategyType": 1, "symbol": "", "zone": "", "sort": "pnl"},
                      "Spot Grid", "SPOT_GRID", diagnostics, stats)
-        prices = fetch_prices(page, [r.get("symbol") for r in rows])
+        symbol_assets = fetch_exchange_info(page)
+        prices = fetch_prices(page, [r.get("symbol") for r in rows], symbol_assets)
         budget = max(0.0, min(DETAIL_BUDGET_S, RUN_BUDGET_S - (time.monotonic() - start)))
         detail, detail_stats = capture_detail_metrics(page, rows, budget, now)
         browser.close()
@@ -738,7 +803,7 @@ def main():
             row["_detail_total_profit"] = metrics.get("totalProfit")
             row["_detail_floating_pnl"] = metrics.get("floatingPnl")
 
-    current = build_current(rows, prices)
+    current = build_current(rows, prices, symbol_assets)
     write_csv(OUT / "current_multicriteria.csv", current)
     snapshot, removed = write_history(current, now)
 
@@ -748,6 +813,12 @@ def main():
         "scan_utc": now.isoformat(), "raw_rows": len(rows), "spot_grid_bots": len(current),
         "collection_complete": not incomplete, "incomplete_categories": incomplete, "collection": stats,
         "grid_profit_exact": exact, "detail_capture": detail_stats,
+        "conversion": {
+            "exchange_info_markets": len(symbol_assets),
+            "quote_assets_seen": sorted({_quote_asset(r.get("symbol"), symbol_assets) for r in rows}),
+            "unresolved_quote_assets": sorted({q for q in (_quote_asset(r.get("symbol"), symbol_assets) for r in rows)
+                                               if q and _quote_usd_price("X" + q, prices, symbol_assets) is None}),
+        },
         "endpoint_errors": diagnostics[:50], "snapshot": str(snapshot), "old_snapshots_removed": removed,
         "profit_per_grid_fee_reference": f"{FEE:.2%} par ordre (Spot) ; les frais réels varient selon paire / VIP / BNB.",
         "strategy_type_probe_max": MAX_STRATEGY_TYPE,
