@@ -95,27 +95,16 @@ def main(src, dst):
     range_high = ranges.map(lambda pair: pair[1])
 
     def price_level(current, lo, hi):
+        # Écart signé du prix au milieu, normalisé par la largeur totale de la plage.
+        # 0 % = milieu ; positif = au-dessus ; négatif = en dessous.
         if pd.isna(current) or pd.isna(lo) or pd.isna(hi) or hi <= lo:
-            return ""
-        span = float(hi) - float(lo)
-        position_pct = (float(current) - float(lo)) / span * 100.0
-        if position_pct < 0:
-            return f"Hors plage — {position_pct:.1f}% (sous la borne basse)"
-        if position_pct > 100:
-            return f"Hors plage — {position_pct:.1f}% (au-dessus de la borne haute)"
-        if abs(position_pct - 50.0) < 1e-9:
-            return "Neutre — 50.0%"
-        if position_pct > 50:
-            # Haussier : distance du cours à la borne haute, rapportée à toute la plage.
-            pct = (float(hi) - float(current)) / span * 100.0
-            return f"Bullish — {pct:.1f}%"
-        # Baissier : distance absolue du cours à la borne basse, rapportée à toute la plage.
-        pct = abs(float(lo) - float(current)) / span * 100.0
-        return f"Bearish — {pct:.1f}%"
+            return np.nan
+        midpoint = (float(hi) + float(lo)) / 2.0
+        return (float(current) - midpoint) / (float(hi) - float(lo)) * 100.0
 
     level = pd.Series(
         [price_level(p, lo, hi) for p, lo, hi in zip(price, range_low, range_high)],
-        index=df.index, dtype=object
+        index=df.index, dtype=float
     )
 
     # Une valeur unique va dans Mid ; une fourchette arithmétique est répartie en Low/Mid/High.
