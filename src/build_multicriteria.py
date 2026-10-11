@@ -97,16 +97,21 @@ def main(src, dst):
     def price_level(current, lo, hi):
         if pd.isna(current) or pd.isna(lo) or pd.isna(hi) or hi <= lo:
             return ""
-        pct = (float(current) - float(lo)) / (float(hi) - float(lo)) * 100.0
-        if pct < 0:
-            return f"Hors plage — {pct:.1f}% (sous la borne basse)"
-        if pct > 100:
-            return f"Hors plage — {pct:.1f}% (au-dessus de la borne haute)"
-        if abs(pct - 50.0) < 1e-9:
-            label = "Neutre"
-        else:
-            label = "Bullish" if pct > 50 else "Bearish"
-        return f"{label} — {pct:.1f}%"
+        span = float(hi) - float(lo)
+        position_pct = (float(current) - float(lo)) / span * 100.0
+        if position_pct < 0:
+            return f"Hors plage — {position_pct:.1f}% (sous la borne basse)"
+        if position_pct > 100:
+            return f"Hors plage — {position_pct:.1f}% (au-dessus de la borne haute)"
+        if abs(position_pct - 50.0) < 1e-9:
+            return "Neutre — 50.0%"
+        if position_pct > 50:
+            # Haussier : distance du cours à la borne haute, rapportée à toute la plage.
+            pct = (float(hi) - float(current)) / span * 100.0
+            return f"Bullish — {pct:.1f}%"
+        # Baissier : distance absolue du cours à la borne basse, rapportée à toute la plage.
+        pct = abs(float(lo) - float(current)) / span * 100.0
+        return f"Bearish — {pct:.1f}%"
 
     level = pd.Series(
         [price_level(p, lo, hi) for p, lo, hi in zip(price, range_low, range_high)],
@@ -137,6 +142,10 @@ def main(src, dst):
     ppg_low = ppg.map(lambda v: v[0])
     ppg_mid = ppg.map(lambda v: v[1])
     ppg_high = ppg.map(lambda v: v[2])
+    # Pour les grilles GEOMETRIC, l'unique valeur est conservée dans Mid et les bornes sont à 0.
+    geometric = df.get("gridMode", pd.Series("", index=df.index)).astype(str).str.strip().str.upper().eq("GEOMETRIC")
+    ppg_low = ppg_low.mask(geometric, 0.0)
+    ppg_high = ppg_high.mask(geometric, 0.0)
 
     floating_source = pd.Series("", index=df.index, dtype=object)
     floating_source.loc[exact & total.notna()] = "BINANCE_TOTAL_MINUS_EXACT_GRID_PROFIT"
