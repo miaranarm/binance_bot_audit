@@ -210,7 +210,7 @@ def check_final(path):
                 raise ValueError(f"floatingProfit identity mismatch for {sid}")
 
     exact = sum(num(r.get("gridProfit")) is not None for r in rows)
-    ppg = sum(bool(r.get("profitPerGridAfterFees")) for r in rows)
+    ppg = sum(any(num(r.get(k)) is not None for k in ("profitPerGridAfterFeesLow", "profitPerGridAfterFeesMid", "profitPerGridAfterFeesHigh")) for r in rows)
     return f"PASS: {len(rows)} unique Spot Grid bots (no leverage filter), {len(FINAL_COLUMNS)} columns, {exact} exact Grid Profit, {ppg} with profit/grid"
 
 
