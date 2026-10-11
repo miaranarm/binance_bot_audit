@@ -171,32 +171,11 @@ def check_final(path):
                 raise ValueError(f"geometric grid must have profitPerGridAfterFeesLow=0 and High=0 for {sid}")
 
         lo, hi, current = num(r.get("priceRangeLow")), num(r.get("priceRangeHigh")), num(r.get("currentPrice"))
-        level = str(r.get("Niveau", "") or "").strip()
+        level = num(r.get("Niveau"))
         if lo is not None and hi is not None and hi > lo and current is not None:
-            pct = (current - lo) / (hi - lo) * 100
-            if pct < 0:
-                expected_prefix = "Hors plage"
-            elif pct > 100:
-                expected_prefix = "Hors plage"
-            elif abs(pct - 50) < 1e-9:
-                expected_prefix = "Neutre"
-            else:
-                expected_prefix = "Bullish" if pct > 50 else "Bearish"
-            if not level.startswith(expected_prefix):
-                raise ValueError(f"Niveau mismatch for {sid}: expected {expected_prefix}, got {level}")
-            match = re.search(r"—\s*(-?\d+(?:\.\d+)?)%", level)
-            if not match:
-                raise ValueError(f"Niveau percentage missing or invalid for {sid}: {level}")
-            shown_pct = float(match.group(1))
-            if 0 <= pct <= 100:
-                if abs(pct - 50) < 1e-9:
-                    expected_pct = 50.0
-                elif pct > 50:
-                    expected_pct = (hi - current) / (hi - lo) * 100
-                else:
-                    expected_pct = abs(lo - current) / (hi - lo) * 100
-                if abs(shown_pct - expected_pct) > 0.11:
-                    raise ValueError(f"Niveau percentage mismatch for {sid}: expected {expected_pct:.1f}%, got {shown_pct:.1f}%")
+            expected_level = (current - (hi + lo) / 2.0) / (hi - lo) * 100.0
+            if level is None or abs(level - expected_level) > max(1e-6, abs(expected_level) * 1e-6):
+                raise ValueError(f"Niveau signed midpoint distance mismatch for {sid}: expected {expected_level:.6f}, got {level}")
 
         low, mid, high = (num(r.get(k)) for k in ("gridProfitEstimateLow", "gridProfitEstimateMid", "gridProfitEstimateHigh"))
         if None not in (low, mid, high) and not (low <= mid + 1e-6 and mid <= high + 1e-6):
