@@ -43,6 +43,9 @@ def main(src, dst):
 
     lev, runtime, roi, pnl = col("leverage"), col("runningTime"), col("roi"), col("pnl")
     min_inv, matched, mdd, price = col("minInvestment"), col("matchedTrades"), col("mdd7d"), col("currentPrice")
+    # Si Binance ne fournit aucun minimum exploitable (vide, nul ou négatif), utiliser 1 comme base conventionnelle.
+    # Cela permet de calculer le ROI indicatif PNL / capital * 100 sans diviser par zéro.
+    min_inv = min_inv.where(min_inv.gt(0), 1.0)
     days = (runtime / 86400).where(runtime >= 0)
     trades_day = (matched / days).where(days > 0)
     total = col("totalProfit").where(col("totalProfit").notna(), pnl)
@@ -61,13 +64,13 @@ def main(src, dst):
     for s in (low, mid, high, qty):
         s[~(exact | interval_ok)] = np.nan
 
-    # Ratio : exact si Grid Profit exact, sinon ratio central estimé (marqué ≈).
+    # Ratio : exact si Grid Profit exact, sinon ratio central estimé. Le CSV reste numérique, sans préfixe.
     nonzero = total.where(total != 0)
     ratio_exact = (gp_exact / nonzero).where(exact)
     ratio_est = (mid / nonzero).where(~exact & interval_ok)
     ratio = ratio_exact.where(exact, ratio_est)
     ratio_txt = [
-        np.nan if pd.isna(v) else (float(f"{v:.6f}") if exact.loc[i] else f"≈{v:.6f}")
+        np.nan if pd.isna(v) else float(f"{v:.6f}")
         for i, v in ratio.items()
     ]
 
@@ -104,10 +107,10 @@ def main(src, dst):
         h.write(f"COUNT={len(out)}\n"
                 "UNIVERSE=Binance public Spot Grid bots only; no leverage filter; verify results/scan_meta.json "
                 "collection_complete before treating the scan as exhaustive; no age/price-range/profit-per-grid filters\n"
-                "ROI_CALCULATED=PNL / positive minInvestment * 100 whenever both values are valid; never filtered by comparison with Binance ROI\n"
+                "ROI_CALCULATED=PNL / minInvestment * 100; missing, zero or negative minInvestment is replaced with 1; blank only if PNL is unavailable\n"
                 "FLOATING_PROFIT=exact Total Profit minus exact Grid Profit when available; otherwise estimated as "
                 "Total Profit minus gridProfitEstimateMid when Grid Profit is estimated\n"
-                "RATIO=exact numeric when Grid Profit is exact; estimated ratio prefixed with ≈; "
+                "RATIO=numeric without approximation prefix for both exact and estimated values; "
                 "empty when Total Profit is zero; no 100%/500% cap\n")
     print(f"{len(out)} stratégies -> {dst} | Grid Profit exact : {int(exact.sum())} | "
           f"floatingProfit estimé : {int(floating_est.notna().sum())} | ratio estimé : {int(ratio_est.notna().sum())}")
