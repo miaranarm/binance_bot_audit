@@ -611,6 +611,7 @@ def build_current(rows, prices):
     current, seen = [], set()
     for x in rows:
         sid, symbol = str(x.get("strategyId") or "").strip(), str(x.get("symbol") or "").strip()
+        lev = num(x.get("_lev"), 99.0)  # conservé comme donnée descriptive, jamais utilisé comme filtre
         category = str(x.get("_category") or "").strip().lower()
         if not sid or not symbol or category != "spot grid" or sid in seen:
             continue
