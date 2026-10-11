@@ -184,7 +184,7 @@ def check_final(path):
                 expected_prefix = "Bullish" if pct > 50 else "Bearish"
             if not level.startswith(expected_prefix):
                 raise ValueError(f"Niveau mismatch for {sid}: expected {expected_prefix}, got {level}")
-            match = re.search(r"—\\s*(-?\\d+(?:\\.\\d+)?)%", level)
+            match = re.search(r"—\s*(-?\d+(?:\.\d+)?)%", level)
             if not match:
                 raise ValueError(f"Niveau percentage missing or invalid for {sid}: {level}")
             shown_pct = float(match.group(1))
