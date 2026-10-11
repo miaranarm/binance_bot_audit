@@ -816,8 +816,9 @@ def main():
         "conversion": {
             "exchange_info_markets": len(symbol_assets),
             "quote_assets_seen": sorted({_quote_asset(r.get("symbol"), symbol_assets) for r in rows}),
-            "unresolved_quote_assets": sorted({q for q in (_quote_asset(r.get("symbol"), symbol_assets) for r in rows)
-                                               if q and _quote_usd_price("X" + q, prices, symbol_assets) is None}),
+            "unresolved_quote_assets": sorted({_quote_asset(r.get("symbol"), symbol_assets) for r in rows
+                                               if _quote_asset(r.get("symbol"), symbol_assets)
+                                               and _quote_usd_price(r.get("symbol"), prices, symbol_assets) is None}),
         },
         "endpoint_errors": diagnostics[:50], "snapshot": str(snapshot), "old_snapshots_removed": removed,
         "profit_per_grid_fee_reference": f"{FEE:.2%} par ordre (Spot) ; les frais réels varient selon paire / VIP / BNB.",
