@@ -52,6 +52,23 @@ class GridProfitFallbackTests(unittest.TestCase):
         self.assertLessEqual(est["low"], est["mid"])
         self.assertLessEqual(est["mid"], est["high"])
 
+    def test_xrp_quote_conversion_uses_xrpusdt(self):
+        rate = audit_all._quote_usd_price("TRXXRP", {"XRPUSDT": 0.52})
+        self.assertAlmostEqual(rate, 0.52)
+
+    def test_trxxrp_bots_can_be_estimated(self):
+        item = {
+            "_category": "Spot Grid", "symbol": "TRXXRP", "roi": 1.64,
+            "pnl": 23.00074418, "minInvestment": 1392.363141,
+            "matchedTrades": 312, "currentPrice": 0.2373,
+            "strategyParams": {"lowerLimit": 0.16, "upperLimit": 0.34,
+                               "gridCount": 67, "type": "GEOMETRIC"},
+        }
+        est = audit_all.estimate_grid_profit(item, item["pnl"], {"XRPUSDT": 0.52})
+        self.assertIsNotNone(est)
+        self.assertLessEqual(est["low"], est["mid"])
+        self.assertLessEqual(est["mid"], est["high"])
+
     def test_marketplace_quote_suffixes_are_recognized(self):
         self.assertEqual(audit_all._quote_asset("BTCUSD1"), "USD1")
         self.assertEqual(audit_all._quote_asset("BTCU"), "U")
