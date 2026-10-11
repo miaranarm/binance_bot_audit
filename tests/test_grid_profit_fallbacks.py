@@ -52,6 +52,26 @@ class GridProfitFallbackTests(unittest.TestCase):
         self.assertLessEqual(est["low"], est["mid"])
         self.assertLessEqual(est["mid"], est["high"])
 
+    def test_brl_quote_conversion_uses_generic_cross_rate(self):
+        assets = {
+            "BTCBRL": {"baseAsset": "BTC", "quoteAsset": "BRL"},
+            "BTCUSDT": {"baseAsset": "BTC", "quoteAsset": "USDT"},
+        }
+        rate = audit_all._quote_usd_price(
+            "BTCBRL", {"BTCUSDT": 65000.0, "BTCBRL": 350000.0}, assets
+        )
+        self.assertAlmostEqual(rate, 65000.0 / 350000.0)
+
+    def test_quote_asset_not_in_legacy_list_uses_exchange_info(self):
+        assets = {
+            "ABCXYZ": {"baseAsset": "ABC", "quoteAsset": "XYZ"},
+            "XYZUSDT": {"baseAsset": "XYZ", "quoteAsset": "USDT"},
+        }
+        self.assertEqual(audit_all._quote_asset("ABCXYZ", assets), "XYZ")
+        self.assertAlmostEqual(
+            audit_all._quote_usd_price("ABCXYZ", {"XYZUSDT": 2.75}, assets), 2.75
+        )
+
     def test_xrp_quote_conversion_uses_xrpusdt(self):
         rate = audit_all._quote_usd_price("TRXXRP", {"XRPUSDT": 0.52})
         self.assertAlmostEqual(rate, 0.52)
