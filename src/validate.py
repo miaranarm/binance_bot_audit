@@ -177,8 +177,8 @@ def check_final(path):
         if ratio is not None and total == 0:
             raise ValueError(f"ratio must be blank when Total Profit is zero for {sid}")
         if grid is None:
-            if ratio is not None and not ratio_raw.startswith("≈"):
-                raise ValueError(f"estimated ratio must be marked with ≈ for {sid}")
+            if ratio_raw.startswith("≈"):
+                raise ValueError(f"ratio must be numeric without approximation prefix for {sid}")
             if ratio is not None and total and mid is not None \
                     and abs(ratio - mid / total) > max(1e-4, abs(mid / total) * 1e-4):
                 raise ValueError(f"estimated Grid/Total ratio mismatch for {sid}")
