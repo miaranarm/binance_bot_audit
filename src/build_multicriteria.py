@@ -83,7 +83,7 @@ def main(src, dst):
     def parse_range(value):
         if pd.isna(value):
             return (np.nan, np.nan)
-        numbers = re.findall(r"[-+]?(?:\d+(?:\.\d*)?|\.\d+)", str(value).replace(",", "."))
+        numbers = re.findall(r"(?:\d+(?:\.\d*)?|\.\d+)", str(value).replace(",", "."))
         if len(numbers) != 2:
             return (np.nan, np.nan)
         lo, hi = float(numbers[0]), float(numbers[1])
@@ -117,12 +117,19 @@ def main(src, dst):
     def parse_profit_per_grid(value):
         if pd.isna(value):
             return (np.nan, np.nan, np.nan)
-        numbers = re.findall(r"[-+]?(?:\d+(?:\.\d*)?|\.\d+)", str(value).replace(",", "."))
-        if len(numbers) == 1:
-            return (np.nan, float(numbers[0]), np.nan)
-        if len(numbers) == 2:
-            lo, hi = sorted(float(n) for n in numbers)
-            return (lo, (lo + hi) / 2.0, hi)
+        raw = str(value).replace(",", ".").strip()
+        parts = re.split(r"\s+-\s+", raw)
+        number_re = r"[-+]?(?:\d+(?:\.\d*)?|\.\d+)"
+        if len(parts) == 1:
+            numbers = re.findall(number_re, parts[0])
+            if len(numbers) == 1:
+                return (np.nan, float(numbers[0]), np.nan)
+            return (np.nan, np.nan, np.nan)
+        if len(parts) == 2:
+            left, right = (re.findall(number_re, part) for part in parts)
+            if len(left) == 1 and len(right) == 1:
+                lo, hi = sorted((float(left[0]), float(right[0])))
+                return (lo, (lo + hi) / 2.0, hi)
         return (np.nan, np.nan, np.nan)
 
     ppg = (df["profitPerGridAfterFees"].map(parse_profit_per_grid)
