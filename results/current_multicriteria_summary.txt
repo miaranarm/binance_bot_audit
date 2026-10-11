@@ -1,4 +1,5 @@
-COUNT=7506
-UNIVERSE=Binance public Bot Marketplace scan result, leverage<=1; verify results/scan_meta.json collection_complete before treating the scan as exhaustive; no age/price-range/profit-per-grid filters
-RANKING=NONE (rank and score columns kept empty)
+COUNT=7175
+UNIVERSE=Binance public Spot Grid bots only; no leverage filter; verify results/scan_meta.json collection_complete before treating the scan as exhaustive; no age/price-range/profit-per-grid filters
+ROI_CALCULATED=PNL / positive minInvestment * 100 whenever both values are valid; never filtered by comparison with Binance ROI
+FLOATING_PROFIT=exact Total Profit minus exact Grid Profit when available; otherwise estimated as Total Profit minus gridProfitEstimateMid when Grid Profit is estimated
 RATIO=exact numeric when Grid Profit is exact; estimated ratio prefixed with ≈; empty when Total Profit is zero; no 100%/500% cap
