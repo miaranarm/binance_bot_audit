@@ -21,7 +21,7 @@ FINAL_COLUMNS = [
     "Trades / J", "mdd7d", "gridProfit", "gridMode", "gridCount",
     "qtyPerOrderEstimate", "gridProfitEstimateLow", "gridProfitEstimateMid",
     "gridProfitEstimateHigh", "totalProfit", "gridProfitTotalProfitRatio",
-    "floatingProfit", "currentPrice", "priceRange", "profitPerGridAfterFees",
+    "floatingProfit", "floatingProfitSource", "currentPrice", "priceRange", "profitPerGridAfterFees",
 ]
 
 
@@ -125,7 +125,7 @@ def check_raw(path):
 
 
 def check_final(path):
-    """Schéma figé (27 colonnes), unicité, Spot Grid uniquement et cohérence des calculs."""
+    """Schéma figé (28 colonnes), unicité, Spot Grid uniquement et cohérence des calculs."""
     with Path(path).open(newline="", encoding="utf-8-sig") as handle:
         reader = csv.DictReader(handle)
         if reader.fieldnames != FINAL_COLUMNS:
@@ -165,15 +165,23 @@ def check_final(path):
             raise ValueError(f"exact Grid Profit differs from its interval for {sid}")
         if ratio is not None and total == 0:
             raise ValueError(f"ratio must be blank when Total Profit is zero for {sid}")
+        floating_source = str(r.get("floatingProfitSource", "")).strip()
         if grid is None:
             if ratio is not None and not ratio_raw.startswith("≈"):
                 raise ValueError(f"estimated ratio must be marked with ≈ for {sid}")
-            if floating is not None:
-                raise ValueError(f"floatingProfit derived from estimated Grid Profit for {sid}")
             if ratio is not None and total and mid is not None \
                     and abs(ratio - mid / total) > max(1e-4, abs(mid / total) * 1e-4):
                 raise ValueError(f"estimated Grid/Total ratio mismatch for {sid}")
+            if floating is not None:
+                if floating_source != "ESTIMATED_TOTAL_MINUS_MID_GRID_PROFIT":
+                    raise ValueError(f"estimated floatingProfit has incorrect provenance for {sid}")
+                if total is None or mid is None or abs(floating - (total - mid)) > max(1e-6, abs(total) * 1e-6):
+                    raise ValueError(f"estimated floatingProfit identity mismatch for {sid}")
+            elif floating_source:
+                raise ValueError(f"floatingProfit source present while value is blank for {sid}")
         else:
+            if floating_source not in ("", "BINANCE_TOTAL_MINUS_EXACT_GRID_PROFIT"):
+                raise ValueError(f"exact Grid Profit has incorrect floatingProfit provenance for {sid}")
             if ratio is not None and total and abs(ratio - grid / total) > max(1e-6, abs(ratio) * 1e-6):
                 raise ValueError(f"Grid/Total ratio mismatch for {sid}")
             if floating is not None and total is not None and abs(total - grid - floating) > max(1e-6, abs(total) * 1e-6):
