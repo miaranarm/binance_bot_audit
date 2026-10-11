@@ -6,6 +6,7 @@ restent explicitement séparées. Par convention d'audit, floatingProfit est est
 Total Profit - gridProfitEstimateMid lorsque le Grid Profit officiel n'est pas disponible.
 """
 import os
+import re
 import sys
 
 import numpy as np
@@ -19,7 +20,7 @@ COLUMNS = [
     "qtyPerOrderEstimate", "gridProfitEstimateLow", "gridProfitEstimateMid",
     "gridProfitEstimateHigh", "totalProfit", "gridProfitTotalProfitRatio",
     "floatingProfit", "currentPrice", "priceRange",
-    "profitPerGridAfterFees",
+    "profitPerGridAfterFees", "profitPerGridAfterFeesMid",
 ]
 
 
@@ -78,6 +79,21 @@ def main(src, dst):
     floating_exact = (total - gp_exact).where(exact & total.notna())
     floating_est = (total - mid).where(~exact & interval_ok & total.notna())
     floating = floating_exact.where(exact, floating_est)
+    # Rendement médian par grille en points de pourcentage : milieu de la fourchette
+    # arithmétique ; pour une valeur unique (grille géométrique), cette valeur elle-même.
+    def parse_profit_per_grid_mid(value):
+        if pd.isna(value):
+            return np.nan
+        numbers = re.findall(r"[-+]?(?:\\d+(?:\\.\\d*)?|\\.\\d+)", str(value).replace(",", "."))
+        if len(numbers) == 1:
+            return float(numbers[0])
+        if len(numbers) == 2:
+            return (float(numbers[0]) + float(numbers[1])) / 2.0
+        return np.nan
+
+    ppg_mid = (df["profitPerGridAfterFees"].map(parse_profit_per_grid_mid)
+               if "profitPerGridAfterFees" in df else pd.Series(np.nan, index=df.index))
+
     floating_source = pd.Series("", index=df.index, dtype=object)
     floating_source.loc[exact & total.notna()] = "BINANCE_TOTAL_MINUS_EXACT_GRID_PROFIT"
     floating_source.loc[~exact & interval_ok & total.notna()] = "ESTIMATED_TOTAL_MINUS_MID_GRID_PROFIT"
@@ -93,6 +109,7 @@ def main(src, dst):
         "gridProfitTotalProfitRatio": ratio_txt, "floatingProfit": floating,
         "floatingProfitSource": floating_source, "currentPrice": price,
         "priceRange": df.get("priceRange"), "profitPerGridAfterFees": df.get("profitPerGridAfterFees"),
+        "profitPerGridAfterFeesMid": ppg_mid,
     })[COLUMNS]
     out = out.assign(_k=pd.to_numeric(out.strategyId, errors="coerce")) \
              .sort_values(["_k", "strategyId"], kind="stable").drop(columns="_k").reset_index(drop=True)
