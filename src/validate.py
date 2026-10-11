@@ -15,14 +15,13 @@ TOL = 2e-5
 EXACT_RATIO_SOURCES = {"BINANCE_DETAIL_GRID_DIV_TOTAL_EXACT", "BINANCE_DETAIL_TOTAL_MINUS_FLOATING_DIV_TOTAL_EXACT"}
 ESTIMATED_RATIO_SOURCE = "RECONSTRUCTED_GRID_PROFIT_DIV_BINANCE_MARKETPLACE_TOTAL_PROFIT"
 FINAL_COLUMNS = [
-    "rank", "strategyId", "category", "strategyType", "symbol", "leverage",
+    "strategyId", "category", "strategyType", "symbol", "leverage",
     "minInvestment", "runningTime", "runningTime en J",
     "roi (fourni par Binance)", "roi (calculé)", "pnl", "matchedTrades",
     "Trades / J", "mdd7d", "gridProfit", "gridMode", "gridCount",
     "qtyPerOrderEstimate", "gridProfitEstimateLow", "gridProfitEstimateMid",
     "gridProfitEstimateHigh", "totalProfit", "gridProfitTotalProfitRatio",
     "floatingProfit", "currentPrice", "priceRange", "profitPerGridAfterFees",
-    "score",
 ]
 
 
@@ -126,7 +125,7 @@ def check_raw(path):
 
 
 def check_final(path):
-    """Schéma figé (29 colonnes), unicité, levier <= 1 et cohérence des calculs. Retourne un message."""
+    """Schéma figé (27 colonnes), unicité, Spot Grid uniquement et cohérence des calculs."""
     with Path(path).open(newline="", encoding="utf-8-sig") as handle:
         reader = csv.DictReader(handle)
         if reader.fieldnames != FINAL_COLUMNS:
@@ -140,11 +139,13 @@ def check_final(path):
 
     for r in rows:
         sid = r["strategyId"]
-        if r.get("rank") or r.get("score"):
-            raise ValueError(f"rank/score must stay empty ({sid})")
-        lev = num(r.get("leverage"))
-        if lev is None or lev > 1:
-            raise ValueError(f"invalid leverage for {sid}: {r.get('leverage')}")
+        if str(r.get("category", "")).strip().lower() != "spot grid":
+            raise ValueError(f"non-Spot-Grid strategy in final CSV ({sid}): {r.get('category')}")
+        pnl, min_inv, roi_calc = num(r.get("pnl")), num(r.get("minInvestment")), num(r.get("roi (calculé)"))
+        if pnl is not None and min_inv is not None and min_inv > 0:
+            expected_roi = pnl / min_inv * 100
+            if roi_calc is None or abs(roi_calc - expected_roi) > max(1e-6, abs(expected_roi) * 1e-6):
+                raise ValueError(f"calculable ROI missing or incorrect for {sid}: expected {expected_roi}, got {roi_calc}")
         runtime, days = num(r.get("runningTime")), num(r.get("runningTime en J"))
         if runtime is not None and days is not None and abs(days - runtime / 86400) > 1e-7:
             raise ValueError(f"runtime/day mismatch for {sid}")
@@ -180,7 +181,7 @@ def check_final(path):
 
     exact = sum(num(r.get("gridProfit")) is not None for r in rows)
     ppg = sum(bool(r.get("profitPerGridAfterFees")) for r in rows)
-    return f"PASS: {len(rows)} unique bots, leverage <= 1, {len(FINAL_COLUMNS)} columns, {exact} exact Grid Profit, {ppg} with profit/grid"
+    return f"PASS: {len(rows)} unique Spot Grid bots (no leverage filter), {len(FINAL_COLUMNS)} columns, {exact} exact Grid Profit, {ppg} with profit/grid"
 
 
 def main(argv):
