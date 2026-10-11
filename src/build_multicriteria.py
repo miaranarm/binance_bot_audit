@@ -15,12 +15,12 @@ import pandas as pd
 COLUMNS = [
     "strategyId", "category", "strategyType", "symbol", "leverage",
     "minInvestment", "runningTime", "runningTime en J",
-    "roi (fourni par Binance)", "roi (calculé)", "pnl", "matchedTrades",
+    "pnl", "roi (fourni par Binance)", "roi (calculé)", "matchedTrades",
     "Trades / J", "mdd7d", "gridProfit", "gridMode", "gridCount",
     "qtyPerOrderEstimate", "gridProfitEstimateLow", "gridProfitEstimateMid",
     "gridProfitEstimateHigh", "totalProfit", "gridProfitTotalProfitRatio",
-    "floatingProfit", "currentPrice", "priceRange",
-    "profitPerGridAfterFees", "profitPerGridAfterFeesMid",
+    "floatingProfit", "currentPrice", "priceRangeLow", "priceRangeHigh", "Niveau",
+    "profitPerGridAfterFeesLow", "profitPerGridAfterFeesMid", "profitPerGridAfterFeesHigh",
 ]
 
 
@@ -79,20 +79,57 @@ def main(src, dst):
     floating_exact = (total - gp_exact).where(exact & total.notna())
     floating_est = (total - mid).where(~exact & interval_ok & total.notna())
     floating = floating_exact.where(exact, floating_est)
-    # Rendement médian par grille en points de pourcentage : milieu de la fourchette
-    # arithmétique ; pour une valeur unique (grille géométrique), cette valeur elle-même.
-    def parse_profit_per_grid_mid(value):
+    # Sépare les bornes de la plage de prix et situe le cours courant entre ces bornes.
+    def parse_range(value):
         if pd.isna(value):
-            return np.nan
-        numbers = re.findall(r"[-+]?(?:\\d+(?:\\.\\d*)?|\\.\\d+)", str(value).replace(",", "."))
-        if len(numbers) == 1:
-            return float(numbers[0])
-        if len(numbers) == 2:
-            return (float(numbers[0]) + float(numbers[1])) / 2.0
-        return np.nan
+            return (np.nan, np.nan)
+        numbers = re.findall(r"[-+]?(?:\d+(?:\.\d*)?|\.\d+)", str(value).replace(",", "."))
+        if len(numbers) != 2:
+            return (np.nan, np.nan)
+        lo, hi = float(numbers[0]), float(numbers[1])
+        return (lo, hi) if lo <= hi else (hi, lo)
 
-    ppg_mid = (df["profitPerGridAfterFees"].map(parse_profit_per_grid_mid)
-               if "profitPerGridAfterFees" in df else pd.Series(np.nan, index=df.index))
+    ranges = (df["priceRange"].map(parse_range) if "priceRange" in df
+              else pd.Series([(np.nan, np.nan)] * len(df), index=df.index))
+    range_low = ranges.map(lambda pair: pair[0])
+    range_high = ranges.map(lambda pair: pair[1])
+
+    def price_level(current, lo, hi):
+        if pd.isna(current) or pd.isna(lo) or pd.isna(hi) or hi <= lo:
+            return ""
+        pct = (float(current) - float(lo)) / (float(hi) - float(lo)) * 100.0
+        if pct < 0:
+            return f"Hors plage — {pct:.1f}% (sous la borne basse)"
+        if pct > 100:
+            return f"Hors plage — {pct:.1f}% (au-dessus de la borne haute)"
+        if abs(pct - 50.0) < 1e-9:
+            label = "Neutre"
+        else:
+            label = "Bullish" if pct > 50 else "Bearish"
+        return f"{label} — {pct:.1f}%"
+
+    level = pd.Series(
+        [price_level(p, lo, hi) for p, lo, hi in zip(price, range_low, range_high)],
+        index=df.index, dtype=object
+    )
+
+    # Une valeur unique va dans Mid ; une fourchette arithmétique est répartie en Low/Mid/High.
+    def parse_profit_per_grid(value):
+        if pd.isna(value):
+            return (np.nan, np.nan, np.nan)
+        numbers = re.findall(r"[-+]?(?:\d+(?:\.\d*)?|\.\d+)", str(value).replace(",", "."))
+        if len(numbers) == 1:
+            return (np.nan, float(numbers[0]), np.nan)
+        if len(numbers) == 2:
+            lo, hi = sorted(float(n) for n in numbers)
+            return (lo, (lo + hi) / 2.0, hi)
+        return (np.nan, np.nan, np.nan)
+
+    ppg = (df["profitPerGridAfterFees"].map(parse_profit_per_grid)
+           if "profitPerGridAfterFees" in df else pd.Series([(np.nan, np.nan, np.nan)] * len(df), index=df.index))
+    ppg_low = ppg.map(lambda v: v[0])
+    ppg_mid = ppg.map(lambda v: v[1])
+    ppg_high = ppg.map(lambda v: v[2])
 
     floating_source = pd.Series("", index=df.index, dtype=object)
     floating_source.loc[exact & total.notna()] = "BINANCE_TOTAL_MINUS_EXACT_GRID_PROFIT"
@@ -102,14 +139,15 @@ def main(src, dst):
         "strategyId": df.strategyId, "category": df.get("category"),
         "strategyType": df.get("strategyType"), "symbol": df.symbol, "leverage": lev,
         "minInvestment": min_inv, "runningTime": runtime, "runningTime en J": days,
-        "roi (fourni par Binance)": roi, "roi (calculé)": roi_calc, "pnl": pnl, "matchedTrades": matched,
+        "pnl": pnl, "roi (fourni par Binance)": roi, "roi (calculé)": roi_calc, "matchedTrades": matched,
         "Trades / J": trades_day, "mdd7d": mdd, "gridProfit": gp_exact, "gridMode": df.get("gridMode"),
         "gridCount": col("gridCount"), "qtyPerOrderEstimate": qty, "gridProfitEstimateLow": low,
         "gridProfitEstimateMid": mid, "gridProfitEstimateHigh": high, "totalProfit": total,
         "gridProfitTotalProfitRatio": ratio_txt, "floatingProfit": floating,
         "floatingProfitSource": floating_source, "currentPrice": price,
-        "priceRange": df.get("priceRange"), "profitPerGridAfterFees": df.get("profitPerGridAfterFees"),
-        "profitPerGridAfterFeesMid": ppg_mid,
+        "priceRangeLow": range_low, "priceRangeHigh": range_high, "Niveau": level,
+        "profitPerGridAfterFeesLow": ppg_low, "profitPerGridAfterFeesMid": ppg_mid,
+        "profitPerGridAfterFeesHigh": ppg_high,
     })[COLUMNS]
     out = out.assign(_k=pd.to_numeric(out.strategyId, errors="coerce")) \
              .sort_values(["_k", "strategyId"], kind="stable").drop(columns="_k").reset_index(drop=True)
