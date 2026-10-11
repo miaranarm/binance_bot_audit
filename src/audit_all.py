@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""src/audit_all.py -- collecte du Bot Marketplace public Binance (levier <= 1).
+"""src/audit_all.py -- collecte des bots publics Binance Spot Grid uniquement.
 
 Étape 1 du pipeline (audit_all -> validate raw -> build_multicriteria -> validate final).
 Écrit le CSV brut results/current_multicriteria.csv (avec colonnes de provenance),
@@ -552,7 +552,7 @@ def capture_detail_metrics(page, rows, budget_s, now):
         path = next((p for name, p in DETAIL_PAGES.items() if name in str(row.get("_category") or "").lower()), None)
         matched = max(num(row.get(k), 0.0) for k in ("matchedTrades", "matchedCount", "latestMatchedCount", "totalMatchedTrades"))
         # Les bots sans activité sont des pages "Pending Trigger" (0/--) : inutile de les visiter.
-        if (not sid or not symbol or not path or num(row.get("_lev"), 99.0) > 1.0
+        if (not sid or not symbol or not path or str(row.get("_category") or "").strip().lower() != "spot grid"
                 or num(row.get("runningTime"), 0.0) <= 0 or matched <= 0 or num(row.get("pnl"), 0.0) == 0):
             continue
         candidates.append((zlib.crc32(f"{sid}:{hour}".encode()), sid, f"{path}?symbol={quote(symbol)}&strategyId={quote(sid)}"))
@@ -607,12 +607,12 @@ def capture_detail_metrics(page, rows, budget_s, now):
 
 # --------------------------------------------------------------------------- sorties
 def build_current(rows, prices):
-    """Un enregistrement par strategyId du périmètre (levier <= 1). Aucun filtre de performance, aucun score."""
+    """Un enregistrement par strategyId : Spot Grid uniquement, sans filtre de levier ni de performance."""
     current, seen = [], set()
     for x in rows:
         sid, symbol = str(x.get("strategyId") or "").strip(), str(x.get("symbol") or "").strip()
-        lev = num(x.get("_lev"), 99.0)
-        if not sid or not symbol or lev > 1.0 or sid in seen:
+        category = str(x.get("_category") or "").strip().lower()
+        if not sid or not symbol or category != "spot grid" or sid in seen:
             continue
         seen.add(sid)
         price = first_num(x, ["currentPrice", "lastPrice", "marketPrice", "price"])
@@ -695,15 +695,6 @@ def main():
         page = browser.new_page()
         rows = pages(page, TOP, {"strategyType": 1, "symbol": "", "zone": "", "sort": "pnl"},
                      "Spot Grid", "SPOT_GRID", diagnostics, stats)
-        # Sonde les strategyType 2..100 pour ne pas supposer que 1..20 couvre tout le catalogue.
-        # Les types au schéma inconnu restent explicitement incomplets, jamais supposés vides.
-        for strategy_type in range(2, MAX_STRATEGY_TYPE + 1):
-            rows += pages(page, TOP, {"strategyType": strategy_type, "symbol": "", "zone": "", "sort": "pnl"},
-                          f"Marketplace type {strategy_type}", f"TYPE_{strategy_type}", diagnostics, stats)
-        rows += pages(page, DCA, {"market": "", "zone": "", "roi": "", "sort": "pnl", "trailingType": "",
-                                  "leverage": "", "investmentType": False, "sevenDayMdd": "",
-                                  "strategyType": 10, "symbol": ""},
-                      "Futures DCA", "UM_DCA", diagnostics, stats)
         prices = fetch_prices(page, [r.get("symbol") for r in rows])
         budget = max(0.0, min(DETAIL_BUDGET_S, RUN_BUDGET_S - (time.monotonic() - start)))
         detail, detail_stats = capture_detail_metrics(page, rows, budget, now)
@@ -723,7 +714,7 @@ def main():
     incomplete = sorted(name for name, s in stats.items() if not s["complete"])
     exact = sum(1 for r in current if r["gridProfitSource"] == "BINANCE_EXACT")
     meta = {
-        "scan_utc": now.isoformat(), "raw_rows": len(rows), "tradable_leverage_le_1": len(current),
+        "scan_utc": now.isoformat(), "raw_rows": len(rows), "spot_grid_bots": len(current),
         "collection_complete": not incomplete, "incomplete_categories": incomplete, "collection": stats,
         "grid_profit_exact": exact, "detail_capture": detail_stats,
         "endpoint_errors": diagnostics[:50], "snapshot": str(snapshot), "old_snapshots_removed": removed,
@@ -735,7 +726,7 @@ def main():
     }
     (OUT / "scan_meta.json").write_text(json.dumps(meta, ensure_ascii=False, indent=2), encoding="utf-8")
 
-    print(f"raw_rows={len(rows)} retenues={len(current)} complete={not incomplete} grid_profit_exact={exact} "
+    print(f"raw_rows={len(rows)} spot_grid={len(current)} complete={not incomplete} grid_profit_exact={exact} "
           f"detail={detail_stats['captured']}/{detail_stats['visited']} visités (candidats {detail_stats['candidates']}, "
           f"pending {detail_stats['pending']}, erreurs {detail_stats['errors']}"
           f"{', ABANDON: ' + detail_stats['aborted'] if 'aborted' in detail_stats else ''})")
