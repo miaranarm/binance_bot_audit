@@ -12,17 +12,15 @@ import sys
 import numpy as np
 import pandas as pd
 
-ROI_RATIO_MIN, ROI_RATIO_MAX = 0.5, 10
-
 COLUMNS = [
-    "rank", "strategyId", "category", "strategyType", "symbol", "leverage",
+    "strategyId", "category", "strategyType", "symbol", "leverage",
     "minInvestment", "runningTime", "runningTime en J",
     "roi (fourni par Binance)", "roi (calculé)", "pnl", "matchedTrades",
     "Trades / J", "mdd7d", "gridProfit", "gridMode", "gridCount",
     "qtyPerOrderEstimate", "gridProfitEstimateLow", "gridProfitEstimateMid",
     "gridProfitEstimateHigh", "totalProfit", "gridProfitTotalProfitRatio",
     "floatingProfit", "floatingProfitSource", "currentPrice", "priceRange",
-    "profitPerGridAfterFees", "score",
+    "profitPerGridAfterFees",
 ]
 
 
@@ -34,7 +32,12 @@ def main(src, dst):
     if missing:
         raise SystemExit(f"Colonnes indispensables absentes : {missing}")
 
-    df = df[df["strategyId"].notna() & df["symbol"].notna()].drop_duplicates("strategyId").copy()
+    df = df[df["strategyId"].notna() & df["symbol"].notna()].copy()
+    if "category" not in df:
+        raise SystemExit("Colonne category absente : impossible de limiter le CSV à Spot Grid")
+    df = df[df["category"].astype(str).str.strip().str.lower().eq("spot grid")].drop_duplicates("strategyId").copy()
+    if df.empty:
+        raise SystemExit("Aucun bot Spot Grid dans la source")
 
     def col(name):
         return pd.to_numeric(df[name], errors="coerce") if name in df else pd.Series(np.nan, index=df.index)
@@ -45,9 +48,9 @@ def main(src, dst):
     trades_day = (matched / days).where(days > 0)
     total = col("totalProfit").where(col("totalProfit").notna(), pnl)
 
-    # ROI calculé sur l'investissement minimum : indicatif, pas une reproduction garantie du ROI Binance.
-    calc = (pnl / min_inv * 100).where(min_inv > 0)
-    roi_calc = calc.where((calc / roi.where(roi != 0)).between(ROI_RATIO_MIN, ROI_RATIO_MAX))
+    # ROI indicatif : ne jamais supprimer un résultat calculable à cause de son écart au ROI Binance.
+    # Il est renseigné dès que PNL est numérique et que le capital minimum est strictement positif.
+    roi_calc = (pnl / min_inv * 100).where(pnl.notna() & min_inv.gt(0))
 
     # Grid Profit exact (Binance) ou estimation (Low / Mid / High).
     source = df["gridProfitSource"].fillna("") if "gridProfitSource" in df else pd.Series("", index=df.index)
@@ -78,7 +81,7 @@ def main(src, dst):
     floating_source.loc[~exact & interval_ok & total.notna()] = "ESTIMATED_TOTAL_MINUS_MID_GRID_PROFIT"
 
     out = pd.DataFrame({
-        "rank": np.nan, "strategyId": df.strategyId, "category": df.get("category"),
+        "strategyId": df.strategyId, "category": df.get("category"),
         "strategyType": df.get("strategyType"), "symbol": df.symbol, "leverage": lev,
         "minInvestment": min_inv, "runningTime": runtime, "runningTime en J": days,
         "roi (fourni par Binance)": roi, "roi (calculé)": roi_calc, "pnl": pnl, "matchedTrades": matched,
@@ -88,7 +91,6 @@ def main(src, dst):
         "gridProfitTotalProfitRatio": ratio_txt, "floatingProfit": floating,
         "floatingProfitSource": floating_source, "currentPrice": price,
         "priceRange": df.get("priceRange"), "profitPerGridAfterFees": df.get("profitPerGridAfterFees"),
-        "score": np.nan,
     })[COLUMNS]
     out = out.assign(_k=pd.to_numeric(out.strategyId, errors="coerce")) \
              .sort_values(["_k", "strategyId"], kind="stable").drop(columns="_k").reset_index(drop=True)
@@ -101,9 +103,9 @@ def main(src, dst):
 
     with open(os.path.join(folder, "current_multicriteria_summary.txt"), "w", encoding="utf-8") as h:
         h.write(f"COUNT={len(out)}\n"
-                "UNIVERSE=Binance public Bot Marketplace scan result, leverage<=1; verify results/scan_meta.json "
+                "UNIVERSE=Binance public Spot Grid bots only; no leverage filter; verify results/scan_meta.json "
                 "collection_complete before treating the scan as exhaustive; no age/price-range/profit-per-grid filters\n"
-                "RANKING=NONE (rank and score columns kept empty)\n"
+                "ROI_CALCULATED=PNL / positive minInvestment * 100 whenever both values are valid; never filtered by comparison with Binance ROI\n"
                 "FLOATING_PROFIT=exact Total Profit minus exact Grid Profit when available; otherwise estimated as "
                 "Total Profit minus gridProfitEstimateMid; see floatingProfitSource\n"
                 "RATIO=exact numeric when Grid Profit is exact; estimated ratio prefixed with ≈; "
