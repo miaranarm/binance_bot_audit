@@ -53,7 +53,7 @@ DETAIL_GIVEUP_AFTER = 25       # abandon des pages de détail si aucune métriqu
 USD_STABLE = {"USDT", "USDC", "FDUSD", "TUSD", "USDP", "BUSD", "DAI", "USD1", "U"}
 # USD1 et le suffixe U apparaissent dans les symboles du Marketplace public Binance.
 # JPY est une devise de cotation ; sa conversion USD est reconstruite par cross-rate BTC/ETH.
-QUOTES = tuple(sorted(USD_STABLE | {"BTC", "ETH", "BNB", "EUR", "TRY", "BRL", "JPY"}, key=len, reverse=True))
+QUOTES = tuple(sorted(USD_STABLE | {"BTC", "ETH", "BNB", "XRP", "EUR", "TRY", "BRL", "JPY"}, key=len, reverse=True))
 
 LOWER = ["lowerLimit", "lowerPrice", "gridLowerLimit", "gridLowerPrice", "minPrice", "lower"]
 UPPER = ["upperLimit", "upperPrice", "gridUpperLimit", "gridUpperPrice", "maxPrice", "upper"]
