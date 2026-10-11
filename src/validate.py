@@ -8,6 +8,7 @@ Code de sortie 1 en cas d'erreur.
 import csv
 import json
 import math
+import re
 import sys
 from pathlib import Path
 
@@ -21,7 +22,7 @@ FINAL_COLUMNS = [
     "Trades / J", "mdd7d", "gridProfit", "gridMode", "gridCount",
     "qtyPerOrderEstimate", "gridProfitEstimateLow", "gridProfitEstimateMid",
     "gridProfitEstimateHigh", "totalProfit", "gridProfitTotalProfitRatio",
-    "floatingProfit", "currentPrice", "priceRange", "profitPerGridAfterFees",
+    "floatingProfit", "currentPrice", "priceRange", "profitPerGridAfterFees", "profitPerGridAfterFeesMid",
 ]
 
 
@@ -154,6 +155,16 @@ def check_final(path):
                 and abs(per_day - trades / (runtime / 86400)) > max(1e-6, abs(per_day) * 1e-6):
             raise ValueError(f"Trades / J mismatch for {sid}")
 
+        ppg_raw = str(r.get("profitPerGridAfterFees", "") or "").strip()
+        ppg_mid = num(r.get("profitPerGridAfterFeesMid"))
+        ppg_numbers = [float(x) for x in re.findall(r"[-+]?(?:\\d+(?:\\.\\d*)?|\\.\\d+)", ppg_raw.replace(",", "."))]
+        expected_ppg_mid = (sum(ppg_numbers) / len(ppg_numbers)) if len(ppg_numbers) in (1, 2) else None
+        if expected_ppg_mid is not None:
+            if ppg_mid is None or abs(ppg_mid - expected_ppg_mid) > 1e-5:
+                raise ValueError(f"profitPerGridAfterFeesMid mismatch for {sid}: expected {expected_ppg_mid}, got {ppg_mid}")
+        elif ppg_mid is not None:
+            raise ValueError(f"profitPerGridAfterFeesMid should be blank when source cannot be parsed for {sid}")
+
         low, mid, high = (num(r.get(k)) for k in ("gridProfitEstimateLow", "gridProfitEstimateMid", "gridProfitEstimateHigh"))
         if None not in (low, mid, high) and not (low <= mid + 1e-6 and mid <= high + 1e-6):
             raise ValueError(f"Grid Profit interval unordered for {sid}")
@@ -182,7 +193,8 @@ def check_final(path):
 
     exact = sum(num(r.get("gridProfit")) is not None for r in rows)
     ppg = sum(bool(r.get("profitPerGridAfterFees")) for r in rows)
-    return f"PASS: {len(rows)} unique Spot Grid bots (no leverage filter), {len(FINAL_COLUMNS)} columns, {exact} exact Grid Profit, {ppg} with profit/grid"
+    ppg_mid_count = sum(num(r.get("profitPerGridAfterFeesMid")) is not None for r in rows)
+    return f"PASS: {len(rows)} unique Spot Grid bots (no leverage filter), {len(FINAL_COLUMNS)} columns, {exact} exact Grid Profit, {ppg} with profit/grid, {ppg_mid_count} with profitPerGridAfterFeesMid"
 
 
 def main(argv):
