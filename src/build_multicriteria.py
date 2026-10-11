@@ -3,8 +3,7 @@
 
 Le Grid Profit officiel est conservé lorsqu'il est lu chez Binance ; sinon les estimations Low/Mid/High
 restent explicitement séparées. Par convention d'audit, floatingProfit est estimé avec le milieu :
-Total Profit - gridProfitEstimateMid. La colonne floatingProfitSource distingue toujours l'estimation
-d'un calcul reposant sur un Grid Profit officiel.
+Total Profit - gridProfitEstimateMid lorsque le Grid Profit officiel n'est pas disponible.
 """
 import os
 import sys
@@ -19,7 +18,7 @@ COLUMNS = [
     "Trades / J", "mdd7d", "gridProfit", "gridMode", "gridCount",
     "qtyPerOrderEstimate", "gridProfitEstimateLow", "gridProfitEstimateMid",
     "gridProfitEstimateHigh", "totalProfit", "gridProfitTotalProfitRatio",
-    "floatingProfit", "floatingProfitSource", "currentPrice", "priceRange",
+    "floatingProfit", "currentPrice", "priceRange",
     "profitPerGridAfterFees",
 ]
 
@@ -107,7 +106,7 @@ def main(src, dst):
                 "collection_complete before treating the scan as exhaustive; no age/price-range/profit-per-grid filters\n"
                 "ROI_CALCULATED=PNL / positive minInvestment * 100 whenever both values are valid; never filtered by comparison with Binance ROI\n"
                 "FLOATING_PROFIT=exact Total Profit minus exact Grid Profit when available; otherwise estimated as "
-                "Total Profit minus gridProfitEstimateMid; see floatingProfitSource\n"
+                "Total Profit minus gridProfitEstimateMid when Grid Profit is estimated\n"
                 "RATIO=exact numeric when Grid Profit is exact; estimated ratio prefixed with ≈; "
                 "empty when Total Profit is zero; no 100%/500% cap\n")
     print(f"{len(out)} stratégies -> {dst} | Grid Profit exact : {int(exact.sum())} | "
