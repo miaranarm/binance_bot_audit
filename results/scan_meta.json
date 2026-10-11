@@ -1,9 +1,10 @@
 {
-  "scan_utc": "2026-10-11T04:30:28.256027+00:00",
-  "raw_rows": 21352,
-  "tradable_leverage_le_1": 6953,
+  "scan_utc": "2026-10-11T05:30:46.393125+00:00",
+  "raw_rows": 20889,
+  "tradable_leverage_le_1": 7023,
   "collection_complete": false,
   "incomplete_categories": [
+    "Marketplace type 100",
     "Marketplace type 12",
     "Marketplace type 13",
     "Marketplace type 14",
@@ -12,163 +13,903 @@
     "Marketplace type 17",
     "Marketplace type 18",
     "Marketplace type 19",
-    "Marketplace type 20"
+    "Marketplace type 20",
+    "Marketplace type 21",
+    "Marketplace type 22",
+    "Marketplace type 23",
+    "Marketplace type 24",
+    "Marketplace type 25",
+    "Marketplace type 26",
+    "Marketplace type 27",
+    "Marketplace type 28",
+    "Marketplace type 29",
+    "Marketplace type 30",
+    "Marketplace type 31",
+    "Marketplace type 32",
+    "Marketplace type 33",
+    "Marketplace type 34",
+    "Marketplace type 35",
+    "Marketplace type 36",
+    "Marketplace type 37",
+    "Marketplace type 38",
+    "Marketplace type 39",
+    "Marketplace type 40",
+    "Marketplace type 41",
+    "Marketplace type 42",
+    "Marketplace type 43",
+    "Marketplace type 44",
+    "Marketplace type 45",
+    "Marketplace type 46",
+    "Marketplace type 47",
+    "Marketplace type 48",
+    "Marketplace type 49",
+    "Marketplace type 50",
+    "Marketplace type 51",
+    "Marketplace type 52",
+    "Marketplace type 53",
+    "Marketplace type 54",
+    "Marketplace type 55",
+    "Marketplace type 56",
+    "Marketplace type 57",
+    "Marketplace type 58",
+    "Marketplace type 59",
+    "Marketplace type 60",
+    "Marketplace type 61",
+    "Marketplace type 62",
+    "Marketplace type 63",
+    "Marketplace type 64",
+    "Marketplace type 65",
+    "Marketplace type 66",
+    "Marketplace type 67",
+    "Marketplace type 68",
+    "Marketplace type 69",
+    "Marketplace type 70",
+    "Marketplace type 71",
+    "Marketplace type 72",
+    "Marketplace type 73",
+    "Marketplace type 74",
+    "Marketplace type 75",
+    "Marketplace type 76",
+    "Marketplace type 77",
+    "Marketplace type 78",
+    "Marketplace type 79",
+    "Marketplace type 80",
+    "Marketplace type 81",
+    "Marketplace type 82",
+    "Marketplace type 83",
+    "Marketplace type 84",
+    "Marketplace type 85",
+    "Marketplace type 86",
+    "Marketplace type 87",
+    "Marketplace type 88",
+    "Marketplace type 89",
+    "Marketplace type 90",
+    "Marketplace type 91",
+    "Marketplace type 92",
+    "Marketplace type 93",
+    "Marketplace type 94",
+    "Marketplace type 95",
+    "Marketplace type 96",
+    "Marketplace type 97",
+    "Marketplace type 98",
+    "Marketplace type 99"
   ],
   "collection": {
     "Spot Grid": {
-      "collected": 6813,
-      "unique_collected": 6813,
+      "collected": 6877,
+      "unique_collected": 6877,
       "duplicate_rows": 0,
-      "expected": 6813,
-      "complete": true
+      "expected": 6877,
+      "complete": true,
+      "unsupported_response_schema": false
     },
     "Marketplace type 2": {
-      "collected": 10966,
-      "unique_collected": 10966,
+      "collected": 10665,
+      "unique_collected": 10665,
       "duplicate_rows": 0,
-      "expected": 10966,
-      "complete": true
+      "expected": 10665,
+      "complete": true,
+      "unsupported_response_schema": false
     },
     "Marketplace type 3": {
-      "collected": 443,
-      "unique_collected": 443,
+      "collected": 431,
+      "unique_collected": 431,
       "duplicate_rows": 0,
-      "expected": 443,
-      "complete": true
+      "expected": 431,
+      "complete": true,
+      "unsupported_response_schema": false
     },
     "Marketplace type 4": {
       "collected": 0,
       "unique_collected": 0,
       "duplicate_rows": 0,
       "expected": 0,
-      "complete": true
+      "complete": true,
+      "unsupported_response_schema": false
     },
     "Marketplace type 5": {
       "collected": 0,
       "unique_collected": 0,
       "duplicate_rows": 0,
       "expected": 0,
-      "complete": true
+      "complete": true,
+      "unsupported_response_schema": false
     },
     "Marketplace type 6": {
       "collected": 0,
       "unique_collected": 0,
       "duplicate_rows": 0,
       "expected": 0,
-      "complete": true
+      "complete": true,
+      "unsupported_response_schema": false
     },
     "Marketplace type 7": {
       "collected": 0,
       "unique_collected": 0,
       "duplicate_rows": 0,
       "expected": 0,
-      "complete": true
+      "complete": true,
+      "unsupported_response_schema": false
     },
     "Marketplace type 8": {
       "collected": 0,
       "unique_collected": 0,
       "duplicate_rows": 0,
       "expected": 0,
-      "complete": true
+      "complete": true,
+      "unsupported_response_schema": false
     },
     "Marketplace type 9": {
       "collected": 0,
       "unique_collected": 0,
       "duplicate_rows": 0,
       "expected": 0,
-      "complete": true
+      "complete": true,
+      "unsupported_response_schema": false
     },
     "Marketplace type 10": {
-      "collected": 1565,
-      "unique_collected": 1565,
+      "collected": 1458,
+      "unique_collected": 1458,
       "duplicate_rows": 0,
-      "expected": 1565,
-      "complete": true
+      "expected": 1458,
+      "complete": true,
+      "unsupported_response_schema": false
     },
     "Marketplace type 11": {
       "collected": 0,
       "unique_collected": 0,
       "duplicate_rows": 0,
       "expected": 0,
-      "complete": true
+      "complete": true,
+      "unsupported_response_schema": false
     },
     "Marketplace type 12": {
       "collected": 0,
       "unique_collected": 0,
       "duplicate_rows": 0,
       "expected": null,
-      "complete": false
+      "complete": false,
+      "unsupported_response_schema": true
     },
     "Marketplace type 13": {
       "collected": 0,
       "unique_collected": 0,
       "duplicate_rows": 0,
       "expected": null,
-      "complete": false
+      "complete": false,
+      "unsupported_response_schema": true
     },
     "Marketplace type 14": {
       "collected": 0,
       "unique_collected": 0,
       "duplicate_rows": 0,
       "expected": null,
-      "complete": false
+      "complete": false,
+      "unsupported_response_schema": true
     },
     "Marketplace type 15": {
       "collected": 0,
       "unique_collected": 0,
       "duplicate_rows": 0,
       "expected": null,
-      "complete": false
+      "complete": false,
+      "unsupported_response_schema": true
     },
     "Marketplace type 16": {
       "collected": 0,
       "unique_collected": 0,
       "duplicate_rows": 0,
       "expected": null,
-      "complete": false
+      "complete": false,
+      "unsupported_response_schema": true
     },
     "Marketplace type 17": {
       "collected": 0,
       "unique_collected": 0,
       "duplicate_rows": 0,
       "expected": null,
-      "complete": false
+      "complete": false,
+      "unsupported_response_schema": true
     },
     "Marketplace type 18": {
       "collected": 0,
       "unique_collected": 0,
       "duplicate_rows": 0,
       "expected": null,
-      "complete": false
+      "complete": false,
+      "unsupported_response_schema": true
     },
     "Marketplace type 19": {
       "collected": 0,
       "unique_collected": 0,
       "duplicate_rows": 0,
       "expected": null,
-      "complete": false
+      "complete": false,
+      "unsupported_response_schema": true
     },
     "Marketplace type 20": {
       "collected": 0,
       "unique_collected": 0,
       "duplicate_rows": 0,
       "expected": null,
-      "complete": false
+      "complete": false,
+      "unsupported_response_schema": true
+    },
+    "Marketplace type 21": {
+      "collected": 0,
+      "unique_collected": 0,
+      "duplicate_rows": 0,
+      "expected": null,
+      "complete": false,
+      "unsupported_response_schema": true
+    },
+    "Marketplace type 22": {
+      "collected": 0,
+      "unique_collected": 0,
+      "duplicate_rows": 0,
+      "expected": null,
+      "complete": false,
+      "unsupported_response_schema": true
+    },
+    "Marketplace type 23": {
+      "collected": 0,
+      "unique_collected": 0,
+      "duplicate_rows": 0,
+      "expected": null,
+      "complete": false,
+      "unsupported_response_schema": true
+    },
+    "Marketplace type 24": {
+      "collected": 0,
+      "unique_collected": 0,
+      "duplicate_rows": 0,
+      "expected": null,
+      "complete": false,
+      "unsupported_response_schema": true
+    },
+    "Marketplace type 25": {
+      "collected": 0,
+      "unique_collected": 0,
+      "duplicate_rows": 0,
+      "expected": null,
+      "complete": false,
+      "unsupported_response_schema": true
+    },
+    "Marketplace type 26": {
+      "collected": 0,
+      "unique_collected": 0,
+      "duplicate_rows": 0,
+      "expected": null,
+      "complete": false,
+      "unsupported_response_schema": true
+    },
+    "Marketplace type 27": {
+      "collected": 0,
+      "unique_collected": 0,
+      "duplicate_rows": 0,
+      "expected": null,
+      "complete": false,
+      "unsupported_response_schema": true
+    },
+    "Marketplace type 28": {
+      "collected": 0,
+      "unique_collected": 0,
+      "duplicate_rows": 0,
+      "expected": null,
+      "complete": false,
+      "unsupported_response_schema": true
+    },
+    "Marketplace type 29": {
+      "collected": 0,
+      "unique_collected": 0,
+      "duplicate_rows": 0,
+      "expected": null,
+      "complete": false,
+      "unsupported_response_schema": true
+    },
+    "Marketplace type 30": {
+      "collected": 0,
+      "unique_collected": 0,
+      "duplicate_rows": 0,
+      "expected": null,
+      "complete": false,
+      "unsupported_response_schema": true
+    },
+    "Marketplace type 31": {
+      "collected": 0,
+      "unique_collected": 0,
+      "duplicate_rows": 0,
+      "expected": null,
+      "complete": false,
+      "unsupported_response_schema": true
+    },
+    "Marketplace type 32": {
+      "collected": 0,
+      "unique_collected": 0,
+      "duplicate_rows": 0,
+      "expected": null,
+      "complete": false,
+      "unsupported_response_schema": true
+    },
+    "Marketplace type 33": {
+      "collected": 0,
+      "unique_collected": 0,
+      "duplicate_rows": 0,
+      "expected": null,
+      "complete": false,
+      "unsupported_response_schema": true
+    },
+    "Marketplace type 34": {
+      "collected": 0,
+      "unique_collected": 0,
+      "duplicate_rows": 0,
+      "expected": null,
+      "complete": false,
+      "unsupported_response_schema": true
+    },
+    "Marketplace type 35": {
+      "collected": 0,
+      "unique_collected": 0,
+      "duplicate_rows": 0,
+      "expected": null,
+      "complete": false,
+      "unsupported_response_schema": true
+    },
+    "Marketplace type 36": {
+      "collected": 0,
+      "unique_collected": 0,
+      "duplicate_rows": 0,
+      "expected": null,
+      "complete": false,
+      "unsupported_response_schema": true
+    },
+    "Marketplace type 37": {
+      "collected": 0,
+      "unique_collected": 0,
+      "duplicate_rows": 0,
+      "expected": null,
+      "complete": false,
+      "unsupported_response_schema": true
+    },
+    "Marketplace type 38": {
+      "collected": 0,
+      "unique_collected": 0,
+      "duplicate_rows": 0,
+      "expected": null,
+      "complete": false,
+      "unsupported_response_schema": true
+    },
+    "Marketplace type 39": {
+      "collected": 0,
+      "unique_collected": 0,
+      "duplicate_rows": 0,
+      "expected": null,
+      "complete": false,
+      "unsupported_response_schema": true
+    },
+    "Marketplace type 40": {
+      "collected": 0,
+      "unique_collected": 0,
+      "duplicate_rows": 0,
+      "expected": null,
+      "complete": false,
+      "unsupported_response_schema": true
+    },
+    "Marketplace type 41": {
+      "collected": 0,
+      "unique_collected": 0,
+      "duplicate_rows": 0,
+      "expected": null,
+      "complete": false,
+      "unsupported_response_schema": true
+    },
+    "Marketplace type 42": {
+      "collected": 0,
+      "unique_collected": 0,
+      "duplicate_rows": 0,
+      "expected": null,
+      "complete": false,
+      "unsupported_response_schema": true
+    },
+    "Marketplace type 43": {
+      "collected": 0,
+      "unique_collected": 0,
+      "duplicate_rows": 0,
+      "expected": null,
+      "complete": false,
+      "unsupported_response_schema": true
+    },
+    "Marketplace type 44": {
+      "collected": 0,
+      "unique_collected": 0,
+      "duplicate_rows": 0,
+      "expected": null,
+      "complete": false,
+      "unsupported_response_schema": true
+    },
+    "Marketplace type 45": {
+      "collected": 0,
+      "unique_collected": 0,
+      "duplicate_rows": 0,
+      "expected": null,
+      "complete": false,
+      "unsupported_response_schema": true
+    },
+    "Marketplace type 46": {
+      "collected": 0,
+      "unique_collected": 0,
+      "duplicate_rows": 0,
+      "expected": null,
+      "complete": false,
+      "unsupported_response_schema": true
+    },
+    "Marketplace type 47": {
+      "collected": 0,
+      "unique_collected": 0,
+      "duplicate_rows": 0,
+      "expected": null,
+      "complete": false,
+      "unsupported_response_schema": true
+    },
+    "Marketplace type 48": {
+      "collected": 0,
+      "unique_collected": 0,
+      "duplicate_rows": 0,
+      "expected": null,
+      "complete": false,
+      "unsupported_response_schema": true
+    },
+    "Marketplace type 49": {
+      "collected": 0,
+      "unique_collected": 0,
+      "duplicate_rows": 0,
+      "expected": null,
+      "complete": false,
+      "unsupported_response_schema": true
+    },
+    "Marketplace type 50": {
+      "collected": 0,
+      "unique_collected": 0,
+      "duplicate_rows": 0,
+      "expected": null,
+      "complete": false,
+      "unsupported_response_schema": true
+    },
+    "Marketplace type 51": {
+      "collected": 0,
+      "unique_collected": 0,
+      "duplicate_rows": 0,
+      "expected": null,
+      "complete": false,
+      "unsupported_response_schema": true
+    },
+    "Marketplace type 52": {
+      "collected": 0,
+      "unique_collected": 0,
+      "duplicate_rows": 0,
+      "expected": null,
+      "complete": false,
+      "unsupported_response_schema": true
+    },
+    "Marketplace type 53": {
+      "collected": 0,
+      "unique_collected": 0,
+      "duplicate_rows": 0,
+      "expected": null,
+      "complete": false,
+      "unsupported_response_schema": true
+    },
+    "Marketplace type 54": {
+      "collected": 0,
+      "unique_collected": 0,
+      "duplicate_rows": 0,
+      "expected": null,
+      "complete": false,
+      "unsupported_response_schema": true
+    },
+    "Marketplace type 55": {
+      "collected": 0,
+      "unique_collected": 0,
+      "duplicate_rows": 0,
+      "expected": null,
+      "complete": false,
+      "unsupported_response_schema": true
+    },
+    "Marketplace type 56": {
+      "collected": 0,
+      "unique_collected": 0,
+      "duplicate_rows": 0,
+      "expected": null,
+      "complete": false,
+      "unsupported_response_schema": true
+    },
+    "Marketplace type 57": {
+      "collected": 0,
+      "unique_collected": 0,
+      "duplicate_rows": 0,
+      "expected": null,
+      "complete": false,
+      "unsupported_response_schema": true
+    },
+    "Marketplace type 58": {
+      "collected": 0,
+      "unique_collected": 0,
+      "duplicate_rows": 0,
+      "expected": null,
+      "complete": false,
+      "unsupported_response_schema": true
+    },
+    "Marketplace type 59": {
+      "collected": 0,
+      "unique_collected": 0,
+      "duplicate_rows": 0,
+      "expected": null,
+      "complete": false,
+      "unsupported_response_schema": true
+    },
+    "Marketplace type 60": {
+      "collected": 0,
+      "unique_collected": 0,
+      "duplicate_rows": 0,
+      "expected": null,
+      "complete": false,
+      "unsupported_response_schema": true
+    },
+    "Marketplace type 61": {
+      "collected": 0,
+      "unique_collected": 0,
+      "duplicate_rows": 0,
+      "expected": null,
+      "complete": false,
+      "unsupported_response_schema": true
+    },
+    "Marketplace type 62": {
+      "collected": 0,
+      "unique_collected": 0,
+      "duplicate_rows": 0,
+      "expected": null,
+      "complete": false,
+      "unsupported_response_schema": true
+    },
+    "Marketplace type 63": {
+      "collected": 0,
+      "unique_collected": 0,
+      "duplicate_rows": 0,
+      "expected": null,
+      "complete": false,
+      "unsupported_response_schema": true
+    },
+    "Marketplace type 64": {
+      "collected": 0,
+      "unique_collected": 0,
+      "duplicate_rows": 0,
+      "expected": null,
+      "complete": false,
+      "unsupported_response_schema": true
+    },
+    "Marketplace type 65": {
+      "collected": 0,
+      "unique_collected": 0,
+      "duplicate_rows": 0,
+      "expected": null,
+      "complete": false,
+      "unsupported_response_schema": true
+    },
+    "Marketplace type 66": {
+      "collected": 0,
+      "unique_collected": 0,
+      "duplicate_rows": 0,
+      "expected": null,
+      "complete": false,
+      "unsupported_response_schema": true
+    },
+    "Marketplace type 67": {
+      "collected": 0,
+      "unique_collected": 0,
+      "duplicate_rows": 0,
+      "expected": null,
+      "complete": false,
+      "unsupported_response_schema": true
+    },
+    "Marketplace type 68": {
+      "collected": 0,
+      "unique_collected": 0,
+      "duplicate_rows": 0,
+      "expected": null,
+      "complete": false,
+      "unsupported_response_schema": true
+    },
+    "Marketplace type 69": {
+      "collected": 0,
+      "unique_collected": 0,
+      "duplicate_rows": 0,
+      "expected": null,
+      "complete": false,
+      "unsupported_response_schema": true
+    },
+    "Marketplace type 70": {
+      "collected": 0,
+      "unique_collected": 0,
+      "duplicate_rows": 0,
+      "expected": null,
+      "complete": false,
+      "unsupported_response_schema": true
+    },
+    "Marketplace type 71": {
+      "collected": 0,
+      "unique_collected": 0,
+      "duplicate_rows": 0,
+      "expected": null,
+      "complete": false,
+      "unsupported_response_schema": true
+    },
+    "Marketplace type 72": {
+      "collected": 0,
+      "unique_collected": 0,
+      "duplicate_rows": 0,
+      "expected": null,
+      "complete": false,
+      "unsupported_response_schema": true
+    },
+    "Marketplace type 73": {
+      "collected": 0,
+      "unique_collected": 0,
+      "duplicate_rows": 0,
+      "expected": null,
+      "complete": false,
+      "unsupported_response_schema": true
+    },
+    "Marketplace type 74": {
+      "collected": 0,
+      "unique_collected": 0,
+      "duplicate_rows": 0,
+      "expected": null,
+      "complete": false,
+      "unsupported_response_schema": true
+    },
+    "Marketplace type 75": {
+      "collected": 0,
+      "unique_collected": 0,
+      "duplicate_rows": 0,
+      "expected": null,
+      "complete": false,
+      "unsupported_response_schema": true
+    },
+    "Marketplace type 76": {
+      "collected": 0,
+      "unique_collected": 0,
+      "duplicate_rows": 0,
+      "expected": null,
+      "complete": false,
+      "unsupported_response_schema": true
+    },
+    "Marketplace type 77": {
+      "collected": 0,
+      "unique_collected": 0,
+      "duplicate_rows": 0,
+      "expected": null,
+      "complete": false,
+      "unsupported_response_schema": true
+    },
+    "Marketplace type 78": {
+      "collected": 0,
+      "unique_collected": 0,
+      "duplicate_rows": 0,
+      "expected": null,
+      "complete": false,
+      "unsupported_response_schema": true
+    },
+    "Marketplace type 79": {
+      "collected": 0,
+      "unique_collected": 0,
+      "duplicate_rows": 0,
+      "expected": null,
+      "complete": false,
+      "unsupported_response_schema": true
+    },
+    "Marketplace type 80": {
+      "collected": 0,
+      "unique_collected": 0,
+      "duplicate_rows": 0,
+      "expected": null,
+      "complete": false,
+      "unsupported_response_schema": true
+    },
+    "Marketplace type 81": {
+      "collected": 0,
+      "unique_collected": 0,
+      "duplicate_rows": 0,
+      "expected": null,
+      "complete": false,
+      "unsupported_response_schema": true
+    },
+    "Marketplace type 82": {
+      "collected": 0,
+      "unique_collected": 0,
+      "duplicate_rows": 0,
+      "expected": null,
+      "complete": false,
+      "unsupported_response_schema": true
+    },
+    "Marketplace type 83": {
+      "collected": 0,
+      "unique_collected": 0,
+      "duplicate_rows": 0,
+      "expected": null,
+      "complete": false,
+      "unsupported_response_schema": true
+    },
+    "Marketplace type 84": {
+      "collected": 0,
+      "unique_collected": 0,
+      "duplicate_rows": 0,
+      "expected": null,
+      "complete": false,
+      "unsupported_response_schema": true
+    },
+    "Marketplace type 85": {
+      "collected": 0,
+      "unique_collected": 0,
+      "duplicate_rows": 0,
+      "expected": null,
+      "complete": false,
+      "unsupported_response_schema": true
+    },
+    "Marketplace type 86": {
+      "collected": 0,
+      "unique_collected": 0,
+      "duplicate_rows": 0,
+      "expected": null,
+      "complete": false,
+      "unsupported_response_schema": true
+    },
+    "Marketplace type 87": {
+      "collected": 0,
+      "unique_collected": 0,
+      "duplicate_rows": 0,
+      "expected": null,
+      "complete": false,
+      "unsupported_response_schema": true
+    },
+    "Marketplace type 88": {
+      "collected": 0,
+      "unique_collected": 0,
+      "duplicate_rows": 0,
+      "expected": null,
+      "complete": false,
+      "unsupported_response_schema": true
+    },
+    "Marketplace type 89": {
+      "collected": 0,
+      "unique_collected": 0,
+      "duplicate_rows": 0,
+      "expected": null,
+      "complete": false,
+      "unsupported_response_schema": true
+    },
+    "Marketplace type 90": {
+      "collected": 0,
+      "unique_collected": 0,
+      "duplicate_rows": 0,
+      "expected": null,
+      "complete": false,
+      "unsupported_response_schema": true
+    },
+    "Marketplace type 91": {
+      "collected": 0,
+      "unique_collected": 0,
+      "duplicate_rows": 0,
+      "expected": null,
+      "complete": false,
+      "unsupported_response_schema": true
+    },
+    "Marketplace type 92": {
+      "collected": 0,
+      "unique_collected": 0,
+      "duplicate_rows": 0,
+      "expected": null,
+      "complete": false,
+      "unsupported_response_schema": true
+    },
+    "Marketplace type 93": {
+      "collected": 0,
+      "unique_collected": 0,
+      "duplicate_rows": 0,
+      "expected": null,
+      "complete": false,
+      "unsupported_response_schema": true
+    },
+    "Marketplace type 94": {
+      "collected": 0,
+      "unique_collected": 0,
+      "duplicate_rows": 0,
+      "expected": null,
+      "complete": false,
+      "unsupported_response_schema": true
+    },
+    "Marketplace type 95": {
+      "collected": 0,
+      "unique_collected": 0,
+      "duplicate_rows": 0,
+      "expected": null,
+      "complete": false,
+      "unsupported_response_schema": true
+    },
+    "Marketplace type 96": {
+      "collected": 0,
+      "unique_collected": 0,
+      "duplicate_rows": 0,
+      "expected": null,
+      "complete": false,
+      "unsupported_response_schema": true
+    },
+    "Marketplace type 97": {
+      "collected": 0,
+      "unique_collected": 0,
+      "duplicate_rows": 0,
+      "expected": null,
+      "complete": false,
+      "unsupported_response_schema": true
+    },
+    "Marketplace type 98": {
+      "collected": 0,
+      "unique_collected": 0,
+      "duplicate_rows": 0,
+      "expected": null,
+      "complete": false,
+      "unsupported_response_schema": true
+    },
+    "Marketplace type 99": {
+      "collected": 0,
+      "unique_collected": 0,
+      "duplicate_rows": 0,
+      "expected": null,
+      "complete": false,
+      "unsupported_response_schema": true
+    },
+    "Marketplace type 100": {
+      "collected": 0,
+      "unique_collected": 0,
+      "duplicate_rows": 0,
+      "expected": null,
+      "complete": false,
+      "unsupported_response_schema": true
     },
     "Futures DCA": {
-      "collected": 1565,
-      "unique_collected": 1565,
+      "collected": 1458,
+      "unique_collected": 1458,
       "duplicate_rows": 0,
-      "expected": 1565,
-      "complete": true
+      "expected": 1458,
+      "complete": true,
+      "unsupported_response_schema": false
     }
   },
   "grid_profit_exact": 0,
   "detail_capture": {
     "budget_s": 900,
-    "candidates": 6813,
-    "visited": 809,
-    "pending": 809,
+    "candidates": 6877,
+    "visited": 762,
+    "pending": 762,
     "captured": 0,
     "errors": 0,
     "endpoints_with_profit_fields": [],
@@ -180,288 +921,838 @@
       "category": "Marketplace type 12",
       "page": 1,
       "attempt": 1,
-      "error": "JSON payload has no list-valued data field"
-    },
-    {
-      "endpoint": "https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryTopStrategy",
-      "category": "Marketplace type 12",
-      "page": 1,
-      "attempt": 2,
-      "error": "JSON payload has no list-valued data field"
-    },
-    {
-      "endpoint": "https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryTopStrategy",
-      "category": "Marketplace type 12",
-      "page": 1,
-      "attempt": 3,
-      "error": "JSON payload has no list-valued data field"
-    },
-    {
-      "endpoint": "https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryTopStrategy",
-      "category": "Marketplace type 12",
-      "page": 1,
-      "attempt": 4,
-      "error": "JSON payload has no list-valued data field"
+      "error": "Unrecognized strategy-list response schema",
+      "response_keys": [
+        "code",
+        "data",
+        "message",
+        "messageDetail",
+        "success",
+        "total"
+      ],
+      "response_preview": "{\"code\": \"000000\", \"message\": null, \"messageDetail\": null, \"data\": null, \"total\": 0, \"success\": true}"
     },
     {
       "endpoint": "https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryTopStrategy",
       "category": "Marketplace type 13",
       "page": 1,
       "attempt": 1,
-      "error": "JSON payload has no list-valued data field"
-    },
-    {
-      "endpoint": "https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryTopStrategy",
-      "category": "Marketplace type 13",
-      "page": 1,
-      "attempt": 2,
-      "error": "JSON payload has no list-valued data field"
-    },
-    {
-      "endpoint": "https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryTopStrategy",
-      "category": "Marketplace type 13",
-      "page": 1,
-      "attempt": 3,
-      "error": "JSON payload has no list-valued data field"
-    },
-    {
-      "endpoint": "https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryTopStrategy",
-      "category": "Marketplace type 13",
-      "page": 1,
-      "attempt": 4,
-      "error": "JSON payload has no list-valued data field"
+      "error": "Unrecognized strategy-list response schema",
+      "response_keys": [
+        "code",
+        "data",
+        "message",
+        "messageDetail",
+        "success",
+        "total"
+      ],
+      "response_preview": "{\"code\": \"000000\", \"message\": null, \"messageDetail\": null, \"data\": null, \"total\": 0, \"success\": true}"
     },
     {
       "endpoint": "https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryTopStrategy",
       "category": "Marketplace type 14",
       "page": 1,
       "attempt": 1,
-      "error": "JSON payload has no list-valued data field"
-    },
-    {
-      "endpoint": "https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryTopStrategy",
-      "category": "Marketplace type 14",
-      "page": 1,
-      "attempt": 2,
-      "error": "JSON payload has no list-valued data field"
-    },
-    {
-      "endpoint": "https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryTopStrategy",
-      "category": "Marketplace type 14",
-      "page": 1,
-      "attempt": 3,
-      "error": "JSON payload has no list-valued data field"
-    },
-    {
-      "endpoint": "https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryTopStrategy",
-      "category": "Marketplace type 14",
-      "page": 1,
-      "attempt": 4,
-      "error": "JSON payload has no list-valued data field"
+      "error": "Unrecognized strategy-list response schema",
+      "response_keys": [
+        "code",
+        "data",
+        "message",
+        "messageDetail",
+        "success",
+        "total"
+      ],
+      "response_preview": "{\"code\": \"000000\", \"message\": null, \"messageDetail\": null, \"data\": null, \"total\": 0, \"success\": true}"
     },
     {
       "endpoint": "https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryTopStrategy",
       "category": "Marketplace type 15",
       "page": 1,
       "attempt": 1,
-      "error": "JSON payload has no list-valued data field"
-    },
-    {
-      "endpoint": "https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryTopStrategy",
-      "category": "Marketplace type 15",
-      "page": 1,
-      "attempt": 2,
-      "error": "JSON payload has no list-valued data field"
-    },
-    {
-      "endpoint": "https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryTopStrategy",
-      "category": "Marketplace type 15",
-      "page": 1,
-      "attempt": 3,
-      "error": "JSON payload has no list-valued data field"
-    },
-    {
-      "endpoint": "https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryTopStrategy",
-      "category": "Marketplace type 15",
-      "page": 1,
-      "attempt": 4,
-      "error": "JSON payload has no list-valued data field"
+      "error": "Unrecognized strategy-list response schema",
+      "response_keys": [
+        "code",
+        "data",
+        "message",
+        "messageDetail",
+        "success",
+        "total"
+      ],
+      "response_preview": "{\"code\": \"000000\", \"message\": null, \"messageDetail\": null, \"data\": null, \"total\": 0, \"success\": true}"
     },
     {
       "endpoint": "https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryTopStrategy",
       "category": "Marketplace type 16",
       "page": 1,
       "attempt": 1,
-      "error": "JSON payload has no list-valued data field"
-    },
-    {
-      "endpoint": "https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryTopStrategy",
-      "category": "Marketplace type 16",
-      "page": 1,
-      "attempt": 2,
-      "error": "JSON payload has no list-valued data field"
-    },
-    {
-      "endpoint": "https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryTopStrategy",
-      "category": "Marketplace type 16",
-      "page": 1,
-      "attempt": 3,
-      "error": "JSON payload has no list-valued data field"
-    },
-    {
-      "endpoint": "https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryTopStrategy",
-      "category": "Marketplace type 16",
-      "page": 1,
-      "attempt": 4,
-      "error": "JSON payload has no list-valued data field"
+      "error": "Unrecognized strategy-list response schema",
+      "response_keys": [
+        "code",
+        "data",
+        "message",
+        "messageDetail",
+        "success",
+        "total"
+      ],
+      "response_preview": "{\"code\": \"000000\", \"message\": null, \"messageDetail\": null, \"data\": null, \"total\": 0, \"success\": true}"
     },
     {
       "endpoint": "https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryTopStrategy",
       "category": "Marketplace type 17",
       "page": 1,
       "attempt": 1,
-      "error": "JSON payload has no list-valued data field"
-    },
-    {
-      "endpoint": "https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryTopStrategy",
-      "category": "Marketplace type 17",
-      "page": 1,
-      "attempt": 2,
-      "error": "JSON payload has no list-valued data field"
-    },
-    {
-      "endpoint": "https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryTopStrategy",
-      "category": "Marketplace type 17",
-      "page": 1,
-      "attempt": 3,
-      "error": "JSON payload has no list-valued data field"
-    },
-    {
-      "endpoint": "https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryTopStrategy",
-      "category": "Marketplace type 17",
-      "page": 1,
-      "attempt": 4,
-      "error": "JSON payload has no list-valued data field"
+      "error": "Unrecognized strategy-list response schema",
+      "response_keys": [
+        "code",
+        "data",
+        "message",
+        "messageDetail",
+        "success",
+        "total"
+      ],
+      "response_preview": "{\"code\": \"000000\", \"message\": null, \"messageDetail\": null, \"data\": null, \"total\": 0, \"success\": true}"
     },
     {
       "endpoint": "https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryTopStrategy",
       "category": "Marketplace type 18",
       "page": 1,
       "attempt": 1,
-      "error": "JSON payload has no list-valued data field"
-    },
-    {
-      "endpoint": "https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryTopStrategy",
-      "category": "Marketplace type 18",
-      "page": 1,
-      "attempt": 2,
-      "error": "JSON payload has no list-valued data field"
-    },
-    {
-      "endpoint": "https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryTopStrategy",
-      "category": "Marketplace type 18",
-      "page": 1,
-      "attempt": 3,
-      "error": "JSON payload has no list-valued data field"
-    },
-    {
-      "endpoint": "https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryTopStrategy",
-      "category": "Marketplace type 18",
-      "page": 1,
-      "attempt": 4,
-      "error": "JSON payload has no list-valued data field"
+      "error": "Unrecognized strategy-list response schema",
+      "response_keys": [
+        "code",
+        "data",
+        "message",
+        "messageDetail",
+        "success",
+        "total"
+      ],
+      "response_preview": "{\"code\": \"000000\", \"message\": null, \"messageDetail\": null, \"data\": null, \"total\": 0, \"success\": true}"
     },
     {
       "endpoint": "https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryTopStrategy",
       "category": "Marketplace type 19",
       "page": 1,
       "attempt": 1,
-      "error": "JSON payload has no list-valued data field"
-    },
-    {
-      "endpoint": "https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryTopStrategy",
-      "category": "Marketplace type 19",
-      "page": 1,
-      "attempt": 2,
-      "error": "JSON payload has no list-valued data field"
-    },
-    {
-      "endpoint": "https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryTopStrategy",
-      "category": "Marketplace type 19",
-      "page": 1,
-      "attempt": 3,
-      "error": "JSON payload has no list-valued data field"
-    },
-    {
-      "endpoint": "https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryTopStrategy",
-      "category": "Marketplace type 19",
-      "page": 1,
-      "attempt": 4,
-      "error": "JSON payload has no list-valued data field"
+      "error": "Unrecognized strategy-list response schema",
+      "response_keys": [
+        "code",
+        "data",
+        "message",
+        "messageDetail",
+        "success",
+        "total"
+      ],
+      "response_preview": "{\"code\": \"000000\", \"message\": null, \"messageDetail\": null, \"data\": null, \"total\": 0, \"success\": true}"
     },
     {
       "endpoint": "https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryTopStrategy",
       "category": "Marketplace type 20",
       "page": 1,
       "attempt": 1,
-      "error": "JSON payload has no list-valued data field"
+      "error": "Unrecognized strategy-list response schema",
+      "response_keys": [
+        "code",
+        "data",
+        "message",
+        "messageDetail",
+        "success",
+        "total"
+      ],
+      "response_preview": "{\"code\": \"000000\", \"message\": null, \"messageDetail\": null, \"data\": null, \"total\": 0, \"success\": true}"
     },
     {
       "endpoint": "https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryTopStrategy",
-      "category": "Marketplace type 20",
+      "category": "Marketplace type 21",
       "page": 1,
-      "attempt": 2,
-      "error": "JSON payload has no list-valued data field"
+      "attempt": 1,
+      "error": "Unrecognized strategy-list response schema",
+      "response_keys": [
+        "code",
+        "data",
+        "message",
+        "messageDetail",
+        "success",
+        "total"
+      ],
+      "response_preview": "{\"code\": \"000000\", \"message\": null, \"messageDetail\": null, \"data\": null, \"total\": 0, \"success\": true}"
     },
     {
       "endpoint": "https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryTopStrategy",
-      "category": "Marketplace type 20",
+      "category": "Marketplace type 22",
       "page": 1,
-      "attempt": 3,
-      "error": "JSON payload has no list-valued data field"
+      "attempt": 1,
+      "error": "Unrecognized strategy-list response schema",
+      "response_keys": [
+        "code",
+        "data",
+        "message",
+        "messageDetail",
+        "success",
+        "total"
+      ],
+      "response_preview": "{\"code\": \"000000\", \"message\": null, \"messageDetail\": null, \"data\": null, \"total\": 0, \"success\": true}"
     },
     {
       "endpoint": "https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryTopStrategy",
-      "category": "Marketplace type 20",
+      "category": "Marketplace type 23",
       "page": 1,
-      "attempt": 4,
-      "error": "JSON payload has no list-valued data field"
+      "attempt": 1,
+      "error": "Unrecognized strategy-list response schema",
+      "response_keys": [
+        "code",
+        "data",
+        "message",
+        "messageDetail",
+        "success",
+        "total"
+      ],
+      "response_preview": "{\"code\": \"000000\", \"message\": null, \"messageDetail\": null, \"data\": null, \"total\": 0, \"success\": true}"
+    },
+    {
+      "endpoint": "https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryTopStrategy",
+      "category": "Marketplace type 24",
+      "page": 1,
+      "attempt": 1,
+      "error": "Unrecognized strategy-list response schema",
+      "response_keys": [
+        "code",
+        "data",
+        "message",
+        "messageDetail",
+        "success",
+        "total"
+      ],
+      "response_preview": "{\"code\": \"000000\", \"message\": null, \"messageDetail\": null, \"data\": null, \"total\": 0, \"success\": true}"
+    },
+    {
+      "endpoint": "https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryTopStrategy",
+      "category": "Marketplace type 25",
+      "page": 1,
+      "attempt": 1,
+      "error": "Unrecognized strategy-list response schema",
+      "response_keys": [
+        "code",
+        "data",
+        "message",
+        "messageDetail",
+        "success",
+        "total"
+      ],
+      "response_preview": "{\"code\": \"000000\", \"message\": null, \"messageDetail\": null, \"data\": null, \"total\": 0, \"success\": true}"
+    },
+    {
+      "endpoint": "https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryTopStrategy",
+      "category": "Marketplace type 26",
+      "page": 1,
+      "attempt": 1,
+      "error": "Unrecognized strategy-list response schema",
+      "response_keys": [
+        "code",
+        "data",
+        "message",
+        "messageDetail",
+        "success",
+        "total"
+      ],
+      "response_preview": "{\"code\": \"000000\", \"message\": null, \"messageDetail\": null, \"data\": null, \"total\": 0, \"success\": true}"
+    },
+    {
+      "endpoint": "https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryTopStrategy",
+      "category": "Marketplace type 27",
+      "page": 1,
+      "attempt": 1,
+      "error": "Unrecognized strategy-list response schema",
+      "response_keys": [
+        "code",
+        "data",
+        "message",
+        "messageDetail",
+        "success",
+        "total"
+      ],
+      "response_preview": "{\"code\": \"000000\", \"message\": null, \"messageDetail\": null, \"data\": null, \"total\": 0, \"success\": true}"
+    },
+    {
+      "endpoint": "https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryTopStrategy",
+      "category": "Marketplace type 28",
+      "page": 1,
+      "attempt": 1,
+      "error": "Unrecognized strategy-list response schema",
+      "response_keys": [
+        "code",
+        "data",
+        "message",
+        "messageDetail",
+        "success",
+        "total"
+      ],
+      "response_preview": "{\"code\": \"000000\", \"message\": null, \"messageDetail\": null, \"data\": null, \"total\": 0, \"success\": true}"
+    },
+    {
+      "endpoint": "https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryTopStrategy",
+      "category": "Marketplace type 29",
+      "page": 1,
+      "attempt": 1,
+      "error": "Unrecognized strategy-list response schema",
+      "response_keys": [
+        "code",
+        "data",
+        "message",
+        "messageDetail",
+        "success",
+        "total"
+      ],
+      "response_preview": "{\"code\": \"000000\", \"message\": null, \"messageDetail\": null, \"data\": null, \"total\": 0, \"success\": true}"
+    },
+    {
+      "endpoint": "https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryTopStrategy",
+      "category": "Marketplace type 30",
+      "page": 1,
+      "attempt": 1,
+      "error": "Unrecognized strategy-list response schema",
+      "response_keys": [
+        "code",
+        "data",
+        "message",
+        "messageDetail",
+        "success",
+        "total"
+      ],
+      "response_preview": "{\"code\": \"000000\", \"message\": null, \"messageDetail\": null, \"data\": null, \"total\": 0, \"success\": true}"
+    },
+    {
+      "endpoint": "https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryTopStrategy",
+      "category": "Marketplace type 31",
+      "page": 1,
+      "attempt": 1,
+      "error": "Unrecognized strategy-list response schema",
+      "response_keys": [
+        "code",
+        "data",
+        "message",
+        "messageDetail",
+        "success",
+        "total"
+      ],
+      "response_preview": "{\"code\": \"000000\", \"message\": null, \"messageDetail\": null, \"data\": null, \"total\": 0, \"success\": true}"
+    },
+    {
+      "endpoint": "https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryTopStrategy",
+      "category": "Marketplace type 32",
+      "page": 1,
+      "attempt": 1,
+      "error": "Unrecognized strategy-list response schema",
+      "response_keys": [
+        "code",
+        "data",
+        "message",
+        "messageDetail",
+        "success",
+        "total"
+      ],
+      "response_preview": "{\"code\": \"000000\", \"message\": null, \"messageDetail\": null, \"data\": null, \"total\": 0, \"success\": true}"
+    },
+    {
+      "endpoint": "https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryTopStrategy",
+      "category": "Marketplace type 33",
+      "page": 1,
+      "attempt": 1,
+      "error": "Unrecognized strategy-list response schema",
+      "response_keys": [
+        "code",
+        "data",
+        "message",
+        "messageDetail",
+        "success",
+        "total"
+      ],
+      "response_preview": "{\"code\": \"000000\", \"message\": null, \"messageDetail\": null, \"data\": null, \"total\": 0, \"success\": true}"
+    },
+    {
+      "endpoint": "https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryTopStrategy",
+      "category": "Marketplace type 34",
+      "page": 1,
+      "attempt": 1,
+      "error": "Unrecognized strategy-list response schema",
+      "response_keys": [
+        "code",
+        "data",
+        "message",
+        "messageDetail",
+        "success",
+        "total"
+      ],
+      "response_preview": "{\"code\": \"000000\", \"message\": null, \"messageDetail\": null, \"data\": null, \"total\": 0, \"success\": true}"
+    },
+    {
+      "endpoint": "https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryTopStrategy",
+      "category": "Marketplace type 35",
+      "page": 1,
+      "attempt": 1,
+      "error": "Unrecognized strategy-list response schema",
+      "response_keys": [
+        "code",
+        "data",
+        "message",
+        "messageDetail",
+        "success",
+        "total"
+      ],
+      "response_preview": "{\"code\": \"000000\", \"message\": null, \"messageDetail\": null, \"data\": null, \"total\": 0, \"success\": true}"
+    },
+    {
+      "endpoint": "https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryTopStrategy",
+      "category": "Marketplace type 36",
+      "page": 1,
+      "attempt": 1,
+      "error": "Unrecognized strategy-list response schema",
+      "response_keys": [
+        "code",
+        "data",
+        "message",
+        "messageDetail",
+        "success",
+        "total"
+      ],
+      "response_preview": "{\"code\": \"000000\", \"message\": null, \"messageDetail\": null, \"data\": null, \"total\": 0, \"success\": true}"
+    },
+    {
+      "endpoint": "https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryTopStrategy",
+      "category": "Marketplace type 37",
+      "page": 1,
+      "attempt": 1,
+      "error": "Unrecognized strategy-list response schema",
+      "response_keys": [
+        "code",
+        "data",
+        "message",
+        "messageDetail",
+        "success",
+        "total"
+      ],
+      "response_preview": "{\"code\": \"000000\", \"message\": null, \"messageDetail\": null, \"data\": null, \"total\": 0, \"success\": true}"
+    },
+    {
+      "endpoint": "https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryTopStrategy",
+      "category": "Marketplace type 38",
+      "page": 1,
+      "attempt": 1,
+      "error": "Unrecognized strategy-list response schema",
+      "response_keys": [
+        "code",
+        "data",
+        "message",
+        "messageDetail",
+        "success",
+        "total"
+      ],
+      "response_preview": "{\"code\": \"000000\", \"message\": null, \"messageDetail\": null, \"data\": null, \"total\": 0, \"success\": true}"
+    },
+    {
+      "endpoint": "https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryTopStrategy",
+      "category": "Marketplace type 39",
+      "page": 1,
+      "attempt": 1,
+      "error": "Unrecognized strategy-list response schema",
+      "response_keys": [
+        "code",
+        "data",
+        "message",
+        "messageDetail",
+        "success",
+        "total"
+      ],
+      "response_preview": "{\"code\": \"000000\", \"message\": null, \"messageDetail\": null, \"data\": null, \"total\": 0, \"success\": true}"
+    },
+    {
+      "endpoint": "https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryTopStrategy",
+      "category": "Marketplace type 40",
+      "page": 1,
+      "attempt": 1,
+      "error": "Unrecognized strategy-list response schema",
+      "response_keys": [
+        "code",
+        "data",
+        "message",
+        "messageDetail",
+        "success",
+        "total"
+      ],
+      "response_preview": "{\"code\": \"000000\", \"message\": null, \"messageDetail\": null, \"data\": null, \"total\": 0, \"success\": true}"
+    },
+    {
+      "endpoint": "https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryTopStrategy",
+      "category": "Marketplace type 41",
+      "page": 1,
+      "attempt": 1,
+      "error": "Unrecognized strategy-list response schema",
+      "response_keys": [
+        "code",
+        "data",
+        "message",
+        "messageDetail",
+        "success",
+        "total"
+      ],
+      "response_preview": "{\"code\": \"000000\", \"message\": null, \"messageDetail\": null, \"data\": null, \"total\": 0, \"success\": true}"
+    },
+    {
+      "endpoint": "https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryTopStrategy",
+      "category": "Marketplace type 42",
+      "page": 1,
+      "attempt": 1,
+      "error": "Unrecognized strategy-list response schema",
+      "response_keys": [
+        "code",
+        "data",
+        "message",
+        "messageDetail",
+        "success",
+        "total"
+      ],
+      "response_preview": "{\"code\": \"000000\", \"message\": null, \"messageDetail\": null, \"data\": null, \"total\": 0, \"success\": true}"
+    },
+    {
+      "endpoint": "https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryTopStrategy",
+      "category": "Marketplace type 43",
+      "page": 1,
+      "attempt": 1,
+      "error": "Unrecognized strategy-list response schema",
+      "response_keys": [
+        "code",
+        "data",
+        "message",
+        "messageDetail",
+        "success",
+        "total"
+      ],
+      "response_preview": "{\"code\": \"000000\", \"message\": null, \"messageDetail\": null, \"data\": null, \"total\": 0, \"success\": true}"
+    },
+    {
+      "endpoint": "https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryTopStrategy",
+      "category": "Marketplace type 44",
+      "page": 1,
+      "attempt": 1,
+      "error": "Unrecognized strategy-list response schema",
+      "response_keys": [
+        "code",
+        "data",
+        "message",
+        "messageDetail",
+        "success",
+        "total"
+      ],
+      "response_preview": "{\"code\": \"000000\", \"message\": null, \"messageDetail\": null, \"data\": null, \"total\": 0, \"success\": true}"
+    },
+    {
+      "endpoint": "https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryTopStrategy",
+      "category": "Marketplace type 45",
+      "page": 1,
+      "attempt": 1,
+      "error": "Unrecognized strategy-list response schema",
+      "response_keys": [
+        "code",
+        "data",
+        "message",
+        "messageDetail",
+        "success",
+        "total"
+      ],
+      "response_preview": "{\"code\": \"000000\", \"message\": null, \"messageDetail\": null, \"data\": null, \"total\": 0, \"success\": true}"
+    },
+    {
+      "endpoint": "https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryTopStrategy",
+      "category": "Marketplace type 46",
+      "page": 1,
+      "attempt": 1,
+      "error": "Unrecognized strategy-list response schema",
+      "response_keys": [
+        "code",
+        "data",
+        "message",
+        "messageDetail",
+        "success",
+        "total"
+      ],
+      "response_preview": "{\"code\": \"000000\", \"message\": null, \"messageDetail\": null, \"data\": null, \"total\": 0, \"success\": true}"
+    },
+    {
+      "endpoint": "https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryTopStrategy",
+      "category": "Marketplace type 47",
+      "page": 1,
+      "attempt": 1,
+      "error": "Unrecognized strategy-list response schema",
+      "response_keys": [
+        "code",
+        "data",
+        "message",
+        "messageDetail",
+        "success",
+        "total"
+      ],
+      "response_preview": "{\"code\": \"000000\", \"message\": null, \"messageDetail\": null, \"data\": null, \"total\": 0, \"success\": true}"
+    },
+    {
+      "endpoint": "https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryTopStrategy",
+      "category": "Marketplace type 48",
+      "page": 1,
+      "attempt": 1,
+      "error": "Unrecognized strategy-list response schema",
+      "response_keys": [
+        "code",
+        "data",
+        "message",
+        "messageDetail",
+        "success",
+        "total"
+      ],
+      "response_preview": "{\"code\": \"000000\", \"message\": null, \"messageDetail\": null, \"data\": null, \"total\": 0, \"success\": true}"
+    },
+    {
+      "endpoint": "https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryTopStrategy",
+      "category": "Marketplace type 49",
+      "page": 1,
+      "attempt": 1,
+      "error": "Unrecognized strategy-list response schema",
+      "response_keys": [
+        "code",
+        "data",
+        "message",
+        "messageDetail",
+        "success",
+        "total"
+      ],
+      "response_preview": "{\"code\": \"000000\", \"message\": null, \"messageDetail\": null, \"data\": null, \"total\": 0, \"success\": true}"
+    },
+    {
+      "endpoint": "https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryTopStrategy",
+      "category": "Marketplace type 50",
+      "page": 1,
+      "attempt": 1,
+      "error": "Unrecognized strategy-list response schema",
+      "response_keys": [
+        "code",
+        "data",
+        "message",
+        "messageDetail",
+        "success",
+        "total"
+      ],
+      "response_preview": "{\"code\": \"000000\", \"message\": null, \"messageDetail\": null, \"data\": null, \"total\": 0, \"success\": true}"
+    },
+    {
+      "endpoint": "https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryTopStrategy",
+      "category": "Marketplace type 51",
+      "page": 1,
+      "attempt": 1,
+      "error": "Unrecognized strategy-list response schema",
+      "response_keys": [
+        "code",
+        "data",
+        "message",
+        "messageDetail",
+        "success",
+        "total"
+      ],
+      "response_preview": "{\"code\": \"000000\", \"message\": null, \"messageDetail\": null, \"data\": null, \"total\": 0, \"success\": true}"
+    },
+    {
+      "endpoint": "https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryTopStrategy",
+      "category": "Marketplace type 52",
+      "page": 1,
+      "attempt": 1,
+      "error": "Unrecognized strategy-list response schema",
+      "response_keys": [
+        "code",
+        "data",
+        "message",
+        "messageDetail",
+        "success",
+        "total"
+      ],
+      "response_preview": "{\"code\": \"000000\", \"message\": null, \"messageDetail\": null, \"data\": null, \"total\": 0, \"success\": true}"
+    },
+    {
+      "endpoint": "https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryTopStrategy",
+      "category": "Marketplace type 53",
+      "page": 1,
+      "attempt": 1,
+      "error": "Unrecognized strategy-list response schema",
+      "response_keys": [
+        "code",
+        "data",
+        "message",
+        "messageDetail",
+        "success",
+        "total"
+      ],
+      "response_preview": "{\"code\": \"000000\", \"message\": null, \"messageDetail\": null, \"data\": null, \"total\": 0, \"success\": true}"
+    },
+    {
+      "endpoint": "https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryTopStrategy",
+      "category": "Marketplace type 54",
+      "page": 1,
+      "attempt": 1,
+      "error": "Unrecognized strategy-list response schema",
+      "response_keys": [
+        "code",
+        "data",
+        "message",
+        "messageDetail",
+        "success",
+        "total"
+      ],
+      "response_preview": "{\"code\": \"000000\", \"message\": null, \"messageDetail\": null, \"data\": null, \"total\": 0, \"success\": true}"
+    },
+    {
+      "endpoint": "https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryTopStrategy",
+      "category": "Marketplace type 55",
+      "page": 1,
+      "attempt": 1,
+      "error": "Unrecognized strategy-list response schema",
+      "response_keys": [
+        "code",
+        "data",
+        "message",
+        "messageDetail",
+        "success",
+        "total"
+      ],
+      "response_preview": "{\"code\": \"000000\", \"message\": null, \"messageDetail\": null, \"data\": null, \"total\": 0, \"success\": true}"
+    },
+    {
+      "endpoint": "https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryTopStrategy",
+      "category": "Marketplace type 56",
+      "page": 1,
+      "attempt": 1,
+      "error": "Unrecognized strategy-list response schema",
+      "response_keys": [
+        "code",
+        "data",
+        "message",
+        "messageDetail",
+        "success",
+        "total"
+      ],
+      "response_preview": "{\"code\": \"000000\", \"message\": null, \"messageDetail\": null, \"data\": null, \"total\": 0, \"success\": true}"
+    },
+    {
+      "endpoint": "https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryTopStrategy",
+      "category": "Marketplace type 57",
+      "page": 1,
+      "attempt": 1,
+      "error": "Unrecognized strategy-list response schema",
+      "response_keys": [
+        "code",
+        "data",
+        "message",
+        "messageDetail",
+        "success",
+        "total"
+      ],
+      "response_preview": "{\"code\": \"000000\", \"message\": null, \"messageDetail\": null, \"data\": null, \"total\": 0, \"success\": true}"
+    },
+    {
+      "endpoint": "https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryTopStrategy",
+      "category": "Marketplace type 58",
+      "page": 1,
+      "attempt": 1,
+      "error": "Unrecognized strategy-list response schema",
+      "response_keys": [
+        "code",
+        "data",
+        "message",
+        "messageDetail",
+        "success",
+        "total"
+      ],
+      "response_preview": "{\"code\": \"000000\", \"message\": null, \"messageDetail\": null, \"data\": null, \"total\": 0, \"success\": true}"
+    },
+    {
+      "endpoint": "https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryTopStrategy",
+      "category": "Marketplace type 59",
+      "page": 1,
+      "attempt": 1,
+      "error": "Unrecognized strategy-list response schema",
+      "response_keys": [
+        "code",
+        "data",
+        "message",
+        "messageDetail",
+        "success",
+        "total"
+      ],
+      "response_preview": "{\"code\": \"000000\", \"message\": null, \"messageDetail\": null, \"data\": null, \"total\": 0, \"success\": true}"
+    },
+    {
+      "endpoint": "https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryTopStrategy",
+      "category": "Marketplace type 60",
+      "page": 1,
+      "attempt": 1,
+      "error": "Unrecognized strategy-list response schema",
+      "response_keys": [
+        "code",
+        "data",
+        "message",
+        "messageDetail",
+        "success",
+        "total"
+      ],
+      "response_preview": "{\"code\": \"000000\", \"message\": null, \"messageDetail\": null, \"data\": null, \"total\": 0, \"success\": true}"
+    },
+    {
+      "endpoint": "https://www.binance.com/bapi/futures/v1/public/future/common/strategy/landing-page/queryTopStrategy",
+      "category": "Marketplace type 61",
+      "page": 1,
+      "attempt": 1,
+      "error": "Unrecognized strategy-list response schema",
+      "response_keys": [
+        "code",
+        "data",
+        "message",
+        "messageDetail",
+        "success",
+        "total"
+      ],
+      "response_preview": "{\"code\": \"000000\", \"message\": null, \"messageDetail\": null, \"data\": null, \"total\": 0, \"success\": true}"
     }
   ],
-  "snapshot": "results/history/2026/10/11/20261011T043028Z.csv.gz",
+  "snapshot": "results/history/2026/10/11/20261011T053046Z.csv.gz",
   "old_snapshots_removed": 0,
   "profit_per_grid_fee_reference": "0.10% par ordre (Spot) ; les frais réels varient selon paire / VIP / BNB.",
+  "strategy_type_probe_max": 100,
   "limitations": [
     "Tri Marketplace par PNL : un re-tri pendant la pagination peut sauter ou dupliquer des lignes.",
-    "Seuls les strategyType 1 à 20 sont interrogés."
+    "La collecte publique ne garantit pas les bots privés/arrêtés ni les familles sans endpoint public identifié.",
+    "Tout strategyType dont la réponse BAPI ne contient pas une liste reconnue reste incomplet, jamais supposé vide."
   ],
   "validation": {
-    "reconstructed": 6670,
+    "reconstructed": 6728,
     "exact": 0,
-    "unavailable": 283,
+    "unavailable": 295,
     "unknownSource": 0,
     "orderingErrors": 0,
     "ratioErrors": 0,
     "floatingErrors": 0,
     "sourceErrors": 0,
-    "negativeEstimateRows": 20,
+    "negativeEstimateRows": 19,
     "ratiosOver100Percent": 0,
-    "estimatedRatiosOver100Percent": 3382,
-    "estimatedRatioOver100PositiveTotal": 3382,
+    "estimatedRatiosOver100Percent": 3409,
+    "estimatedRatioOver100PositiveTotal": 3409,
     "estimatedRatioOver100NegativeTotal": 0,
-    "estimatedRatioOver100PositiveGridProfit": 3382,
+    "estimatedRatioOver100PositiveGridProfit": 3409,
     "estimatedRatioOver100NegativeGridProfit": 0,
-    "estimatedRatioOver100ImpliedFloatingNegative": 3382,
+    "estimatedRatioOver100ImpliedFloatingNegative": 3409,
     "estimatedRatioOver100ImpliedFloatingNonNegative": 0,
     "estimatedRatioOver100Examples": [
       {
         "strategyId": "8205304",
         "symbol": "LINKETH",
         "category": "Spot Grid",
-        "totalProfit": 158927.75768962,
-        "estimatedGridProfitMid": 196906.24789720436,
-        "estimatedRatio": 1.238967004629581,
-        "impliedFloatingProfit": -37978.49020758437,
+        "totalProfit": 150554.83042554,
+        "estimatedGridProfitMid": 195828.10518940628,
+        "estimatedRatio": 1.3007095463885305,
+        "impliedFloatingProfit": -45273.27476386627,
         "confidence": "MEDIUM",
         "method": "BINANCE_FORMULA_RECONSTRUCTION_ROUNDED_ROI_AND_GRID_RANGE"
       },
@@ -469,10 +1760,10 @@
         "strategyId": "9799189",
         "symbol": "TAOUSDT",
         "category": "Spot Grid",
-        "totalProfit": 14413.79660915,
-        "estimatedGridProfitMid": 14540.39996068817,
-        "estimatedRatio": 1.0087834839751937,
-        "impliedFloatingProfit": -126.60335153816959,
+        "totalProfit": 13483.98374393,
+        "estimatedGridProfitMid": 15680.796856842575,
+        "estimatedRatio": 1.1629201840221366,
+        "impliedFloatingProfit": -2196.813112912574,
         "confidence": "MEDIUM",
         "method": "BINANCE_FORMULA_RECONSTRUCTION_ROUNDED_ROI_AND_GRID_RANGE"
       },
@@ -480,10 +1771,10 @@
         "strategyId": "9992671",
         "symbol": "XRPUSDT",
         "category": "Spot Grid",
-        "totalProfit": 11429.2497418,
-        "estimatedGridProfitMid": 31152.213233215603,
-        "estimatedRatio": 2.725656883608304,
-        "impliedFloatingProfit": -19722.963491415605,
+        "totalProfit": 10634.25186955,
+        "estimatedGridProfitMid": 40088.27277753339,
+        "estimatedRatio": 3.7697313613872274,
+        "impliedFloatingProfit": -29454.02090798339,
         "confidence": "MEDIUM",
         "method": "BINANCE_FORMULA_RECONSTRUCTION_ROUNDED_ROI_AND_GRID_RANGE"
       },
@@ -491,10 +1782,10 @@
         "strategyId": "7257253",
         "symbol": "UNIUSDT",
         "category": "Spot Grid",
-        "totalProfit": 8710.71207012,
-        "estimatedGridProfitMid": 10404.923582103664,
-        "estimatedRatio": 1.1944974760209615,
-        "impliedFloatingProfit": -1694.2115119836635,
+        "totalProfit": 8576.21360777,
+        "estimatedGridProfitMid": 10642.57433611235,
+        "estimatedRatio": 1.2409409120209225,
+        "impliedFloatingProfit": -2066.36072834235,
         "confidence": "MEDIUM",
         "method": "BINANCE_FORMULA_RECONSTRUCTION_ROUNDED_ROI_AND_GRID_RANGE"
       },
@@ -502,10 +1793,10 @@
         "strategyId": "9519684",
         "symbol": "USTCUSDT",
         "category": "Spot Grid",
-        "totalProfit": 6812.82966232,
-        "estimatedGridProfitMid": 10617.984507400242,
-        "estimatedRatio": 1.5585278120375694,
-        "impliedFloatingProfit": -3805.154845080242,
+        "totalProfit": 6686.27288713,
+        "estimatedGridProfitMid": 11046.094689955524,
+        "estimatedRatio": 1.6520556184922515,
+        "impliedFloatingProfit": -4359.821802825524,
         "confidence": "MEDIUM",
         "method": "BINANCE_FORMULA_RECONSTRUCTION_ROUNDED_ROI_AND_GRID_RANGE"
       },
@@ -513,10 +1804,21 @@
         "strategyId": "9497184",
         "symbol": "USTCUSDT",
         "category": "Spot Grid",
-        "totalProfit": 6524.55335429,
-        "estimatedGridProfitMid": 12152.087814298578,
-        "estimatedRatio": 1.8625164290071108,
-        "impliedFloatingProfit": -5627.534460008578,
+        "totalProfit": 6392.68014518,
+        "estimatedGridProfitMid": 12768.895436389044,
+        "estimatedRatio": 1.9974244208067613,
+        "impliedFloatingProfit": -6376.215291209044,
+        "confidence": "MEDIUM",
+        "method": "BINANCE_FORMULA_RECONSTRUCTION_ROUNDED_ROI_AND_GRID_RANGE"
+      },
+      {
+        "strategyId": "9880280",
+        "symbol": "SOLBTC",
+        "category": "Spot Grid",
+        "totalProfit": 6325.81813936,
+        "estimatedGridProfitMid": 6559.957726540331,
+        "estimatedRatio": 1.0370133288725907,
+        "impliedFloatingProfit": -234.13958718033155,
         "confidence": "MEDIUM",
         "method": "BINANCE_FORMULA_RECONSTRUCTION_ROUNDED_ROI_AND_GRID_RANGE"
       },
@@ -524,10 +1826,10 @@
         "strategyId": "6883234",
         "symbol": "CAKEUSDT",
         "category": "Spot Grid",
-        "totalProfit": 5793.36686661,
-        "estimatedGridProfitMid": 6900.145105847948,
-        "estimatedRatio": 1.1910423186932715,
-        "impliedFloatingProfit": -1106.7782392379477,
+        "totalProfit": 5749.51832209,
+        "estimatedGridProfitMid": 7033.305705437201,
+        "estimatedRatio": 1.2232860757073878,
+        "impliedFloatingProfit": -1283.7873833472013,
         "confidence": "MEDIUM",
         "method": "BINANCE_FORMULA_RECONSTRUCTION_ROUNDED_ROI_AND_GRID_RANGE"
       },
@@ -535,10 +1837,10 @@
         "strategyId": "9276576",
         "symbol": "SOLUSDT",
         "category": "Spot Grid",
-        "totalProfit": 5652.77233936,
-        "estimatedGridProfitMid": 11668.823453383598,
-        "estimatedRatio": 2.064265594447189,
-        "impliedFloatingProfit": -6016.0511140235985,
+        "totalProfit": 5569.2782523,
+        "estimatedGridProfitMid": 12008.908239737177,
+        "estimatedRatio": 2.1562772940600947,
+        "impliedFloatingProfit": -6439.629987437177,
         "confidence": "MEDIUM",
         "method": "BINANCE_FORMULA_RECONSTRUCTION_ROUNDED_ROI_AND_GRID_RANGE"
       },
@@ -546,26 +1848,15 @@
         "strategyId": "9461754",
         "symbol": "ALTUSDT",
         "category": "Spot Grid",
-        "totalProfit": 4007.84741985,
-        "estimatedGridProfitMid": 5261.61365666629,
-        "estimatedRatio": 1.3128278363608998,
-        "impliedFloatingProfit": -1253.76623681629,
+        "totalProfit": 3908.58182038,
+        "estimatedGridProfitMid": 5317.145407647759,
+        "estimatedRatio": 1.3603771526345625,
+        "impliedFloatingProfit": -1408.5635872677594,
         "confidence": "MEDIUM",
-        "method": "BINANCE_FORMULA_RECONSTRUCTION_ROUNDED_ROI_AND_GRID_RANGE"
-      },
-      {
-        "strategyId": "9982136",
-        "symbol": "SOLUSDC",
-        "category": "Spot Grid",
-        "totalProfit": 3982.46756877,
-        "estimatedGridProfitMid": 118465.20951668266,
-        "estimatedRatio": 29.746685307790486,
-        "impliedFloatingProfit": -114482.74194791267,
-        "confidence": "LOW",
         "method": "BINANCE_FORMULA_RECONSTRUCTION_ROUNDED_ROI_AND_GRID_RANGE"
       }
     ],
-    "rows": 6953,
+    "rows": 7023,
     "status": "PASS",
     "examples": []
   }
