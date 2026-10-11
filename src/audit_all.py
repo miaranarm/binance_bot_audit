@@ -44,7 +44,9 @@ FIELDS = [
 
 FEE = 0.001                     # frais de référence par ordre (Spot 0,1 %) : source unique
 RETENTION_DAYS = 30
-PAGE_SIZE, MAX_PAGES, MAX_ATTEMPTS = 100, 400, 4
+PAGE_SIZE, MAX_PAGES, MAX_ATTEMPTS = 100, 400, 3
+# Probe broadly to discover Marketplace strategyType values instead of assuming 1..20.
+MAX_STRATEGY_TYPE = 100
 RUN_BUDGET_S = 1500             # le job GitHub est limité à 30 min
 DETAIL_BUDGET_S = 900           # temps max consacré aux pages de détail (Grid Profit exact)
 DETAIL_GIVEUP_AFTER = 25       # abandon des pages de détail si aucune métrique lue après N visites
@@ -354,9 +356,42 @@ def grid_metrics(item, prices):
 
 
 # --------------------------------------------------------------------------- collecte
+def extract_strategy_rows(payload):
+    """Extrait une liste de stratégies depuis plusieurs variantes de réponse BAPI."""
+    if not isinstance(payload, dict):
+        return None, None
+    total = num(payload.get("total", payload.get("totalCount", payload.get("count"))), None)
+    data = payload.get("data")
+    if isinstance(data, list):
+        return data, total
+    preferred = ("list", "rows", "items", "records", "strategies", "strategyList", "result", "listData")
+    for root in (data, payload):
+        if not isinstance(root, dict):
+            continue
+        for key in preferred:
+            value = root.get(key)
+            if isinstance(value, list) and (not value or any(
+                    isinstance(v, dict) and any(k in v for k in ("strategyId", "algoId", "strategy_id"))
+                    for v in value)):
+                nested_total = num(root.get("total", root.get("totalCount", root.get("count"))), None)
+                return value, nested_total if nested_total is not None else total
+    stack = [data]
+    while stack:
+        node = stack.pop()
+        if isinstance(node, dict):
+            stack.extend(node.values())
+        elif isinstance(node, list):
+            if not node or any(isinstance(v, dict) and any(
+                    k in v for k in ("strategyId", "algoId", "strategy_id")) for v in node):
+                return node, total
+            stack.extend(node)
+    return None, total
+
+
 def pages(page, endpoint, base_query, category, streamer, diagnostics, stats=None):
-    """Lit toutes les pages d'une catégorie (nouvelles tentatives, total annoncé vs collecté)."""
+    """Lit les pages, accepte plusieurs schémas BAPI et distingue erreur de schéma et page vide."""
     rows, expected, failed = [], None, False
+    unsupported = False
     for page_no in range(1, MAX_PAGES + 1):
         query = dict(base_query, page=page_no, rows=PAGE_SIZE)
         data, response = None, None
@@ -366,9 +401,18 @@ def pages(page, endpoint, base_query, category, streamer, diagnostics, stats=Non
                 if not http.ok:
                     raise RuntimeError(f"HTTP {http.status}")
                 response = http.json()
-                if not isinstance(response, dict) or not isinstance(response.get("data"), list):
-                    raise RuntimeError("JSON payload has no list-valued data field")
-                data = response["data"]
+                data, response_total = extract_strategy_rows(response)
+                if data is None:
+                    keys = sorted(response.keys()) if isinstance(response, dict) else [type(response).__name__]
+                    diagnostics.append({
+                        "endpoint": endpoint, "category": category, "page": page_no,
+                        "attempt": attempt + 1, "error": "Unrecognized strategy-list response schema",
+                        "response_keys": keys,
+                        "response_preview": json.dumps(response, ensure_ascii=False)[:500],
+                    })
+                    unsupported = True
+                    failed = True
+                    break
                 break
             except Exception as exc:
                 diagnostics.append({"endpoint": endpoint, "category": category, "page": page_no,
@@ -380,27 +424,30 @@ def pages(page, endpoint, base_query, category, streamer, diagnostics, stats=Non
             failed = True
             break
         if expected is None:
-            total = num(response.get("total"), None)
-            expected = int(total) if total is not None and total >= 0 else None
+            expected = int(response_total) if response_total is not None and response_total >= 0 else None
         for item in data:
+            if not isinstance(item, dict):
+                continue
             item = dict(item)
             item.update(_category=category, _streamer=streamer)
             item["_lev"] = leverage(item)
             rows.append(item)
-        # Sans total annoncé on continue jusqu'à une page incomplète (l'ancien code s'arrêtait à la page 1).
         if len(data) < PAGE_SIZE or (expected is not None and page_no * PAGE_SIZE >= expected):
             break
     else:
-        failed = True           # plafond MAX_PAGES atteint
+        failed = True
 
     if stats is not None:
-        ids = [str(i.get("strategyId") or "").strip() for i in rows if str(i.get("strategyId") or "").strip()]
+        ids = [str(i.get("strategyId") or i.get("algoId") or i.get("strategy_id") or "").strip()
+               for i in rows if str(i.get("strategyId") or i.get("algoId") or i.get("strategy_id") or "").strip()]
+        unique_count = len(set(ids))
         if expected is None and not failed and not rows:
-            expected = 0                  # première page vide sans erreur : famille inexistante, pas une collecte partielle
+            expected = 0
         stats[category] = {
-            "collected": len(rows), "unique_collected": len(set(ids)), "duplicate_rows": len(rows) - len(set(ids)),
-            "expected": expected,
-            "complete": (not failed) and expected is not None and len(set(ids)) >= expected,
+            "collected": len(rows), "unique_collected": unique_count,
+            "duplicate_rows": len(rows) - unique_count, "expected": expected,
+            "complete": (not failed) and expected is not None and unique_count >= expected,
+            "unsupported_response_schema": unsupported,
         }
     return rows
 
@@ -632,8 +679,9 @@ def main():
         page = browser.new_page()
         rows = pages(page, TOP, {"strategyType": 1, "symbol": "", "zone": "", "sort": "pnl"},
                      "Spot Grid", "SPOT_GRID", diagnostics, stats)
-        # Les autres familles du Marketplace passent par le même endpoint ; le filtre levier <= 1 s'applique ensuite.
-        for strategy_type in range(2, 21):
+        # Sonde les strategyType 2..100 pour ne pas supposer que 1..20 couvre tout le catalogue.
+        # Les types au schéma inconnu restent explicitement incomplets, jamais supposés vides.
+        for strategy_type in range(2, MAX_STRATEGY_TYPE + 1):
             rows += pages(page, TOP, {"strategyType": strategy_type, "symbol": "", "zone": "", "sort": "pnl"},
                           f"Marketplace type {strategy_type}", f"TYPE_{strategy_type}", diagnostics, stats)
         rows += pages(page, DCA, {"market": "", "zone": "", "roi": "", "sort": "pnl", "trailingType": "",
@@ -664,8 +712,10 @@ def main():
         "grid_profit_exact": exact, "detail_capture": detail_stats,
         "endpoint_errors": diagnostics[:50], "snapshot": str(snapshot), "old_snapshots_removed": removed,
         "profit_per_grid_fee_reference": f"{FEE:.2%} par ordre (Spot) ; les frais réels varient selon paire / VIP / BNB.",
+        "strategy_type_probe_max": MAX_STRATEGY_TYPE,
         "limitations": ["Tri Marketplace par PNL : un re-tri pendant la pagination peut sauter ou dupliquer des lignes.",
-                        "Seuls les strategyType 1 à 20 sont interrogés."],
+                        "La collecte publique ne garantit pas les bots privés/arrêtés ni les familles sans endpoint public identifié.",
+                        "Tout strategyType dont la réponse BAPI ne contient pas une liste reconnue reste incomplet, jamais supposé vide."],
     }
     (OUT / "scan_meta.json").write_text(json.dumps(meta, ensure_ascii=False, indent=2), encoding="utf-8")
 
