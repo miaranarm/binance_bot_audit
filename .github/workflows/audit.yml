@@ -80,7 +80,7 @@ jobs:
         run: python src/audit_all.py
       - name: Validate raw CSV
         run: python src/validate.py raw
-      - name: Build final current_multicriteria.csv (29 columns)
+      - name: Build final current_multicriteria.csv (27 columns; Spot Grid only)
         run: python src/build_multicriteria.py results/current_multicriteria.csv results/current_multicriteria.csv
       - name: Validate final CSV
         run: python src/validate.py final
