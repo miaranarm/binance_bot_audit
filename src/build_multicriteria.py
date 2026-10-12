@@ -169,6 +169,8 @@ def main(src, dst):
     for column in COLUMNS:
         if column == "gridProfit":
             continue
+        # N/D est textuel : convertir en object avant l'affectation, y compris pour les colonnes numériques.
+        out[column] = out[column].astype(object)
         missing = out[column].isna() | out[column].astype(str).str.strip().eq("")
         out.loc[missing, column] = "N/D"
     out.loc[grid_profit_missing, "gridProfit"] = ""
