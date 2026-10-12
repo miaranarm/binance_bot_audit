@@ -139,6 +139,15 @@ def check_final(path):
     if not all(ids) or len(ids) != len(set(ids)):
         raise ValueError("empty or duplicate strategyId")
 
+    # Garde-fou du contrat CSV : gridProfit est la seule colonne autorisée à rester vide.
+    # Les autres valeurs non disponibles doivent être explicites (N/D), jamais des cellules vides.
+    for row_number, row in enumerate(rows, start=2):
+        for column in FINAL_COLUMNS:
+            if column == "gridProfit":
+                continue
+            if not str(row.get(column, "") or "").strip():
+                raise ValueError(f"empty cell forbidden in final CSV: row={row_number}, column={column}")
+
     for r in rows:
         sid = r["strategyId"]
         if str(r.get("category", "")).strip().lower() != "spot grid":
