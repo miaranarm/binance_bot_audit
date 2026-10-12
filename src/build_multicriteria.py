@@ -163,6 +163,16 @@ def main(src, dst):
     out = out.assign(_k=pd.to_numeric(out.strategyId, errors="coerce")) \
              .sort_values(["_k", "strategyId"], kind="stable").drop(columns="_k").reset_index(drop=True)
 
+    # Contract de sortie : aucune cellule vide, sauf gridProfit (vide = Binance ne l'a pas exposé).
+    # N/D signifie explicitement « donnée indisponible/non calculable », jamais zéro inventé.
+    grid_profit_missing = out["gridProfit"].isna() | out["gridProfit"].astype(str).str.strip().eq("")
+    for column in COLUMNS:
+        if column == "gridProfit":
+            continue
+        missing = out[column].isna() | out[column].astype(str).str.strip().eq("")
+        out.loc[missing, column] = "N/D"
+    out.loc[grid_profit_missing, "gridProfit"] = ""
+
     folder = os.path.dirname(dst) or "."
     os.makedirs(folder, exist_ok=True)
     tmp = dst + ".tmp"
@@ -177,7 +187,8 @@ def main(src, dst):
                 "FLOATING_PROFIT=exact Total Profit minus exact Grid Profit when available; otherwise estimated as "
                 "Total Profit minus gridProfitEstimateMid when Grid Profit is estimated\n"
                 "RATIO=numeric without approximation prefix for both exact and estimated values; "
-                "empty when Total Profit is zero; no 100%/500% cap\n")
+                "empty when Total Profit is zero; no 100%/500% cap\n"
+                "EMPTY_CELLS=forbidden except gridProfit; N/D means unavailable or not calculable, not zero\n")
     print(f"{len(out)} stratégies -> {dst} | Grid Profit exact : {int(exact.sum())} | "
           f"floatingProfit estimé : {int(floating_est.notna().sum())} | ratio estimé : {int(ratio_est.notna().sum())}")
 
