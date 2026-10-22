@@ -52,6 +52,14 @@ class GridSetupTests(unittest.TestCase):
         self.assertAlmostEqual(arithmetic[1], 2.0)
         self.assertNotAlmostEqual(geometric[1], arithmetic[1])
 
+    def test_initial_setup_profit_uses_only_past_data_to_configure(self):
+        from src.build_grid_setup import historical_initial_setup_profit
+        times = np.arange(24 * 12, dtype=float) * 3600.0
+        prices = 1.0 + 0.08 * np.sin(np.arange(len(times), dtype=float) / 7.0)
+        results = historical_initial_setup_profit({"ABCUSDT": (times, prices)})
+        self.assertIn("ABCUSDT", results)
+        self.assertTrue(np.isfinite(results["ABCUSDT"]))
+
     def test_invalid_range_is_rejected(self):
         self.assertIsNone(simulate_grid([1.0, 1.1], 0.0, 1.0, 6))
 
