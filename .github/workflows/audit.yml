@@ -87,7 +87,7 @@ jobs:
         run: python src/validate.py final
       - name: Build pair-level current prices and historical extrema
         run: python src/build_current_price.py
-      - name: Backtest Spot Grid setup rules on stored hourly history
+      - name: Build per-pair Spot Grid range and 72-hour entry filter from stored prices
         run: python src/build_grid_setup.py
       - name: Shortlist (performance d'abord, risque ensuite) -> results/shortlist.csv
         run: python src/select_bots.py results/current_multicriteria.csv 1
