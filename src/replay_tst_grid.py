@@ -12,8 +12,6 @@ import gzip
 import math
 import re
 
-import numpy as np
-import pandas as pd
 
 ROOT = Path(__file__).resolve().parents[1]
 HISTORY = ROOT / "results" / "history"
@@ -59,7 +57,7 @@ def load_prices():
                     if math.isfinite(p) and p > 0:
                         values.append(p)
                 if values:
-                    rows.append((stamp.isoformat(sep=" "), float(np.median(values)), len(values)))
+                    rows.append((stamp.isoformat(sep=" "), sorted(values)[len(values) // 2] if len(values) % 2 else (sorted(values)[len(values)//2 - 1] + sorted(values)[len(values)//2]) / 2, len(values)))
         except (OSError, UnicodeError, csv.Error):
             continue
     # Deduplicate timestamps; each snapshot contributes one median currentPrice.
@@ -71,7 +69,7 @@ def main():
     if len(rows) < 2:
         raise SystemExit(f"Insufficient TSTUSDT snapshots from {START_DATE} to {END_DATE}: {len(rows)}")
 
-    levels = np.geomspace(LOW, HIGH, GRID_COUNT + 1)
+    levels = [LOW * ((HIGH / LOW) ** (i / GRID_COUNT)) for i in range(GRID_COUNT + 1)]
     # Approximate grid-cycle replay: each cell can hold one buy lot at a time.
     # Each buy lot uses 1/5 of the 100 USDT reference budget.
     lot_qty = [BUDGET / GRID_COUNT / levels[i] for i in range(GRID_COUNT)]
@@ -152,9 +150,12 @@ def main():
         "warning": "Approximation from snapshot currentPrice only; not exact Binance execution. No OHLC or actual order fills."
     }
     OUT.mkdir(exist_ok=True)
-    pd.DataFrame(events).to_csv(OUT / "tstusdt_grid_replay.csv", index=False)
-    pd.DataFrame([summary]).to_csv(OUT / "tstusdt_grid_replay_summary.csv", index=False)
-    print(pd.DataFrame([summary]).to_string(index=False))
+    for filename, data in (("tstusdt_grid_replay.csv", events), ("tstusdt_grid_replay_summary.csv", [summary])):
+        with (OUT / filename).open("w", newline="", encoding="utf-8") as handle:
+            writer = csv.DictWriter(handle, fieldnames=list(data[0].keys()))
+            writer.writeheader()
+            writer.writerows(data)
+    print("\\n".join(f"{key}: {value}" for key, value in summary.items()))
 
 
 if __name__ == "__main__":
