@@ -278,9 +278,13 @@ def historical_initial_setup_profit(series_by_symbol):
         if int(mask.sum()) >= 20:
             training[symbol] = (times[mask], prices[mask])
     _, chosen, _ = build_validation(training)
-    buffer = (float(chosen["bufferPct"]) / 100.0) if chosen else 0.04
-    count = int(chosen["gridCount"]) if chosen else 6
-    mode = str(chosen.get("gridMode", "GEOMETRIC")) if chosen else "GEOMETRIC"
+    # Never fabricate a buffer, grid count, or grid mode when the history
+    # cannot select a rule empirically.
+    if not chosen:
+        return {}
+    buffer = float(chosen["bufferPct"]) / 100.0
+    count = int(chosen["gridCount"])
+    mode = str(chosen["gridMode"])
     results = {}
     # A pair may have entered the tracked universe long after the first archived
     # snapshot. Give each pair its own first eligible setup date, while keeping
@@ -313,11 +317,15 @@ def add_setup_columns(current, series_by_symbol, per_pair_windows, chosen, now, 
         # Pandas 3 infers dtype=str from an empty-string initializer; use object
         # so the same output column can hold numbers, labels, or missing values.
         result[column] = pd.Series([None] * len(result), index=result.index, dtype=object)
-    # If the replay cannot select a rule, use a clearly marked fallback, not a claimed optimum.
-    buffer = chosen["bufferPct"] / 100.0 if chosen else 0.04
-    count = int(chosen["gridCount"]) if chosen else 6
-    mode = str(chosen.get("gridMode", "GEOMETRIC")) if chosen else "GEOMETRIC"
-    base_buffer, base_count, base_mode = buffer, count, mode
+    # Recommendation parameters must come from empirical rule selection.
+    # If no rule can be selected, leave configuration values empty rather than
+    # inventing a fallback buffer, grid count, or mode.
+    if chosen:
+        base_buffer = float(chosen["bufferPct"]) / 100.0
+        base_count = int(chosen["gridCount"])
+        base_mode = str(chosen["gridMode"])
+    else:
+        base_buffer = base_count = base_mode = None
 
     for idx, row in result.iterrows():
         buffer, count, mode = base_buffer, base_count, base_mode
@@ -333,15 +341,25 @@ def add_setup_columns(current, series_by_symbol, per_pair_windows, chosen, now, 
         latest_time = times[-1]
         recent = (times >= latest_time - LOOKBACK_HOURS * 3600) & (times <= latest_time)
         recent_prices = prices[recent]
-        span_hours = (times[-1] - times[0]) / 3600.0
-        if len(recent_prices) < 12 or (times[-1] - times[recent][0]) < 48 * 3600:
-            result.at[idx, "setupSignal"] = "INSUFFICIENT_HISTORY"
-            result.at[idx, "setupReason"] = "Il faut au moins 48 h de snapshots récents pour calculer les indicateurs 72 h."
+        recent_span_hours = (
+            float(times[recent][-1] - times[recent][0]) / 3600.0
+            if len(recent_prices) >= 2 else 0.0
+        )
+        enough_recent_history = len(recent_prices) >= 12 and recent_span_hours >= 48.0
+
+        # Use the same empirically selected rule and full observed pair history
+        # as every other pair. Do not synthesize settings when no rule was selected.
+        if not chosen:
+            result.at[idx, "setupSignal"] = "RULE_NOT_VALIDATED"
+            result.at[idx, "setupReason"] = (
+                "Aucune règle n'a pu être sélectionnée par le backtest; "
+                "paramètres non renseignés plutôt que valeurs arbitraires."
+            )
             result.at[idx, "setupHistoryPoints"] = int(len(recent_prices))
             continue
 
-        low72 = float(np.min(recent_prices))
-        high72 = float(np.max(recent_prices))
+        low72 = float(np.min(recent_prices)) if len(recent_prices) else float("nan")
+        high72 = float(np.max(recent_prices)) if len(recent_prices) else float("nan")
         # Bounds use the complete accumulated history; 72 h indicators remain short-term.
         historical_low = float(np.min(prices))
         historical_high = float(np.max(prices))
@@ -358,11 +376,14 @@ def add_setup_columns(current, series_by_symbol, per_pair_windows, chosen, now, 
                     mode = str(locked.get("gridMode", mode))
             except (TypeError, ValueError, KeyError):
                 pass
-        mean = float(np.mean(recent_prices))
-        std = float(np.std(recent_prices, ddof=0))
-        position = ((float(current_price) - low72) / (high72 - low72) * 100.0) if high72 > low72 else 50.0
-        zscore = (float(current_price) - mean) / std if std > 0 else 0.0
-        width_pct = (high72 / low72 - 1.0) * 100.0 if low72 > 0 else float("nan")
+        if enough_recent_history:
+            mean = float(np.mean(recent_prices))
+            std = float(np.std(recent_prices, ddof=0))
+            position = ((float(current_price) - low72) / (high72 - low72) * 100.0) if high72 > low72 else float("nan")
+            zscore = (float(current_price) - mean) / std if std > 0 else float("nan")
+            width_pct = (high72 / low72 - 1.0) * 100.0 if low72 > 0 else float("nan")
+        else:
+            position = zscore = width_pct = float("nan")
 
         bundle = per_pair_windows.get(symbol, {})
         tests = bundle.get("test", [])
@@ -372,9 +393,13 @@ def add_setup_columns(current, series_by_symbol, per_pair_windows, chosen, now, 
         win_rate = float(np.mean([v["profit_pct"] > 0 for v in test_values]) * 100.0) if test_values else float("nan")
         outside = float(np.mean([v["outside_pct"] for v in test_values])) if test_values else float("nan")
 
-        if not chosen and not locked:
-            signal = "RULE_NOT_VALIDATED"
-            reason = "Historique insuffisant pour départager les réglages; valeurs indicatives uniquement."
+        if not enough_recent_history:
+            signal = "PROVISIONAL_SHORT_HISTORY"
+            reason = (
+                f"Configuration calculée avec la règle empirique commune et les extrema historiques disponibles, "
+                f"mais historique récent insuffisant pour les indicateurs 72 h "
+                f"({len(recent_prices)} observations sur {recent_span_hours:.1f} h; 48 h et 12 observations requis)."
+            )
         elif position >= 80.0 or zscore > 0.3:
             signal = "WAIT_HIGH_RANGE"
             reason = "Prix trop haut dans son range 72 h ou au-dessus de sa moyenne ajustée du risque; attendre un retour."
@@ -554,7 +579,7 @@ def main():
             f"holdout_win_rate={chosen['holdoutWinRatePct']:.1f}% holdout_outside={chosen['holdoutOutsidePct']:.1f}%"
         )
     else:
-        print("GRID_SETUP_RULE_FALLBACK buffer=4% grids=6; no rule could be validated from stored history.")
+        print("GRID_SETUP_NO_RULE_SELECTED; recommended grid parameters left empty because stored history did not select a rule.")
     next_recalculation = previous_state.get("next_rebuild_at")
     if due:
         next_recalculation = state["next_rebuild_at"]
