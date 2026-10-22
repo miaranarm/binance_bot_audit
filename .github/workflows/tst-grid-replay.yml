@@ -15,6 +15,21 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            src/replay_tst_grid.py
+            results/history/2026/10/11
+            results/history/2026/10/12
+            results/history/2026/10/13
+            results/history/2026/10/14
+            results/history/2026/10/15
+            results/history/2026/10/16
+            results/history/2026/10/17
+            results/history/2026/10/18
+            results/history/2026/10/19
+            results/history/2026/10/20
+            results/history/2026/10/21
+            results/history/2026/10/22
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
