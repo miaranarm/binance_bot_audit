@@ -83,6 +83,8 @@ jobs:
         run: python src/build_multicriteria.py results/current_multicriteria.csv results/current_multicriteria.csv
       - name: Validate final CSV
         run: python src/validate.py final
+      - name: Build pair-level current prices and historical extrema
+        run: python src/build_current_price.py
       - name: Shortlist (performance d'abord, risque ensuite) -> results/shortlist.csv
         run: python src/select_bots.py results/current_multicriteria.csv 1
       - name: Classement historique (performance observée, risque ignoré) -> results/history_ranking.csv
