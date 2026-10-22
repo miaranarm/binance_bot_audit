@@ -1,0 +1,30 @@
+name: TSTUSDT historical grid replay
+
+on:
+  push:
+    paths:
+      - "src/replay_tst_grid.py"
+      - ".github/workflows/tst-grid-replay.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  replay:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Replay TSTUSDT using every snapshot currentPrice
+        run: python src/replay_tst_grid.py
+      - name: Upload replay CSV
+        uses: actions/upload-artifact@v4
+        with:
+          name: tstusdt-grid-replay
+          path: |
+            results/tstusdt_grid_replay.csv
+            results/tstusdt_grid_replay_summary.csv
+          if-no-files-found: error
