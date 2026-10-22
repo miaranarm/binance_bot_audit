@@ -60,6 +60,21 @@ class GridSetupTests(unittest.TestCase):
         self.assertIn("ABCUSDT", results)
         self.assertTrue(np.isfinite(results["ABCUSDT"]))
 
+    def test_initial_setup_profit_handles_pairs_added_later(self):
+        from src.build_grid_setup import historical_initial_setup_profit
+        # Pair A establishes the archive start; pair B appears ten days later.
+        times_a = np.arange(24 * 30, dtype=float) * 3600.0
+        prices_a = 1.0 + 0.08 * np.sin(np.arange(len(times_a), dtype=float) / 7.0)
+        times_b = np.arange(24 * 20, dtype=float) * 3600.0 + 10 * 24 * 3600.0
+        prices_b = 2.0 + 0.12 * np.sin(np.arange(len(times_b), dtype=float) / 6.0)
+        results = historical_initial_setup_profit({
+            "EARLYUSDT": (times_a, prices_a),
+            "LATEUSDT": (times_b, prices_b),
+        })
+        self.assertIn("EARLYUSDT", results)
+        self.assertIn("LATEUSDT", results)
+        self.assertTrue(np.isfinite(results["LATEUSDT"]))
+
     def test_invalid_range_is_rejected(self):
         self.assertIsNone(simulate_grid([1.0, 1.1], 0.0, 1.0, 6))
 
