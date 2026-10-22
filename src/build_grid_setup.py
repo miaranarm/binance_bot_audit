@@ -282,8 +282,15 @@ def historical_initial_setup_profit(series_by_symbol):
     count = int(chosen["gridCount"]) if chosen else 6
     mode = str(chosen.get("gridMode", "GEOMETRIC")) if chosen else "GEOMETRIC"
     results = {}
+    # A pair may have entered the tracked universe long after the first archived
+    # snapshot. Give each pair its own first eligible setup date, while keeping
+    # the rule parameters calibrated only on the global early training period.
+    minimum_pair_history = (LOOKBACK_HOURS + FORWARD_HOURS) * 3600
     for symbol, (times, prices) in series_by_symbol.items():
-        setup_idx = int(np.searchsorted(times, setup_time, side="right")) - 1
+        if len(times) == 0:
+            continue
+        pair_setup_time = max(setup_time, float(times[0]) + minimum_pair_history)
+        setup_idx = int(np.searchsorted(times, pair_setup_time, side="right")) - 1
         if setup_idx < 12 or setup_idx >= len(prices) - 1:
             continue
         trailing_mask = (times <= times[setup_idx]) & (times >= times[setup_idx] - LOOKBACK_HOURS * 3600)
