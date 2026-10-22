@@ -132,8 +132,12 @@ def main():
 
     active_symbols = sorted(set(now["symbol"]))
     cached = listing.set_index("symbol", drop=False).to_dict("index") if not listing.empty else {}
+    # Retry any non-OK symbol on each audit; only successful extrema are cached daily.
+    # Otherwise a temporary HTTP 451/403 would suppress fallback-host retries until tomorrow.
     to_query = [symbol for symbol in active_symbols
-                if symbol not in cached or cached[symbol].get("checkedDateUTC", "") != today]
+                if symbol not in cached
+                or cached[symbol].get("checkedDateUTC", "") != today
+                or cached[symbol].get("status", "") != "OK"]
     queried = {}
     if to_query:
         # Moderate parallelism while remaining within Binance's public API rate limits.
