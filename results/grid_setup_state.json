@@ -1,0 +1,2255 @@
+{
+  "configured_at": "2026-10-22T13:39:55.873820+00:00",
+  "forward_horizon_days": 14.7846,
+  "grid_mode_candidates": [
+    "GEOMETRIC",
+    "ARITHMETIC"
+  ],
+  "history_days": 14.7846,
+  "history_end": "2026-10-22T13:38:28+00:00",
+  "history_start": "2026-10-07T18:48:42+00:00",
+  "next_rebuild_at": "2026-11-06T08:29:41.873820+00:00",
+  "setups": {
+    "0GUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.325104,
+      "low": 0.210144
+    },
+    "1000CATUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.0022276799999999997,
+      "low": 0.00168192
+    },
+    "1000SATSUSDC": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 1.2667200000000001e-05,
+      "low": 9.648e-06
+    },
+    "1000SATSUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 1.27192e-05,
+      "low": 9.4464e-06
+    },
+    "1INCHUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.10379200000000001,
+      "low": 0.085632
+    },
+    "AAVEBTC": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.00221104,
+      "low": 0.0017260799999999998
+    },
+    "AAVEETH": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.0733096,
+      "low": 0.058684799999999995
+    },
+    "AAVEUSDC": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 182.7384,
+      "low": 140.8128
+    },
+    "AAVEUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 182.8112,
+      "low": 140.4672
+    },
+    "ACHUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.0064688,
+      "low": 0.0049824
+    },
+    "ACTUSDC": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.0115336,
+      "low": 0.0081216
+    },
+    "ACTUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.011502400000000001,
+      "low": 0.008323200000000001
+    },
+    "ADABTC": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 3.2344e-06,
+      "low": 2.5247999999999995e-06
+    },
+    "ADAETH": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.00010712,
+      "low": 8.5632e-05
+    },
+    "ADAFDUSD": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.269152,
+      "low": 0.20419199999999998
+    },
+    "ADAUSDC": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.268424,
+      "low": 0.203904
+    },
+    "ADAUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.268528,
+      "low": 0.204
+    },
+    "AIUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.022776,
+      "low": 0.017855999999999997
+    },
+    "ALGOUSDC": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.147576,
+      "low": 0.10224
+    },
+    "ALGOUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.14768,
+      "low": 0.102432
+    },
+    "ALICEUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.18740800000000002,
+      "low": 0.131328
+    },
+    "ALLOUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.270192,
+      "low": 0.19017599999999998
+    },
+    "ALTUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.0141856,
+      "low": 0.0066816
+    },
+    "AMPUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.00095576,
+      "low": 0.0006096
+    },
+    "APEUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.16556800000000002,
+      "low": 0.127104
+    },
+    "APTUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.996424,
+      "low": 0.67248
+    },
+    "ARBBTC": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 2.5584000000000004e-06,
+      "low": 1.9583999999999997e-06
+    },
+    "ARBUSDC": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.210184,
+      "low": 0.157728
+    },
+    "ARBUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.2106,
+      "low": 0.15792
+    },
+    "ARKMUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.14830400000000002,
+      "low": 0.10502399999999999
+    },
+    "ARUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 4.537520000000001,
+      "low": 3.46272
+    },
+    "ASTERUSDC": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.752752,
+      "low": 0.649824
+    },
+    "ASTERUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.75348,
+      "low": 0.650304
+    },
+    "ATMUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 1.13776,
+      "low": 0.9369599999999999
+    },
+    "ATOMBTC": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 2.5688000000000002e-05,
+      "low": 1.9392e-05
+    },
+    "ATOMUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 2.1205600000000002,
+      "low": 1.56192
+    },
+    "ATUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.15610400000000002,
+      "low": 0.12441599999999998
+    },
+    "AUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.118872,
+      "low": 0.0816
+    },
+    "AVAUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.46217600000000003,
+      "low": 0.21312
+    },
+    "AVAXUSDC": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 11.756160000000001,
+      "low": 8.83104
+    },
+    "AVAXUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 11.758239999999999,
+      "low": 8.83872
+    },
+    "AWEUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.0744432,
+      "low": 0.059663999999999995
+    },
+    "BABYUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.014352,
+      "low": 0.011135999999999998
+    },
+    "BANANAS31USDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.007376720000000001,
+      "low": 0.00567168
+    },
+    "BATUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.228904,
+      "low": 0.092064
+    },
+    "BCHBTC": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.00375856,
+      "low": 0.0030816
+    },
+    "BCHUSDC": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 313.248,
+      "low": 249.98399999999998
+    },
+    "BCHUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 313.56,
+      "low": 250.07999999999998
+    },
+    "BEAMXUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.0033436,
+      "low": 0.00235008
+    },
+    "BELUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.135304,
+      "low": 0.103584
+    },
+    "BMTUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.0272272,
+      "low": 0.0164256
+    },
+    "BNBBTC": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.009672,
+      "low": 0.008400959999999999
+    },
+    "BNBETH": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.318968,
+      "low": 0.281856
+    },
+    "BNBEUR": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 719.0767999999999,
+      "low": 605.616
+    },
+    "BNBFDUSD": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 806.9984000000001,
+      "low": 680.3616
+    },
+    "BNBUSD1": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 806.1976000000001,
+      "low": 678.9024000000001
+    },
+    "BNBUSDC": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 805.636,
+      "low": 678.3648
+    },
+    "BNBUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 805.8336,
+      "low": 679.1424000000001
+    },
+    "BONKUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 3.6712e-06,
+      "low": 2.7072e-06
+    },
+    "BROCCOLI714USDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.025646400000000003,
+      "low": 0.0178944
+    },
+    "BTCBRL": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 444093.52,
+      "low": 388329.6
+    },
+    "BTCEUR": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 78470.4856,
+      "low": 68323.59360000001
+    },
+    "BTCFDUSD": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 88288.5224,
+      "low": 76840.31999999999
+    },
+    "BTCJPY": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 13931264.88,
+      "low": 12082337.28
+    },
+    "BTCU": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 88181.652,
+      "low": 76674.6816
+    },
+    "BTCUSD1": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 88244.1144,
+      "low": 76664.8032
+    },
+    "BTCUSDC": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 88160.90400000001,
+      "low": 76617.6192
+    },
+    "BTCUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 88212.8104,
+      "low": 76696.51199999999
+    },
+    "CAKEBNB": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.0033488000000000003,
+      "low": 0.00281472
+    },
+    "CAKEBTC": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 3.00872e-05,
+      "low": 2.49216e-05
+    },
+    "CAKEUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 2.5282400000000003,
+      "low": 2.01312
+    },
+    "CATIUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.0706784,
+      "low": 0.047011199999999996
+    },
+    "CFGUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.15808,
+      "low": 0.10896
+    },
+    "CFXUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.0743912,
+      "low": 0.0460608
+    },
+    "CGPTUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.025584000000000003,
+      "low": 0.0197568
+    },
+    "CHIPUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.0735592,
+      "low": 0.037632
+    },
+    "CKBUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.00217984,
+      "low": 0.0011519999999999998
+    },
+    "COMPUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 27.7888,
+      "low": 19.8816
+    },
+    "COTIUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.014248,
+      "low": 0.0099072
+    },
+    "CRCLBUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 95.2848,
+      "low": 72.8736
+    },
+    "CRVUSDC": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.418184,
+      "low": 0.309216
+    },
+    "CRVUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.4186,
+      "low": 0.3096
+    },
+    "CUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.114192,
+      "low": 0.07478399999999999
+    },
+    "CVXUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 2.78096,
+      "low": 1.73952
+    },
+    "DASHBTC": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.0006790160000000001,
+      "low": 0.00055296
+    },
+    "DASHUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 56.6488,
+      "low": 44.64
+    },
+    "DCRUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 18.72,
+      "low": 13.6992
+    },
+    "DEXEUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 1.9832800000000002,
+      "low": 1.59936
+    },
+    "DGBUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.004201600000000001,
+      "low": 0.0031872
+    },
+    "DIAUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.193232,
+      "low": 0.14332799999999998
+    },
+    "DODOUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.022630400000000002,
+      "low": 0.017183999999999998
+    },
+    "DOGEBTC": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 1.1128e-06,
+      "low": 9.12e-07
+    },
+    "DOGEEUR": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.082992,
+      "low": 0.06527039999999999
+    },
+    "DOGEFDUSD": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.0930696,
+      "low": 0.0735648
+    },
+    "DOGEUSDC": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.09291360000000001,
+      "low": 0.0733152
+    },
+    "DOGEUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.09294480000000001,
+      "low": 0.0734016
+    },
+    "DOGSUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 4.67168e-05,
+      "low": 3.49344e-05
+    },
+    "DOTUSDC": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 1.3259999999999998,
+      "low": 0.9782399999999999
+    },
+    "DOTUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 1.3259999999999998,
+      "low": 0.9792
+    },
+    "DUSKUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.13540800000000003,
+      "low": 0.071232
+    },
+    "DYDXUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.1498848,
+      "low": 0.1050816
+    },
+    "EDENUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.06692400000000001,
+      "low": 0.0489888
+    },
+    "EGLDUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 4.36176,
+      "low": 3.42144
+    },
+    "ENAUSDC": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.254176,
+      "low": 0.169824
+    },
+    "ENAUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.254488,
+      "low": 0.170016
+    },
+    "ENSUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 6.916,
+      "low": 5.04
+    },
+    "ERAUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.094224,
+      "low": 0.055007999999999994
+    },
+    "ESPUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.123448,
+      "low": 0.07893119999999999
+    },
+    "ETCUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 8.892000000000001,
+      "low": 7.1904
+    },
+    "ETHBTC": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.0323024,
+      "low": 0.02784
+    },
+    "ETHEUR": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 2399.3008,
+      "low": 1990.2527999999998
+    },
+    "ETHFDUSD": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 2691.5616,
+      "low": 2237.5296000000003
+    },
+    "ETHFIUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.781872,
+      "low": 0.572256
+    },
+    "ETHJPY": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 424491.60000000003,
+      "low": 351941.76
+    },
+    "ETHUSD1": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 2689.1592,
+      "low": 2232.624
+    },
+    "ETHUSDC": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 2686.7255999999998,
+      "low": 2231.088
+    },
+    "ETHUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 2687.6928000000003,
+      "low": 2233.2576
+    },
+    "EULUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 1.5319200000000002,
+      "low": 1.06176
+    },
+    "FETUSDC": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.251992,
+      "low": 0.172032
+    },
+    "FETUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.25230400000000003,
+      "low": 0.172032
+    },
+    "FILBTC": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 1.55168e-05,
+      "low": 1.1462399999999999e-05
+    },
+    "FILUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 1.304472,
+      "low": 0.934848
+    },
+    "FLOKIUSDC": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 2.886e-05,
+      "low": 2.1456e-05
+    },
+    "FLOKIUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 2.88808e-05,
+      "low": 2.15136e-05
+    },
+    "FLOWUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.0387816,
+      "low": 0.0275616
+    },
+    "FORMUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.304512,
+      "low": 0.222816
+    },
+    "FRAXUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.36743200000000004,
+      "low": 0.24163199999999996
+    },
+    "GALAUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.0025875200000000003,
+      "low": 0.00175872
+    },
+    "GENIUSUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.360152,
+      "low": 0.287904
+    },
+    "GIGGLEUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 38.864799999999995,
+      "low": 29.4624
+    },
+    "GLMRUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.013165360000000001,
+      "low": 0.0087648
+    },
+    "GNSUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.8569599999999999,
+      "low": 0.37632
+    },
+    "GRAMUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 1.55376,
+      "low": 1.27104
+    },
+    "GRTUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.0293176,
+      "low": 0.02184
+    },
+    "GTCUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.383344,
+      "low": 0.15202559999999998
+    },
+    "HBARBNB": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.000131352,
+      "low": 0.0001054368
+    },
+    "HBARUSDC": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.1003392,
+      "low": 0.0774144
+    },
+    "HBARUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.10040160000000001,
+      "low": 0.0771072
+    },
+    "HYPERUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.079872,
+      "low": 0.056063999999999996
+    },
+    "HYPEUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 92.18560000000001,
+      "low": 74.544
+    },
+    "ICPBTC": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 4.3472e-05,
+      "low": 3.2448e-05
+    },
+    "ICPUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 3.64208,
+      "low": 2.64864
+    },
+    "INJBTC": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.0001173744,
+      "low": 7.785600000000001e-05
+    },
+    "INJUSDC": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 9.67408,
+      "low": 6.346559999999999
+    },
+    "INJUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 9.684479999999999,
+      "low": 6.287999999999999
+    },
+    "IOSTUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.00189488,
+      "low": 0.00070752
+    },
+    "IOTAUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.0572,
+      "low": 0.043104
+    },
+    "IOTXUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.00472264,
+      "low": 0.0033148799999999996
+    },
+    "IOUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.20072,
+      "low": 0.13679999999999998
+    },
+    "JASMYUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.0054496,
+      "low": 0.004224
+    },
+    "JSTUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.1489488,
+      "low": 0.1295712
+    },
+    "JTOUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.607152,
+      "low": 0.41616
+    },
+    "KERNELUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.053456000000000004,
+      "low": 0.037247999999999996
+    },
+    "KITEUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.144872,
+      "low": 0.11001599999999999
+    },
+    "KSMUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 5.4496,
+      "low": 3.7728
+    },
+    "LDOUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.486928,
+      "low": 0.35184
+    },
+    "LINKBTC": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.00016733600000000003,
+      "low": 0.000137664
+    },
+    "LINKETH": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.0054953599999999995,
+      "low": 0.0047424
+    },
+    "LINKFDUSD": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 14.033760000000001,
+      "low": 11.14176
+    },
+    "LINKUSDC": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 14.00048,
+      "low": 11.1216
+    },
+    "LINKUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 14.014,
+      "low": 11.13504
+    },
+    "LPTUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 2.12888,
+      "low": 1.5062399999999998
+    },
+    "LQTYUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.24908,
+      "low": 0.18201599999999998
+    },
+    "LTCBTC": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.0008268,
+      "low": 0.0006806399999999999
+    },
+    "LTCETH": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.0268632,
+      "low": 0.0232608
+    },
+    "LTCUSDC": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 68.9,
+      "low": 54.912
+    },
+    "LTCUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 68.9312,
+      "low": 54.9792
+    },
+    "LUMIAUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.177528,
+      "low": 0.070656
+    },
+    "LUNCUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 5.39552e-05,
+      "low": 4.28736e-05
+    },
+    "MAGICUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.166296,
+      "low": 0.074016
+    },
+    "MANAUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.110136,
+      "low": 0.077952
+    },
+    "MANTAUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.0813488,
+      "low": 0.0577344
+    },
+    "MARSCOINUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.10150400000000001,
+      "low": 0.07084800000000001
+    },
+    "MASKUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.5210400000000001,
+      "low": 0.37344
+    },
+    "MBLUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.00131456,
+      "low": 0.0006710399999999999
+    },
+    "MEMEUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.0006104799999999999,
+      "low": 0.0004416
+    },
+    "METUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.563368,
+      "low": 0.304896
+    },
+    "MIRAUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.0527904,
+      "low": 0.04126079999999999
+    },
+    "MMTUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.186264,
+      "low": 0.127968
+    },
+    "MOVRUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 2.07584,
+      "low": 1.12512
+    },
+    "MSTRBUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 165.2872,
+      "low": 128.9952
+    },
+    "MUBARAKUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.0831896,
+      "low": 0.0506208
+    },
+    "MUBUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 1138.4048,
+      "low": 832.1856
+    },
+    "NEARBTC": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 7.338240000000001e-05,
+      "low": 5.2895999999999996e-05
+    },
+    "NEARUSDC": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 6.152640000000001,
+      "low": 4.29984
+    },
+    "NEARUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 6.1568000000000005,
+      "low": 4.29984
+    },
+    "NEIROUSDC": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 9.17696e-05,
+      "low": 6.50976e-05
+    },
+    "NEXOBTC": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 1.06808e-05,
+      "low": 9.3408e-06
+    },
+    "NEXOUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.884,
+      "low": 0.76512
+    },
+    "NIGHTUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.0532896,
+      "low": 0.0366432
+    },
+    "NILUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.10155600000000001,
+      "low": 0.0683808
+    },
+    "NMRUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 16.088800000000003,
+      "low": 10.195199999999998
+    },
+    "NVDABUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 247.5928,
+      "low": 203.6736
+    },
+    "NXPCUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.263744,
+      "low": 0.153408
+    },
+    "OGUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 2.98584,
+      "low": 2.4643200000000003
+    },
+    "ONDOUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.55276,
+      "low": 0.398208
+    },
+    "ONTUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.06568639999999999,
+      "low": 0.04924799999999999
+    },
+    "OPGUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.16078399999999998,
+      "low": 0.12134400000000001
+    },
+    "OPUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.16650399999999999,
+      "low": 0.108192
+    },
+    "ORCAUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 3.1574400000000002,
+      "low": 1.66848
+    },
+    "ORDIUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 4.774640000000001,
+      "low": 3.40032
+    },
+    "OSMOUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.06604,
+      "low": 0.038784
+    },
+    "PARTIUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.041184000000000005,
+      "low": 0.02736
+    },
+    "PAXGBTC": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.0540176,
+      "low": 0.0468288
+    },
+    "PAXGUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 4375.7375999999995,
+      "low": 3911.1648
+    },
+    "PENDLEUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 2.40032,
+      "low": 1.83744
+    },
+    "PENGUUSDC": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.00911352,
+      "low": 0.0068352
+    },
+    "PENGUUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.00911352,
+      "low": 0.00684096
+    },
+    "PEOPLEUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.0091728,
+      "low": 0.0067968
+    },
+    "PEPEFDUSD": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 4.9504e-06,
+      "low": 3.552e-06
+    },
+    "PEPEUSDC": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 4.94e-06,
+      "low": 3.5328e-06
+    },
+    "PEPEUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 4.9504e-06,
+      "low": 3.5328e-06
+    },
+    "PHAUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.071136,
+      "low": 0.044736
+    },
+    "PLUMEUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.0241072,
+      "low": 0.0160992
+    },
+    "PNUTUSDC": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.0546,
+      "low": 0.039648
+    },
+    "PNUTUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.054496,
+      "low": 0.039648
+    },
+    "POLUSDC": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.11108240000000001,
+      "low": 0.084576
+    },
+    "PORTALUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.0157144,
+      "low": 0.0136416
+    },
+    "PROMUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 6.19632,
+      "low": 4.38624
+    },
+    "PUMPUSDC": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.006697600000000001,
+      "low": 0.0037334399999999998
+    },
+    "PUMPUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.0067028,
+      "low": 0.00373728
+    },
+    "PYTHUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.10386480000000001,
+      "low": 0.06915840000000001
+    },
+    "QIUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.0030867200000000003,
+      "low": 0.0022032
+    },
+    "QNTUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 264.2328,
+      "low": 176.208
+    },
+    "QQQBUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 789.7448,
+      "low": 684.0864
+    },
+    "RADUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.37752,
+      "low": 0.25824
+    },
+    "RAYUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 2.6170560000000003,
+      "low": 1.6488
+    },
+    "REDUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.167024,
+      "low": 0.129984
+    },
+    "RENDERUSDC": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 2.29008,
+      "low": 1.65696
+    },
+    "RENDERUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 2.29424,
+      "low": 1.66272
+    },
+    "REQUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.05803200000000001,
+      "low": 0.046752
+    },
+    "REZUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.0042328,
+      "low": 0.00314592
+    },
+    "RIFUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.08943999999999999,
+      "low": 0.0696
+    },
+    "RUNEUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.75192,
+      "low": 0.59232
+    },
+    "SAGAUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.024845600000000002,
+      "low": 0.017097599999999998
+    },
+    "SANDUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.0836472,
+      "low": 0.0509088
+    },
+    "SCRUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.0283504,
+      "low": 0.0186432
+    },
+    "SEIUSDC": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.0739544,
+      "low": 0.0558528
+    },
+    "SEIUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.0740688,
+      "low": 0.05544
+    },
+    "SENTUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.027528800000000003,
+      "low": 0.0190176
+    },
+    "SHIBUSDC": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 5.772000000000001e-06,
+      "low": 4.608e-06
+    },
+    "SHIBUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 5.772000000000001e-06,
+      "low": 4.6176e-06
+    },
+    "SIGNUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.0136864,
+      "low": 0.0100416
+    },
+    "SKYUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.0848536,
+      "low": 0.0644352
+    },
+    "SNDKBUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 1790.7136,
+      "low": 1200.2592
+    },
+    "SNXUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.270192,
+      "low": 0.203712
+    },
+    "SOLBNB": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.156728,
+      "low": 0.13584
+    },
+    "SOLBTC": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.001456728,
+      "low": 0.001199232
+    },
+    "SOLETH": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.0471952,
+      "low": 0.0408576
+    },
+    "SOLEUR": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 108.20160000000001,
+      "low": 86.3328
+    },
+    "SOLFDUSD": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 121.39920000000001,
+      "low": 97.0944
+    },
+    "SOLUSD1": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 121.2952,
+      "low": 96.9024
+    },
+    "SOLUSDC": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 121.16000000000001,
+      "low": 96.81599999999999
+    },
+    "SOLUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 121.212,
+      "low": 96.93119999999999
+    },
+    "SPCXBUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 175.24,
+      "low": 136.07999999999998
+    },
+    "SPKUSDC": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.02361944,
+      "low": 0.01774752
+    },
+    "STXUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.473304,
+      "low": 0.324096
+    },
+    "SUIFDUSD": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 1.1879920000000002,
+      "low": 0.909504
+    },
+    "SUIUSDC": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 1.184352,
+      "low": 0.906336
+    },
+    "SUIUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 1.184664,
+      "low": 0.907296
+    },
+    "SUPERUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.24648,
+      "low": 0.17548799999999998
+    },
+    "SUSDC": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.0614432,
+      "low": 0.0356928
+    },
+    "SYNUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.2116088,
+      "low": 0.1620384
+    },
+    "TAOUSDC": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 311.58400000000006,
+      "low": 245.568
+    },
+    "TAOUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 311.79200000000003,
+      "low": 245.76
+    },
+    "THETAUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.23930400000000002,
+      "low": 0.177792
+    },
+    "TIAUSDC": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.790296,
+      "low": 0.42672
+    },
+    "TIAUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.7923760000000001,
+      "low": 0.42624
+    },
+    "TRBUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 20.7688,
+      "low": 16.7808
+    },
+    "TRUMPUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 2.03112,
+      "low": 1.59648
+    },
+    "TRXBNB": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.000488488,
+      "low": 0.000416448
+    },
+    "TRXBTC": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 4.3056e-06,
+      "low": 3.7535999999999995e-06
+    },
+    "TRXETH": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.00014734720000000002,
+      "low": 0.0001240128
+    },
+    "TRXUSDC": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.34996000000000005,
+      "low": 0.31392
+    },
+    "TRXUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.35048,
+      "low": 0.314208
+    },
+    "TRXXRP": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.273936,
+      "low": 0.22416
+    },
+    "TSTUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.0188968,
+      "low": 0.0139872
+    },
+    "TURBOUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.0010576799999999999,
+      "low": 0.00077856
+    },
+    "TUTUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.024429600000000003,
+      "low": 0.0175776
+    },
+    "TWTUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.5669040000000001,
+      "low": 0.419616
+    },
+    "UNIBTC": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 9.973600000000001e-05,
+      "low": 8.0928e-05
+    },
+    "UNIUSDC": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 8.32416,
+      "low": 6.55488
+    },
+    "UNIUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 8.32832,
+      "low": 6.56544
+    },
+    "USDTBRL": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 5.307432,
+      "low": 4.786656
+    },
+    "USTCUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.0057096000000000004,
+      "low": 0.004512
+    },
+    "VETUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.00841568,
+      "low": 0.006184319999999999
+    },
+    "VIRTUALUSDC": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.808392,
+      "low": 0.610752
+    },
+    "VIRTUALUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.808704,
+      "low": 0.602208
+    },
+    "VTHOUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.0007810400000000001,
+      "low": 0.0005807999999999999
+    },
+    "WIFUSDC": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.241696,
+      "low": 0.180192
+    },
+    "WIFUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.24138400000000002,
+      "low": 0.18038400000000002
+    },
+    "WINUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 6.664319999999999e-05,
+      "low": 4.88448e-05
+    },
+    "WLDUSDC": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.61776,
+      "low": 0.44256
+    },
+    "WLDUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.618384,
+      "low": 0.44294399999999995
+    },
+    "WLFIUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.060528000000000005,
+      "low": 0.051264000000000004
+    },
+    "WUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.0314704,
+      "low": 0.012230399999999999
+    },
+    "XAIUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.010264800000000001,
+      "low": 0.0074015999999999995
+    },
+    "XAUTUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 4373.428800000001,
+      "low": 3902.8127999999997
+    },
+    "XLMUSDC": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.21257600000000001,
+      "low": 0.168768
+    },
+    "XLMUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.212888,
+      "low": 0.165408
+    },
+    "XNOUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.41704,
+      "low": 0.30432
+    },
+    "XPLUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.0928616,
+      "low": 0.0707136
+    },
+    "XRPBTC": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 1.7825599999999998e-05,
+      "low": 1.4956799999999999e-05
+    },
+    "XRPETH": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.0005871839999999999,
+      "low": 0.0005134079999999999
+    },
+    "XRPEUR": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 1.3249600000000001,
+      "low": 1.0770239999999998
+    },
+    "XRPFDUSD": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 1.4865760000000001,
+      "low": 1.211616
+    },
+    "XRPUSDC": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 1.4835600000000002,
+      "low": 1.2078719999999998
+    },
+    "XRPUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 1.4839760000000002,
+      "low": 1.209504
+    },
+    "XVGUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.00308568,
+      "low": 0.00233664
+    },
+    "XVSUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 3.3498400000000004,
+      "low": 2.80224
+    },
+    "ZAMAUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.0877136,
+      "low": 0.0648384
+    },
+    "ZECBTC": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.016761263999999998,
+      "low": 0.012532703999999999
+    },
+    "ZECETH": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.5635968,
+      "low": 0.43118399999999996
+    },
+    "ZECUSDC": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 1414.92,
+      "low": 1014.5855999999999
+    },
+    "ZECUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 1415.7416,
+      "low": 1015.7663999999999
+    },
+    "ZENUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 6.981520000000001,
+      "low": 5.424
+    },
+    "ZKUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.0188864,
+      "low": 0.0103872
+    },
+    "ZROUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 2.5771200000000003,
+      "low": 1.66944
+    },
+    "\u5e01\u5b89\u4eba\u751fUSDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.6544719999999999,
+      "low": 0.44707199999999997
+    },
+    "\u725b\u6765USDT": {
+      "bufferPct": 4.0,
+      "gridCount": 5,
+      "gridMode": "GEOMETRIC",
+      "high": 0.0859872,
+      "low": 0.0539232
+    }
+  },
+  "strategy": "progressive_equal_history_and_forward_horizon"
+}
