@@ -11,7 +11,7 @@ import pandas as pd
 RESULTS = Path("results")
 OUTPUT = RESULTS / "current_price.csv"
 HISTORY = RESULTS / "history"
-HISTORY_DAYS = 10
+HISTORY_DAYS = 11
 LOOKBACK_HOURS = 72
 MIN_POINTS = 12
 GRID_COUNT = 5
