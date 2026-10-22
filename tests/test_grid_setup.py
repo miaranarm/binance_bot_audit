@@ -45,6 +45,39 @@ class GridSetupTests(unittest.TestCase):
         self.assertEqual(output.loc[0, "recommendedGridCount"], 6)
         self.assertIn(output.loc[0, "setupSignal"], {"READY_TO_REVIEW", "WAIT_HIGH_RANGE", "WAIT_OUTSIDE_RANGE"})
 
+    def test_short_history_pair_uses_selected_rule_without_fake_72h_indicators(self):
+        times = np.arange(20, dtype=float) * 3600.0
+        prices = 1.0 + 0.05 * np.sin(np.arange(20, dtype=float) / 3.0)
+        current = pd.DataFrame([{"symbol": "SHORTUSDT", "currentPrice": float(prices[-1])}])
+        chosen = {"bufferPct": 4.0, "gridCount": 5, "gridMode": "GEOMETRIC"}
+        output = add_setup_columns(
+            current, {"SHORTUSDT": (times, prices)}, {}, chosen,
+            datetime.now(timezone.utc),
+        )
+        row = output.iloc[0]
+        self.assertGreater(float(row["recommendedPriceLow"]), 0)
+        self.assertGreater(float(row["recommendedPriceHigh"]), float(row["recommendedPriceLow"]))
+        self.assertEqual(row["recommendedGridCount"], 5)
+        self.assertEqual(row["recommendedGridMode"], "GEOMETRIC")
+        self.assertEqual(row["setupSignal"], "PROVISIONAL_SHORT_HISTORY")
+        self.assertTrue(pd.isna(row["rangePosition72hPct"]))
+        self.assertTrue(pd.isna(row["zScore72h"]))
+
+    def test_no_selected_rule_does_not_invent_grid_parameters(self):
+        times = np.arange(20, dtype=float) * 3600.0
+        prices = 1.0 + 0.05 * np.sin(np.arange(20, dtype=float) / 3.0)
+        current = pd.DataFrame([{"symbol": "UNVALIDATEDUSDT", "currentPrice": float(prices[-1])}])
+        output = add_setup_columns(
+            current, {"UNVALIDATEDUSDT": (times, prices)}, {}, None,
+            datetime.now(timezone.utc),
+        )
+        row = output.iloc[0]
+        self.assertTrue(pd.isna(row["recommendedPriceLow"]))
+        self.assertTrue(pd.isna(row["recommendedPriceHigh"]))
+        self.assertTrue(pd.isna(row["recommendedGridCount"]))
+        self.assertTrue(pd.isna(row["recommendedGridMode"]))
+        self.assertEqual(row["setupSignal"], "RULE_NOT_VALIDATED")
+
     def test_arithmetic_and_geometric_levels_differ(self):
         from src.build_grid_setup import make_levels
         arithmetic = make_levels(1.0, 4.0, 3, "ARITHMETIC")
