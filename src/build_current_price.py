@@ -16,7 +16,13 @@ PROJECT_TRACKER = RESULTS / "current_price_history.csv"
 BINANCE_TRACKER = RESULTS / "binance_listing_extrema.csv"
 OUTPUT = RESULTS / "current_price.csv"
 HISTORY = RESULTS / "history"
-API = "https://data-api.binance.vision/api/v3/klines"
+APIS = [
+    "https://data-api.binance.vision/api/v3/klines",
+    "https://api.binance.com/api/v3/klines",
+    "https://api-gcp.binance.com/api/v3/klines",
+    "https://api1.binance.com/api/v3/klines",
+    "https://api2.binance.com/api/v3/klines",
+]
 OUT_COLUMNS = [
     "symbol", "minInvestment", "currentPrice",
     "priceLow", "priceHigh", "binancePriceLow", "binancePriceHigh", "Niveau"
@@ -40,32 +46,35 @@ def read_snapshot(path):
 
 
 def get_binance_listing_extrema(symbol):
-    """Monthly candles retain exact intramonth lows/highs; Binance began in 2017."""
+    """Monthly candles retain exact intramonth lows/highs; try independent public hosts."""
     params = urlencode({"symbol": symbol, "interval": "1M", "limit": 1000})
-    request = Request(API + "?" + params, headers={"User-Agent": "binance-bot-audit/1.0"})
-    for attempt in range(4):
-        try:
-            with urlopen(request, timeout=20) as response:
-                payload = json.loads(response.read().decode("utf-8"))
-            if not isinstance(payload, list) or not payload:
-                return symbol, None, None, "NO_KLINES"
-            lows = [float(candle[3]) for candle in payload if len(candle) > 3]
-            highs = [float(candle[2]) for candle in payload if len(candle) > 2]
-            if not lows or not highs:
-                return symbol, None, None, "NO_KLINES"
-            return symbol, min(lows), max(highs), "OK"
-        except HTTPError as exc:
-            # Invalid/delisted symbols should not repeatedly stall the audit.
-            if exc.code in (400, 404):
-                return symbol, None, None, f"HTTP_{exc.code}"
-            if exc.code == 429 or exc.code >= 500:
-                time.sleep(1.5 * (attempt + 1))
-            else:
-                return symbol, None, None, f"HTTP_{exc.code}"
-        except (URLError, TimeoutError, ValueError, json.JSONDecodeError):
-            time.sleep(1.0 * (attempt + 1))
-    return symbol, None, None, "REQUEST_FAILED"
-
+    last_status = "REQUEST_FAILED"
+    for api in APIS:
+        request = Request(api + "?" + params, headers={"User-Agent": "binance-bot-audit/1.0"})
+        # Retry only throttling/server failures on a host; try the next host for other failures.
+        for attempt in range(2):
+            try:
+                with urlopen(request, timeout=12) as response:
+                    payload = json.loads(response.read().decode("utf-8"))
+                if not isinstance(payload, list) or not payload:
+                    last_status = "NO_KLINES"
+                    break
+                lows = [float(candle[3]) for candle in payload if len(candle) > 3]
+                highs = [float(candle[2]) for candle in payload if len(candle) > 2]
+                if not lows or not highs:
+                    last_status = "NO_KLINES"
+                    break
+                return symbol, min(lows), max(highs), "OK"
+            except HTTPError as exc:
+                last_status = f"HTTP_{exc.code}"
+                if exc.code in (429, 500, 502, 503, 504) and attempt == 0:
+                    time.sleep(0.8)
+                    continue
+                break
+            except (URLError, TimeoutError, ValueError, json.JSONDecodeError):
+                last_status = "REQUEST_FAILED"
+                break
+    return symbol, None, None, last_status
 
 def main():
     current = pd.read_csv(CURRENT, dtype={"symbol": str})
