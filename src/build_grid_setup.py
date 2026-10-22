@@ -258,8 +258,9 @@ def build_validation(series_by_symbol):
 def add_setup_columns(current, series_by_symbol, per_pair_windows, chosen, now):
     result = current.copy()
     for column in NEW_COLUMNS:
-        if column not in result.columns:
-            result[column] = ""
+        # Pandas 3 infers dtype=str from an empty-string initializer; use object
+        # so the same output column can hold numbers, labels, or missing values.
+        result[column] = pd.Series([None] * len(result), index=result.index, dtype=object)
     # If the replay cannot select a rule, use a clearly marked fallback, not a claimed optimum.
     buffer = chosen["bufferPct"] / 100.0 if chosen else 0.04
     count = int(chosen["gridCount"]) if chosen else 6
