@@ -1,7 +1,7 @@
 name: Binance Public Bot Audit
 
 # Pipeline unique (remplace audit.yml + pr-validation.yml + pr-e2e-validation.yml) :
-#   audit_all.py -> validate.py raw -> build_multicriteria.py -> validate.py final -> select_bots.py -> history_ranking.py
+#   audit_all.py -> validate.py raw -> build_multicriteria.py -> validate.py final -> build_current_price.py -> build_grid_setup.py -> select_bots.py -> history_ranking.py
 # Hors pull request : commit de results/ sur main. Pull request : même scan complet, sans commit.
 
 on:
