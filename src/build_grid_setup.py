@@ -18,6 +18,7 @@ CURRENT = RESULTS / "current_price.csv"
 HISTORY = RESULTS / "history"
 VALIDATION = RESULTS / "grid_setup_validation.csv"
 STATE = RESULTS / "grid_setup_state.json"
+EVALUATION = RESULTS / "grid_setup_period_evaluation.csv"
 FEE = 0.001                 # per order, conservative public-marketplace reference
 BUDGET = 100.0              # quote currency used to compare candidate rules
 LOOKBACK_HOURS = 72
@@ -320,13 +321,13 @@ def add_setup_columns(current, series_by_symbol, per_pair_windows, chosen, now, 
 
         bundle = per_pair_windows.get(symbol, {})
         tests = bundle.get("test", [])
-        test_values = [evaluate_rule(window, buffer, count) for window in tests]
+        test_values = [evaluate_rule(window, buffer, count, mode) for window in tests]
         test_values = [v for v in test_values if v is not None]
         mean_profit = float(np.mean([v["profit_pct"] for v in test_values])) if test_values else float("nan")
         win_rate = float(np.mean([v["profit_pct"] > 0 for v in test_values]) * 100.0) if test_values else float("nan")
         outside = float(np.mean([v["outside_pct"] for v in test_values])) if test_values else float("nan")
 
-        if not chosen:
+        if not chosen and not locked:
             signal = "RULE_NOT_VALIDATED"
             reason = "Historique insuffisant pour départager les réglages; valeurs indicatives uniquement."
         elif position >= 80.0 or zscore > 0.3:
@@ -373,15 +374,17 @@ def main():
         raise SystemExit(f"Colonnes obligatoires absentes de {CURRENT}: {sorted(required - set(current.columns))}")
 
     now = datetime.now(timezone.utc)
-    history = load_history(now)
-    current_symbols = set(current["symbol"].astype(str).str.strip())
-    history = {symbol: series for symbol, series in history.items() if symbol in current_symbols}
-    if not history:
+    all_history = load_history(now)
+    if not all_history:
         raise SystemExit("Aucun historique exploitable pour construire les recommandations.")
-
-    earliest = min(float(series[0][0]) for series in history.values() if len(series[0]))
-    latest = max(float(series[0][-1]) for series in history.values() if len(series[0]))
+    # The collection clock is based on all archived snapshots, including pairs no longer listed.
+    earliest = min(float(series[0][0]) for series in all_history.values() if len(series[0]))
+    latest = max(float(series[0][-1]) for series in all_history.values() if len(series[0]))
     history_days = max(1.0, (latest - earliest) / 86400.0)
+    current_symbols = set(current["symbol"].astype(str).str.strip())
+    history = {symbol: series for symbol, series in all_history.items() if symbol in current_symbols}
+    if not history:
+        raise SystemExit("Aucun historique des paires actuellement présentes dans current_price.csv.")
 
     previous_state = {}
     if STATE.exists():
@@ -398,6 +401,55 @@ def main():
         due = True
 
     if due:
+        # Score the just-finished forward period against the setup that was actually frozen.
+        evaluation_rows = []
+        old_setups = previous_state.get("setups", {})
+        old_configured_at = previous_state.get("configured_at")
+        try:
+            evaluation_start = datetime.fromisoformat(old_configured_at).timestamp() if old_configured_at else None
+        except (TypeError, ValueError):
+            evaluation_start = None
+        if evaluation_start is not None:
+            for symbol, setup in old_setups.items():
+                series = history.get(symbol)
+                if series is None:
+                    continue
+                times, prices = series
+                start_idx = int(np.searchsorted(times, evaluation_start, side="left"))
+                period_prices = prices[start_idx:]
+                if len(period_prices) < 2:
+                    continue
+                replay = simulate_grid(
+                    period_prices, float(setup["low"]), float(setup["high"]),
+                    int(setup["gridCount"]), str(setup.get("gridMode", "GEOMETRIC")),
+                )
+                if replay is None:
+                    continue
+                evaluation_rows.append({
+                    "symbol": symbol,
+                    "configuredAt": old_configured_at,
+                    "evaluatedAt": now.isoformat(),
+                    "elapsedDays": round((now.timestamp() - evaluation_start) / 86400.0, 4),
+                    "snapshots": int(len(period_prices)),
+                    "startPrice": float(period_prices[0]),
+                    "endPrice": float(period_prices[-1]),
+                    "recommendedPriceLow": float(setup["low"]),
+                    "recommendedPriceHigh": float(setup["high"]),
+                    "recommendedGridCount": int(setup["gridCount"]),
+                    "recommendedGridMode": str(setup.get("gridMode", "GEOMETRIC")),
+                    "realizedGridProfitProxyPct": replay["profit_pct"],
+                    "completedCycles": replay["cycles"],
+                    "outsidePct": replay["outside_pct"],
+                    "limitation": "Replay approximatif sur currentPrice; pas d'exécutions réelles ni de mark-to-market de l'inventaire ouvert.",
+                })
+        evaluation_columns = [
+            "symbol", "configuredAt", "evaluatedAt", "elapsedDays", "snapshots",
+            "startPrice", "endPrice", "recommendedPriceLow", "recommendedPriceHigh",
+            "recommendedGridCount", "recommendedGridMode", "realizedGridProfitProxyPct",
+            "completedCycles", "outsidePct", "limitation",
+        ]
+        pd.DataFrame(evaluation_rows, columns=evaluation_columns).to_csv(EVALUATION, index=False)
+
         per_pair_windows, chosen, validation = build_validation(history)
         validation.to_csv(VALIDATION, index=False)
         output = add_setup_columns(current, history, per_pair_windows, chosen, now)
