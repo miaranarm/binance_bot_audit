@@ -400,11 +400,13 @@ def main():
     except (TypeError, ValueError):
         due = True
 
+    # Refresh every recommended field on every snapshot. The progressive horizon
+    # is retained only to evaluate the previously frozen period, never to lock
+    # the recommendations displayed in current_price.csv.
+    evaluation_rows = []
+    old_setups = previous_state.get("setups", {})
+    old_configured_at = previous_state.get("configured_at")
     if due:
-        # Score the just-finished forward period against the setup that was actually frozen.
-        evaluation_rows = []
-        old_setups = previous_state.get("setups", {})
-        old_configured_at = previous_state.get("configured_at")
         try:
             evaluation_start = datetime.fromisoformat(old_configured_at).timestamp() if old_configured_at else None
         except (TypeError, ValueError):
@@ -450,9 +452,12 @@ def main():
         ]
         pd.DataFrame(evaluation_rows, columns=evaluation_columns).to_csv(EVALUATION, index=False)
 
-        per_pair_windows, chosen, validation = build_validation(history)
-        validation.to_csv(VALIDATION, index=False)
-        output = add_setup_columns(current, history, per_pair_windows, chosen, now)
+    # Relearn from the full accumulated snapshot history every time the workflow runs.
+    per_pair_windows, chosen, validation = build_validation(history)
+    validation.to_csv(VALIDATION, index=False)
+    output = add_setup_columns(current, history, per_pair_windows, chosen, now)
+
+    if due:
         setups = {}
         for _, row in output.iterrows():
             symbol = str(row.get("symbol", "")).strip()
@@ -482,17 +487,15 @@ def main():
         }
         import json
         STATE.write_text(json.dumps(state, indent=2, sort_keys=True, allow_nan=False) + "\n", encoding="utf-8")
-        action = "RECALCULATED"
+        action = "RELEARNED_AND_EVALUATED" if old_configured_at else "INITIALIZED"
     else:
-        setups = previous_state.get("setups", {})
-        output = add_setup_columns(current, history, {}, None, now, locked_setups=setups)
-        action = "LOCKED_UNTIL_NEXT_HORIZON"
+        action = "REFRESHED_RECOMMENDATIONS"
 
     temp = CURRENT.with_suffix(".csv.tmp")
     output.to_csv(temp, index=False)
     temp.replace(CURRENT)
 
-    if due and chosen:
+    if chosen:
         print(
             f"GRID_SETUP_{action} "
             f"buffer={chosen['bufferPct']:.0f}% grids={chosen['gridCount']} mode={chosen.get('gridMode', 'GEOMETRIC')}; "
@@ -503,11 +506,15 @@ def main():
             f"holdout_mean_profit_proxy={chosen['holdoutMeanProfitProxyPct']:.4f}% "
             f"holdout_win_rate={chosen['holdoutWinRatePct']:.1f}% holdout_outside={chosen['holdoutOutsidePct']:.1f}%"
         )
-    elif due:
+    else:
         print("GRID_SETUP_RULE_FALLBACK buffer=4% grids=6; no rule could be validated from stored history.")
+    next_recalculation = previous_state.get("next_rebuild_at")
+    if due:
+        next_recalculation = state["next_rebuild_at"]
     print(
-        f"GRID_SETUP_{action}: history={history_days:.2f} days; forward horizon={history_days:.2f} days; "
-        f"next recalculation={previous_state.get('next_rebuild_at') if not due else state['next_rebuild_at']}; "
+        f"GRID_SETUP_{action}: recommendations refreshed for this snapshot; "
+        f"history={history_days:.2f} days; evaluation horizon={history_days:.2f} days; "
+        f"period evaluation due={due}; next period evaluation={next_recalculation}; "
         f"state={STATE}; symbols with history={len(history)}."
     )
 
