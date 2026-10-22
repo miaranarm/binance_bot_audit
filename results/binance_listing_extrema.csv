@@ -1,5 +1,6 @@
 symbol,binancePriceLow,binancePriceHigh,status,checkedDateUTC,validationMethod
 0GUSDT,0.136,7.26,OK_DAILY_VERIFIED,2026-10-22,monthly-vs-full-daily-v1
+1000CATUSDT,0.00123,0.07089,OK_DAILY_VERIFIED,2026-10-22,monthly-vs-full-daily-v1
 1000SATSUSDC,2.87e-06,0.0004283,OK_DAILY_VERIFIED,2026-10-22,monthly-vs-full-daily-v1
 1000SATSUSDT,5.35e-06,0.0009428,OK_DAILY_VERIFIED,2026-10-22,monthly-vs-full-daily-v1
 1INCHUSDT,0.0647,7.8748,OK_DAILY_VERIFIED,2026-10-22,monthly-vs-full-daily-v1
@@ -352,3 +353,4 @@ ZENUSDT,3.734,169.23,OK_DAILY_VERIFIED,2026-10-22,monthly-vs-full-daily-v1
 ZKUSDT,0.00373,0.295,OK_DAILY_VERIFIED,2026-10-22,monthly-vs-full-daily-v1
 ZROUSDT,0.311,7.567,OK_DAILY_VERIFIED,2026-10-22,monthly-vs-full-daily-v1
 币安人生USDT,0.037,0.8999,OK_DAILY_VERIFIED,2026-10-22,monthly-vs-full-daily-v1
+牛来USDT,0.0544,0.16355,OK_DAILY_VERIFIED,2026-10-22,monthly-vs-full-daily-v1
