@@ -138,7 +138,7 @@ def main():
                 }
 
     records = []
-    for symbol in sorted(set(list(cached) | set(active_symbols))):
+    for symbol in sorted(set(cached) | set(active_symbols)):
         old = cached.get(symbol, {})
         new = queried.get(symbol)
         if new and new["status"] == "OK":
