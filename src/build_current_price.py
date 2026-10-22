@@ -46,34 +46,72 @@ def read_snapshot(path):
 
 
 def get_binance_listing_extrema(symbol):
-    """Monthly candles retain exact intramonth lows/highs; try independent public hosts."""
-    params = urlencode({"symbol": symbol, "interval": "1M", "limit": 1000})
+    """Accept listing extrema only when monthly and complete daily history agree."""
     last_status = "REQUEST_FAILED"
     for api in APIS:
-        request = Request(api + "?" + params, headers={"User-Agent": "binance-bot-audit/1.0"})
-        # Retry only throttling/server failures on a host; try the next host for other failures.
-        for attempt in range(2):
-            try:
+        try:
+            def fetch(interval, start_time=None):
+                params = {"symbol": symbol, "interval": interval, "limit": 1000}
+                if start_time is not None:
+                    params["startTime"] = int(start_time)
+                request = Request(api + "?" + urlencode(params), headers={"User-Agent": "binance-bot-audit/1.0"})
                 with urlopen(request, timeout=12) as response:
                     payload = json.loads(response.read().decode("utf-8"))
-                if not isinstance(payload, list) or not payload:
-                    last_status = "NO_KLINES"
+                if not isinstance(payload, list):
+                    raise ValueError("Invalid klines response")
+                return payload
+
+            def checked(payload):
+                rows = []
+                for c in payload:
+                    if len(c) < 7:
+                        raise ValueError("Incomplete kline")
+                    t = int(c[0]); o, h, l, close = map(float, (c[1], c[2], c[3], c[4]))
+                    if not all(v > 0 and v < float("inf") for v in (o, h, l, close)):
+                        raise ValueError("Invalid OHLC value")
+                    if l > min(o, close) or h < max(o, close) or l > h:
+                        raise ValueError("Inconsistent OHLC candle")
+                    rows.append((t, l, h))
+                return rows
+
+            monthly = checked(fetch("1M"))
+            if not monthly:
+                last_status = "NO_KLINES"
+                continue
+            daily_low, daily_high = float("inf"), 0.0
+            start_time, previous_start, pages = monthly[0][0], -1, 0
+            while True:
+                payload = fetch("1d", start_time)
+                daily = checked(payload)
+                if not daily:
                     break
-                lows = [float(candle[3]) for candle in payload if len(candle) > 3]
-                highs = [float(candle[2]) for candle in payload if len(candle) > 2]
-                if not lows or not highs:
-                    last_status = "NO_KLINES"
+                if daily[0][0] <= previous_start:
+                    raise ValueError("Daily pagination did not advance")
+                previous_start = daily[-1][0]
+                daily_low = min(daily_low, min(row[1] for row in daily))
+                daily_high = max(daily_high, max(row[2] for row in daily))
+                pages += 1
+                if len(payload) < 1000:
                     break
-                return symbol, min(lows), max(highs), "OK"
-            except HTTPError as exc:
-                last_status = f"HTTP_{exc.code}"
-                if exc.code in (429, 500, 502, 503, 504) and attempt == 0:
-                    time.sleep(0.8)
-                    continue
-                break
-            except (URLError, TimeoutError, ValueError, json.JSONDecodeError):
-                last_status = "REQUEST_FAILED"
-                break
+                if pages >= 20:
+                    raise ValueError("Daily history exceeds safety page limit")
+                start_time = previous_start + 86400000
+            if daily_low == float("inf") or daily_high <= 0:
+                last_status = "NO_DAILY_KLINES"
+                continue
+            monthly_low = min(row[1] for row in monthly)
+            monthly_high = max(row[2] for row in monthly)
+            low_ok = abs(monthly_low - daily_low) <= max(monthly_low, daily_low) * 1e-6
+            high_ok = abs(monthly_high - daily_high) <= max(monthly_high, daily_high) * 1e-6
+            if not (low_ok and high_ok):
+                return symbol, None, None, "INTERVAL_MISMATCH"
+            return symbol, daily_low, daily_high, "OK_DAILY_VERIFIED"
+        except HTTPError as exc:
+            last_status = f"HTTP_{exc.code}"
+            if exc.code in (429, 500, 502, 503, 504):
+                time.sleep(0.8)
+        except (URLError, TimeoutError, ValueError, json.JSONDecodeError):
+            last_status = "INVALID_KLINE_DATA"
     return symbol, None, None, last_status
 
 def main():
@@ -126,6 +164,8 @@ def main():
             "symbol", "binancePriceLow", "binancePriceHigh", "status", "checkedDateUTC"])
     for column in ("binancePriceLow", "binancePriceHigh"):
         listing[column] = num(listing[column]) if column in listing else float("nan")
+    if "validationMethod" not in listing:
+        listing["validationMethod"] = ""
     listing["symbol"] = listing["symbol"].astype(str).str.strip()
     listing["checkedDateUTC"] = listing["checkedDateUTC"].fillna("").astype(str)
     listing = listing.drop_duplicates("symbol", keep="last")
@@ -137,7 +177,8 @@ def main():
     to_query = [symbol for symbol in active_symbols
                 if symbol not in cached
                 or cached[symbol].get("checkedDateUTC", "") != today
-                or cached[symbol].get("status", "") != "OK"]
+                or cached[symbol].get("status", "") != "OK_DAILY_VERIFIED"
+                or cached[symbol].get("validationMethod", "") != "monthly-vs-full-daily-v1"]
     queried = {}
     if to_query:
         # Moderate parallelism while remaining within Binance's public API rate limits.
@@ -147,24 +188,25 @@ def main():
                 symbol, low, high, status = future.result()
                 queried[symbol] = {
                     "symbol": symbol, "binancePriceLow": low, "binancePriceHigh": high,
-                    "status": status, "checkedDateUTC": today
+                    "status": status, "checkedDateUTC": today,
+                    "validationMethod": "monthly-vs-full-daily-v1"
                 }
 
     records = []
     for symbol in sorted(set(cached) | set(active_symbols)):
         old = cached.get(symbol, {})
         new = queried.get(symbol)
-        if new and new["status"] == "OK":
-            # Monthly low/high can extend as the current month develops.
+        if new and new["status"] == "OK_DAILY_VERIFIED":
             record = new
         elif new:
-            # Keep last known valid values on temporary API failures / delisted pairs.
+            trusted_old = old.get("validationMethod", "") == "monthly-vs-full-daily-v1" and old.get("status") == "OK_DAILY_VERIFIED"
             record = {
                 "symbol": symbol,
-                "binancePriceLow": old.get("binancePriceLow"),
-                "binancePriceHigh": old.get("binancePriceHigh"),
+                "binancePriceLow": old.get("binancePriceLow") if trusted_old else None,
+                "binancePriceHigh": old.get("binancePriceHigh") if trusted_old else None,
                 "status": new["status"],
-                "checkedDateUTC": today
+                "checkedDateUTC": today,
+                "validationMethod": "monthly-vs-full-daily-v1"
             }
         else:
             record = {
@@ -172,11 +214,12 @@ def main():
                 "binancePriceLow": old.get("binancePriceLow"),
                 "binancePriceHigh": old.get("binancePriceHigh"),
                 "status": old.get("status", ""),
-                "checkedDateUTC": old.get("checkedDateUTC", "")
+                "checkedDateUTC": old.get("checkedDateUTC", ""),
+                "validationMethod": old.get("validationMethod", "")
             }
         records.append(record)
     listing = pd.DataFrame(records, columns=[
-        "symbol", "binancePriceLow", "binancePriceHigh", "status", "checkedDateUTC"])
+        "symbol", "binancePriceLow", "binancePriceHigh", "status", "checkedDateUTC", "validationMethod"])
     listing.to_csv(BINANCE_TRACKER, index=False)
 
     # One row per pair; use the bot with the lowest minimum investment to select Niveau.
@@ -190,8 +233,8 @@ def main():
     temp = OUTPUT.with_suffix(".csv.tmp")
     result.to_csv(temp, index=False)
     temp.replace(OUTPUT)
-    failures = int(listing.loc[listing["symbol"].isin(active_symbols), "status"].ne("OK").sum())
-    print(f"{len(result)} paires -> {OUTPUT}; Binance listing extrema checked today: {len(to_query)} queried, {failures} active symbols without a fresh valid result.")
+    failures = int(listing.loc[listing["symbol"].isin(active_symbols), "status"].ne("OK_DAILY_VERIFIED").sum())
+    print(f"{len(result)} paires -> {OUTPUT}; full daily-history validation: {len(to_query)} queried, {failures} active symbols without verified extrema.")
 
 
 if __name__ == "__main__":
