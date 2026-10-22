@@ -21,14 +21,14 @@ on:
 permissions:
   contents: write
 
-# Un push sur main relance l'audit avec le code à jour ; la concurrence annule les runs périmés.
-# Les commentaires étrangers à /audit-run et les PR ont leur propre groupe : ils n'annulent pas le scan horaire.
+# Les audits qui écrivent les résultats sur main sont sérialisés pour éviter les conflits de rebase.
+# Les PR et commentaires ignorés restent isolés du scan principal.
 concurrency:
   group: >-
     ${{ github.event_name == 'pull_request' && format('audit-pr-{0}', github.ref)
     || (github.event_name == 'issue_comment' && github.event.comment.body != '/audit-run') && format('audit-ignored-{0}', github.run_id)
     || 'binance-public-bot-audit' }}
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   tests:
