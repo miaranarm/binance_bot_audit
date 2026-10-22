@@ -17,6 +17,7 @@ RESULTS = Path("results")
 CURRENT = RESULTS / "current_price.csv"
 HISTORY = RESULTS / "history"
 VALIDATION = RESULTS / "grid_setup_validation.csv"
+STATE = RESULTS / "grid_setup_state.json"
 FEE = 0.001                 # per order, conservative public-marketplace reference
 BUDGET = 100.0              # quote currency used to compare candidate rules
 LOOKBACK_HOURS = 72
@@ -47,12 +48,12 @@ def snapshot_time(path):
 
 
 def load_history(now):
-    cutoff = now - timedelta(days=HISTORY_DAYS)
+    # Use the full retained snapshot history; learning horizon grows over time.
     rows = []
     files = sorted(HISTORY.rglob("*.csv.gz"))
     for path in files:
         stamp = snapshot_time(path)
-        if stamp is None or stamp < cutoff or stamp > now + timedelta(hours=1):
+        if stamp is None or stamp > now + timedelta(hours=1):
             continue
         try:
             frame = pd.read_csv(
@@ -90,15 +91,17 @@ def load_history(now):
     return result
 
 
-def make_levels(low, high, count):
+def make_levels(low, high, count, mode="GEOMETRIC"):
     if not (math.isfinite(low) and math.isfinite(high) and 0 < low < high):
         return None
+    if str(mode).upper() == "ARITHMETIC":
+        return np.linspace(low, high, count + 1)
     return np.geomspace(low, high, count + 1)
 
 
-def simulate_grid(prices, low, high, count):
+def simulate_grid(prices, low, high, count, mode="GEOMETRIC"):
     """Approximate realized grid-cycle profit; inventory mark-to-market is not included."""
-    levels = make_levels(low, high, count)
+    levels = make_levels(low, high, count, mode)
     if levels is None or len(prices) < 2:
         return None
     bought = [False] * count
@@ -164,12 +167,12 @@ def candidate_windows(series):
     return windows
 
 
-def evaluate_rule(window, buffer, count):
+def evaluate_rule(window, buffer, count, mode="GEOMETRIC"):
     low = window["low72"] * (1.0 - buffer)
     high = window["high72"] * (1.0 + buffer)
     if not (0 < low < high):
         return None
-    result = simulate_grid(window["future"], low, high, count)
+    result = simulate_grid(window["future"], low, high, count, mode)
     if result is None:
         return None
     result.update({"low": low, "high": high})
@@ -194,48 +197,50 @@ def build_validation(series_by_symbol):
     candidates = []
     for buffer in BUFFERS:
         for count in GRID_COUNTS:
-            train_results = []
-            test_results = []
-            for symbol, bundle in per_pair_windows.items():
-                for window in bundle["train"]:
-                    value = evaluate_rule(window, buffer, count)
-                    if value is not None:
-                        train_results.append((symbol, value))
-                for window in bundle["test"]:
-                    value = evaluate_rule(window, buffer, count)
-                    if value is not None:
-                        test_results.append((symbol, value))
-            if not train_results:
-                continue
-            mean_profit = float(np.mean([v["profit_pct"] for _, v in train_results]))
-            win_rate = float(np.mean([v["profit_pct"] > 0 for _, v in train_results]) * 100.0)
-            outside = float(np.mean([v["outside_pct"] for _, v in train_results]))
-            pair_means = {}
-            for symbol, value in train_results:
-                pair_means.setdefault(symbol, []).append(value["profit_pct"])
-            pair_mean_profit = float(np.mean([np.mean(values) for values in pair_means.values()]))
-            test_profit = float(np.mean([v["profit_pct"] for _, v in test_results])) if test_results else float("nan")
-            test_win = float(np.mean([v["profit_pct"] > 0 for _, v in test_results]) * 100.0) if test_results else float("nan")
-            test_outside = float(np.mean([v["outside_pct"] for _, v in test_results])) if test_results else float("nan")
-            candidates.append({
-                "bufferPct": buffer * 100.0,
-                "gridCount": count,
-                "trainPairs": len(pair_means),
-                "trainWindows": len(train_results),
-                "trainMeanProfitProxyPct": mean_profit,
-                "trainMeanPerPairProfitProxyPct": pair_mean_profit,
-                "trainWinRatePct": win_rate,
-                "trainOutsidePct": outside,
-                "holdoutPairs": len({symbol for symbol, _ in test_results}),
-                "holdoutWindows": len(test_results),
-                "holdoutMeanProfitProxyPct": test_profit,
-                "holdoutWinRatePct": test_win,
-                "holdoutOutsidePct": test_outside,
-            })
+            for mode in ("GEOMETRIC", "ARITHMETIC"):
+                train_results = []
+                test_results = []
+                for symbol, bundle in per_pair_windows.items():
+                    for window in bundle["train"]:
+                        value = evaluate_rule(window, buffer, count, mode)
+                        if value is not None:
+                            train_results.append((symbol, value))
+                    for window in bundle["test"]:
+                        value = evaluate_rule(window, buffer, count, mode)
+                        if value is not None:
+                            test_results.append((symbol, value))
+                if not train_results:
+                    continue
+                mean_profit = float(np.mean([v["profit_pct"] for _, v in train_results]))
+                win_rate = float(np.mean([v["profit_pct"] > 0 for _, v in train_results]) * 100.0)
+                outside = float(np.mean([v["outside_pct"] for _, v in train_results]))
+                pair_means = {}
+                for symbol, value in train_results:
+                    pair_means.setdefault(symbol, []).append(value["profit_pct"])
+                pair_mean_profit = float(np.mean([np.mean(values) for values in pair_means.values()]))
+                test_profit = float(np.mean([v["profit_pct"] for _, v in test_results])) if test_results else float("nan")
+                test_win = float(np.mean([v["profit_pct"] > 0 for _, v in test_results]) * 100.0) if test_results else float("nan")
+                test_outside = float(np.mean([v["outside_pct"] for _, v in test_results])) if test_results else float("nan")
+                candidates.append({
+                    "bufferPct": buffer * 100.0,
+                    "gridCount": count,
+                    "gridMode": mode,
+                    "trainPairs": len(pair_means),
+                    "trainWindows": len(train_results),
+                    "trainMeanProfitProxyPct": mean_profit,
+                    "trainMeanPerPairProfitProxyPct": pair_mean_profit,
+                    "trainWinRatePct": win_rate,
+                    "trainOutsidePct": outside,
+                    "holdoutPairs": len({symbol for symbol, _ in test_results}),
+                    "holdoutWindows": len(test_results),
+                    "holdoutMeanProfitProxyPct": test_profit,
+                    "holdoutWinRatePct": test_win,
+                    "holdoutOutsidePct": test_outside,
+                })
 
     if not candidates:
         return per_pair_windows, None, pd.DataFrame(columns=[
-            "bufferPct", "gridCount", "trainPairs", "trainWindows",
+            "bufferPct", "gridCount", "gridMode", "trainPairs", "trainWindows",
             "trainMeanProfitProxyPct", "trainMeanPerPairProfitProxyPct",
             "trainWinRatePct", "trainOutsidePct", "holdoutPairs", "holdoutWindows",
             "holdoutMeanProfitProxyPct", "holdoutWinRatePct", "holdoutOutsidePct",
@@ -245,18 +250,19 @@ def build_validation(series_by_symbol):
     eligible = [r for r in candidates if r["trainWinRatePct"] >= 50 and r["trainOutsidePct"] <= 20]
     if eligible:
         chosen = max(eligible, key=lambda r: (
-            r["trainMeanPerPairProfitProxyPct"], -r["trainOutsidePct"], -r["gridCount"]
+            r["trainMeanPerPairProfitProxyPct"], -r["trainOutsidePct"], -r["gridCount"], r["gridMode"] == "ARITHMETIC"
         ))
     else:
         chosen = max(candidates, key=lambda r: (
-            r["trainWinRatePct"], -r["trainOutsidePct"], r["trainMeanPerPairProfitProxyPct"], -r["gridCount"]
+            r["trainWinRatePct"], -r["trainOutsidePct"], r["trainMeanPerPairProfitProxyPct"], -r["gridCount"], r["gridMode"] == "ARITHMETIC"
         ))
-    summary = pd.DataFrame(sorted(candidates, key=lambda r: (r["bufferPct"], r["gridCount"])))
+    summary = pd.DataFrame(sorted(candidates, key=lambda r: (r["bufferPct"], r["gridCount"], r["gridMode"])))
     return per_pair_windows, chosen, summary
 
 
-def add_setup_columns(current, series_by_symbol, per_pair_windows, chosen, now):
+def add_setup_columns(current, series_by_symbol, per_pair_windows, chosen, now, locked_setups=None):
     result = current.copy()
+    locked_setups = locked_setups or {}
     for column in NEW_COLUMNS:
         # Pandas 3 infers dtype=str from an empty-string initializer; use object
         # so the same output column can hold numbers, labels, or missing values.
@@ -264,8 +270,11 @@ def add_setup_columns(current, series_by_symbol, per_pair_windows, chosen, now):
     # If the replay cannot select a rule, use a clearly marked fallback, not a claimed optimum.
     buffer = chosen["bufferPct"] / 100.0 if chosen else 0.04
     count = int(chosen["gridCount"]) if chosen else 6
+    mode = str(chosen.get("gridMode", "GEOMETRIC")) if chosen else "GEOMETRIC"
+    base_buffer, base_count, base_mode = buffer, count, mode
 
     for idx, row in result.iterrows():
+        buffer, count, mode = base_buffer, base_count, base_mode
         symbol = str(row.get("symbol", "")).strip()
         current_price = pd.to_numeric(pd.Series([row.get("currentPrice")]), errors="coerce").iloc[0]
         series = series_by_symbol.get(symbol)
@@ -287,8 +296,22 @@ def add_setup_columns(current, series_by_symbol, per_pair_windows, chosen, now):
 
         low72 = float(np.min(recent_prices))
         high72 = float(np.max(recent_prices))
-        low = low72 * (1.0 - buffer)
-        high = high72 * (1.0 + buffer)
+        # Bounds use the complete accumulated history; 72 h indicators remain short-term.
+        historical_low = float(np.min(prices))
+        historical_high = float(np.max(prices))
+        low = historical_low * (1.0 - buffer)
+        high = historical_high * (1.0 + buffer)
+        locked = locked_setups.get(symbol)
+        if locked:
+            try:
+                locked_low, locked_high = float(locked["low"]), float(locked["high"])
+                if 0 < locked_low < locked_high:
+                    low, high = locked_low, locked_high
+                    buffer = float(locked.get("bufferPct", buffer * 100.0)) / 100.0
+                    count = int(locked.get("gridCount", count))
+                    mode = str(locked.get("gridMode", mode))
+            except (TypeError, ValueError, KeyError):
+                pass
         mean = float(np.mean(recent_prices))
         std = float(np.std(recent_prices, ddof=0))
         position = ((float(current_price) - low72) / (high72 - low72) * 100.0) if high72 > low72 else 50.0
@@ -320,7 +343,7 @@ def add_setup_columns(current, series_by_symbol, per_pair_windows, chosen, now):
             "recommendedPriceLow": low,
             "recommendedPriceHigh": high,
             "recommendedGridCount": count,
-            "recommendedGridMode": "GEOMETRIC",
+            "recommendedGridMode": mode,
             "setupRuleBufferPct": buffer * 100.0,
             "rangePosition72hPct": position,
             "zScore72h": zscore,
@@ -351,19 +374,76 @@ def main():
 
     now = datetime.now(timezone.utc)
     history = load_history(now)
-    # Use only symbols represented in the current file, while preserving the complete stored history.
-    history = {symbol: series for symbol, series in history.items() if symbol in set(current["symbol"].astype(str))}
-    per_pair_windows, chosen, validation = build_validation(history)
-    validation.to_csv(VALIDATION, index=False)
-    output = add_setup_columns(current, history, per_pair_windows, chosen, now)
+    current_symbols = set(current["symbol"].astype(str).str.strip())
+    history = {symbol: series for symbol, series in history.items() if symbol in current_symbols}
+    if not history:
+        raise SystemExit("Aucun historique exploitable pour construire les recommandations.")
+
+    earliest = min(float(series[0][0]) for series in history.values() if len(series[0]))
+    latest = max(float(series[0][-1]) for series in history.values() if len(series[0]))
+    history_days = max(1.0, (latest - earliest) / 86400.0)
+
+    previous_state = {}
+    if STATE.exists():
+        try:
+            import json
+            previous_state = json.loads(STATE.read_text(encoding="utf-8"))
+        except (OSError, ValueError):
+            previous_state = {}
+
+    next_rebuild = previous_state.get("next_rebuild_at")
+    try:
+        due = not next_rebuild or now >= datetime.fromisoformat(next_rebuild)
+    except (TypeError, ValueError):
+        due = True
+
+    if due:
+        per_pair_windows, chosen, validation = build_validation(history)
+        validation.to_csv(VALIDATION, index=False)
+        output = add_setup_columns(current, history, per_pair_windows, chosen, now)
+        setups = {}
+        for _, row in output.iterrows():
+            symbol = str(row.get("symbol", "")).strip()
+            try:
+                low, high = float(row.get("recommendedPriceLow")), float(row.get("recommendedPriceHigh"))
+                count = int(float(row.get("recommendedGridCount")))
+                buffer_pct = float(row.get("setupRuleBufferPct"))
+                grid_mode = str(row.get("recommendedGridMode") or "GEOMETRIC")
+                if symbol and 0 < low < high and count > 0 and grid_mode in {"GEOMETRIC", "ARITHMETIC"} and math.isfinite(buffer_pct):
+                    setups[symbol] = {
+                        "low": low, "high": high, "gridCount": count,
+                        "gridMode": grid_mode, "bufferPct": buffer_pct,
+                    }
+            except (TypeError, ValueError):
+                continue
+        next_at = now + timedelta(days=history_days)
+        state = {
+            "strategy": "progressive_equal_history_and_forward_horizon",
+            "configured_at": now.isoformat(),
+            "history_start": datetime.fromtimestamp(earliest, timezone.utc).isoformat(),
+            "history_end": datetime.fromtimestamp(latest, timezone.utc).isoformat(),
+            "history_days": round(history_days, 4),
+            "forward_horizon_days": round(history_days, 4),
+            "next_rebuild_at": next_at.isoformat(),
+            "grid_mode_candidates": ["GEOMETRIC", "ARITHMETIC"],
+            "setups": setups,
+        }
+        import json
+        STATE.write_text(json.dumps(state, indent=2, sort_keys=True, allow_nan=False) + "\n", encoding="utf-8")
+        action = "RECALCULATED"
+    else:
+        setups = previous_state.get("setups", {})
+        output = add_setup_columns(current, history, {}, None, now, locked_setups=setups)
+        action = "LOCKED_UNTIL_NEXT_HORIZON"
+
     temp = CURRENT.with_suffix(".csv.tmp")
     output.to_csv(temp, index=False)
     temp.replace(CURRENT)
 
-    if chosen:
+    if due and chosen:
         print(
-            "GRID_SETUP_RULE_SELECTED "
-            f"buffer={chosen['bufferPct']:.0f}% grids={chosen['gridCount']} geometric; "
+            f"GRID_SETUP_{action} "
+            f"buffer={chosen['bufferPct']:.0f}% grids={chosen['gridCount']} mode={chosen.get('gridMode', 'GEOMETRIC')}; "
             f"train_pairs={chosen['trainPairs']} train_windows={chosen['trainWindows']} "
             f"train_mean_profit_proxy={chosen['trainMeanPerPairProfitProxyPct']:.4f}% "
             f"train_win_rate={chosen['trainWinRatePct']:.1f}% train_outside={chosen['trainOutsidePct']:.1f}%; "
@@ -371,9 +451,13 @@ def main():
             f"holdout_mean_profit_proxy={chosen['holdoutMeanProfitProxyPct']:.4f}% "
             f"holdout_win_rate={chosen['holdoutWinRatePct']:.1f}% holdout_outside={chosen['holdoutOutsidePct']:.1f}%"
         )
-    else:
+    elif due:
         print("GRID_SETUP_RULE_FALLBACK buffer=4% grids=6; no rule could be validated from stored history.")
-    print(f"Grid setup appended to {CURRENT}; rule comparison saved to {VALIDATION}; symbols with history={len(history)}.")
+    print(
+        f"GRID_SETUP_{action}: history={history_days:.2f} days; forward horizon={history_days:.2f} days; "
+        f"next recalculation={previous_state.get('next_rebuild_at') if not due else state['next_rebuild_at']}; "
+        f"state={STATE}; symbols with history={len(history)}."
+    )
 
 
 if __name__ == "__main__":
