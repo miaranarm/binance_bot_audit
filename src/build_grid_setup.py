@@ -34,7 +34,7 @@ NEW_COLUMNS = [
     "recommendedGridMode", "setupRuleBufferPct", "rangePosition72hPct",
     "zScore72h", "rangeWidth72hPct", "setupSignal", "setupReason",
     "setupHistoryPoints", "backtest4dMeanProfitPct", "backtest4dWinRatePct",
-    "backtest4dOutsidePct", "backtest4dWindows",
+    "backtest4dOutsidePct", "backtest4dWindows", "simulatedGridProfitPctSinceInitialSetup",
 ]
 
 
@@ -261,6 +261,44 @@ def build_validation(series_by_symbol):
     return per_pair_windows, chosen, summary
 
 
+def historical_initial_setup_profit(series_by_symbol):
+    """Reconstruct a no-lookahead initial grid setup, then replay it to the latest snapshot.
+
+    The initial setup is made only after enough history exists to validate candidate rules.
+    Price bounds use the trailing 72h at that timestamp; future prices are used only for replay.
+    """
+    if not series_by_symbol:
+        return {}
+    earliest = min(float(series[0][0]) for series in series_by_symbol.values() if len(series[0]))
+    # Allow 72h lookback plus 96h forward windows to evaluate candidate rules before setup.
+    setup_time = earliest + (LOOKBACK_HOURS + FORWARD_HOURS) * 3600
+    training = {}
+    for symbol, (times, prices) in series_by_symbol.items():
+        mask = times <= setup_time
+        if int(mask.sum()) >= 20:
+            training[symbol] = (times[mask], prices[mask])
+    _, chosen, _ = build_validation(training)
+    buffer = (float(chosen["bufferPct"]) / 100.0) if chosen else 0.04
+    count = int(chosen["gridCount"]) if chosen else 6
+    mode = str(chosen.get("gridMode", "GEOMETRIC")) if chosen else "GEOMETRIC"
+    results = {}
+    for symbol, (times, prices) in series_by_symbol.items():
+        setup_idx = int(np.searchsorted(times, setup_time, side="right")) - 1
+        if setup_idx < 12 or setup_idx >= len(prices) - 1:
+            continue
+        trailing_mask = (times <= times[setup_idx]) & (times >= times[setup_idx] - LOOKBACK_HOURS * 3600)
+        trailing = prices[trailing_mask]
+        future = prices[setup_idx:]
+        if len(trailing) < 12 or len(future) < 2:
+            continue
+        low = float(np.min(trailing)) * (1.0 - buffer)
+        high = float(np.max(trailing)) * (1.0 + buffer)
+        replay = simulate_grid(future, low, high, count, mode)
+        if replay is not None:
+            results[symbol] = replay["profit_pct"]
+    return results
+
+
 def add_setup_columns(current, series_by_symbol, per_pair_windows, chosen, now, locked_setups=None):
     result = current.copy()
     locked_setups = locked_setups or {}
@@ -456,6 +494,8 @@ def main():
     per_pair_windows, chosen, validation = build_validation(history)
     validation.to_csv(VALIDATION, index=False)
     output = add_setup_columns(current, history, per_pair_windows, chosen, now)
+    initial_setup_profit = historical_initial_setup_profit(history)
+    output["simulatedGridProfitPctSinceInitialSetup"] = output["symbol"].astype(str).map(initial_setup_profit)
 
     if due:
         setups = {}
