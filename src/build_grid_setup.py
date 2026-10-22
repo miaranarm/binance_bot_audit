@@ -1,101 +1,163 @@
 #!/usr/bin/env python3
-"""Per-pair Spot Grid recommendations from archived price history."""
-from pathlib import Path
+"""Simple Claude-style Spot Grid setup from the pair's stored price history."""
 from datetime import datetime, timezone
-import math, re
+from pathlib import Path
+import math
+import re
+
 import numpy as np
 import pandas as pd
 
-R=Path("results"); OUT=R/"current_price.csv"; HIST=R/"history"
-FEE=0.001; BUDGET=100.0; LB=72*3600; FW=96*3600; STEP=24*3600
-PAT=re.compile(r"^(\d{8}T\d{6})Z\.csv\.gz$")
-BASE=["symbol","minInvestment","currentPrice","priceLow","priceHigh","binancePriceLow","binancePriceHigh","Niveau"]
-EXTRA=["recommendedPriceLow","recommendedPriceHigh","recommendedGridCount","rangePosition72hPct","zScore72h","setupSignal"]
+RESULTS = Path("results")
+OUTPUT = RESULTS / "current_price.csv"
+HISTORY = RESULTS / "history"
+HISTORY_DAYS = 10
+LOOKBACK_HOURS = 72
+MIN_POINTS = 12
+GRID_COUNT = 5
+GRID_MODE = "GEOMETRIC"
+SNAPSHOT_PATTERN = re.compile(r"^(\d{8}T\d{6})Z\.csv\.gz$")
 
-def stamp(p):
- m=PAT.match(p.name)
- if not m:return None
- try:return datetime.strptime(m.group(1),"%Y%m%dT%H%M%S").replace(tzinfo=timezone.utc).timestamp()
- except ValueError:return None
+BASE_COLUMNS = [
+    "symbol", "minInvestment", "currentPrice", "priceLow", "priceHigh",
+    "binancePriceLow", "binancePriceHigh", "Niveau",
+]
+SETUP_COLUMNS = [
+    "recommendedPriceLow", "recommendedPriceHigh", "recommendedGridCount",
+    "recommendedGridMode", "rangePosition72hPct", "zScore72h", "setupSignal",
+]
 
-def history(now):
- rows=[]
- for p in HIST.rglob("*.csv.gz"):
-  t=stamp(p)
-  if t is None or t>now+3600:continue
-  try:
-   d=pd.read_csv(p,compression="gzip",usecols=lambda c:c in {"symbol","currentPrice"})
-   if not {"symbol","currentPrice"}.issubset(d):continue
-   d["currentPrice"]=pd.to_numeric(d.currentPrice,errors="coerce")
-   d=d[d.currentPrice.gt(0)&np.isfinite(d.currentPrice)]
-   for s,g in d.groupby("symbol"):rows.append((str(s).strip(),t,float(g.currentPrice.median())))
-  except (OSError,ValueError,pd.errors.ParserError):pass
- if not rows:return {}
- d=pd.DataFrame(rows,columns=["symbol","t","p"]).drop_duplicates(["symbol","t"]).sort_values("t")
- return {s:(g.t.to_numpy(float),g.p.to_numpy(float)) for s,g in d.groupby("symbol")}
 
-def replay(p,lo,hi,n):
- if not 0<lo<hi or len(p)<2:return None
- levels=np.geomspace(lo,hi,n+1); bought=[False]*n
- qty=[BUDGET/n/levels[i] for i in range(n)]; profit=0.; cycles=0
- for a,b in zip(p[:-1],p[1:]):
-  if b<a:
-   for k in reversed([k for k in range(n) if a>levels[k]>=b]):bought[k]=True
-  elif b>a:
-   for k in [k for k in range(1,n+1) if a<levels[k]<=b]:
-    j=k-1
-    if bought[j]:
-     profit+=qty[j]*((levels[j+1]-levels[j])-FEE*(levels[j+1]+levels[j]));cycles+=1;bought[j]=False
- outside=100*sum(x<lo or x>hi for x in p)/len(p)
- return profit/BUDGET*100,outside,cycles
+def snapshot_timestamp(path):
+    match = SNAPSHOT_PATTERN.match(path.name)
+    if not match:
+        return None
+    try:
+        return datetime.strptime(match.group(1), "%Y%m%dT%H%M%S").replace(
+            tzinfo=timezone.utc
+        ).timestamp()
+    except ValueError:
+        return None
 
-def setup(t,p,current):
- recent=p[t>=t[-1]-10*86400]
- if len(recent)<12:return [None,None,None,None,None,"INSUFFICIENT_HISTORY"]
- windows=[]; start=t[0]+LB
- while start+FW<=t[-1]:
-  i=int(np.searchsorted(t,start)); x=t[i]
-  past=p[(t>=x-LB)&(t<=x)]; future=p[(t>=x)&(t<=x+FW)]
-  if len(past)>=12 and len(future)>=12:windows.append((past,future))
-  start=x+STEP
- if not windows:return [None,None,None,None,None,"INSUFFICIENT_BACKTEST"]
- q=np.quantile(recent,[0,.1,.2,.3,.7,.8,.9,1])
- lows=sorted(set(float(x) for x in q[:4] if x>0)); highs=sorted(set(float(x) for x in q[4:] if x>0))
- best=None
- for lo in lows:
-  for hi in highs:
-   if lo>=hi:continue
-   for n in (5,6,8,10):
-    vals=[replay(f,lo,hi,n) for _,f in windows]; vals=[v for v in vals if v]
-    if not vals:continue
-    avg=float(np.mean([v[0] for v in vals])); outside=float(np.mean([v[1] for v in vals]))
-    score=avg-.03*outside
-    cand=(score,avg,-outside,-n,lo,hi,n)
-    if best is None or cand>best:best=cand
- if best is None:return [None,None,None,None,None,"INSUFFICIENT_BACKTEST"]
- _,_,_,_,lo,hi,n=best
- p72=p[t>=t[-1]-LB]
- if len(p72)<12:return [lo,hi,n,None,None,"INSUFFICIENT_72H"]
- mn,mx=float(np.min(p72)),float(np.max(p72))
- pos=100*(current-mn)/(mx-mn) if mx>mn else None
- sd=float(np.std(p72)); z=(current-float(np.mean(p72)))/sd if sd>0 else None
- signal="WAIT_HIGH_RANGE" if (pos is not None and pos>80) or (z is not None and z>.3) else ("WAIT_OUTSIDE_RANGE" if current<lo or current>hi else "READY_TO_REVIEW")
- return [lo,hi,n,pos,z,signal]
+
+def load_price_history(now):
+    rows = []
+    for path in HISTORY.rglob("*.csv.gz"):
+        timestamp = snapshot_timestamp(path)
+        if timestamp is None or timestamp > now + 3600:
+            continue
+        try:
+            frame = pd.read_csv(
+                path, compression="gzip",
+                usecols=lambda column: column in {"symbol", "currentPrice"},
+            )
+            if not {"symbol", "currentPrice"}.issubset(frame.columns):
+                continue
+            frame["symbol"] = frame["symbol"].astype(str).str.strip()
+            frame["currentPrice"] = pd.to_numeric(frame["currentPrice"], errors="coerce")
+            frame = frame[
+                frame["symbol"].ne("")
+                & frame["currentPrice"].gt(0)
+                & np.isfinite(frame["currentPrice"])
+            ]
+            for symbol, group in frame.groupby("symbol"):
+                rows.append((symbol, timestamp, float(group["currentPrice"].median())))
+        except (OSError, ValueError, pd.errors.ParserError):
+            continue
+
+    if not rows:
+        return {}
+
+    data = pd.DataFrame(rows, columns=["symbol", "timestamp", "price"])
+    data = data.drop_duplicates(["symbol", "timestamp"]).sort_values("timestamp")
+    return {
+        symbol: (group["timestamp"].to_numpy(float), group["price"].to_numpy(float))
+        for symbol, group in data.groupby("symbol")
+    }
+
+
+def recommend_setup(timestamps, prices, current_price):
+    """Use only observed prices: 10-day range plus the 72-hour entry filter."""
+    if len(prices) < MIN_POINTS:
+        return [None, None, None, None, None, "INSUFFICIENT_HISTORY"]
+
+    recent_mask = timestamps >= timestamps[-1] - HISTORY_DAYS * 86400
+    recent_prices = prices[recent_mask]
+    if len(recent_prices) < MIN_POINTS:
+        return [None, None, None, None, None, "INSUFFICIENT_HISTORY"]
+
+    price_low = float(np.min(recent_prices))
+    price_high = float(np.max(recent_prices))
+    if not (0 < price_low < price_high):
+        return [None, None, GRID_COUNT, GRID_MODE, None, "INSUFFICIENT_RANGE"]
+
+    recent_72h = prices[timestamps >= timestamps[-1] - LOOKBACK_HOURS * 3600]
+    if len(recent_72h) < MIN_POINTS:
+        return [price_low, price_high, GRID_COUNT, GRID_MODE, None, "INSUFFICIENT_72H"]
+
+    low_72h = float(np.min(recent_72h))
+    high_72h = float(np.max(recent_72h))
+    position = (
+        100.0 * (current_price - low_72h) / (high_72h - low_72h)
+        if high_72h > low_72h else None
+    )
+    deviation = float(np.std(recent_72h))
+    z_score = (
+        (current_price - float(np.mean(recent_72h))) / deviation
+        if deviation > 0 else None
+    )
+
+    if (position is not None and position > 80) or (z_score is not None and z_score > 0.3):
+        signal = "WAIT_HIGH_RANGE"
+    elif current_price < price_low or current_price > price_high:
+        signal = "WAIT_OUTSIDE_RANGE"
+    else:
+        signal = "READY_TO_REVIEW"
+
+    return [
+        price_low, price_high, GRID_COUNT, GRID_MODE,
+        position, z_score, signal,
+    ]
+
 
 def main():
- if not OUT.exists():raise SystemExit(f"Missing {OUT}")
- d=pd.read_csv(OUT,dtype={"symbol":str})
- if not {"symbol","currentPrice"}.issubset(d):raise SystemExit("Required columns missing")
- d=d[[c for c in BASE if c in d.columns]].copy()
- for c in EXTRA:d[c]=None
- h=history(datetime.now(timezone.utc).timestamp())
- for i,r in d.iterrows():
-  s=str(r.symbol).strip(); price=pd.to_numeric(pd.Series([r.currentPrice]),errors="coerce").iloc[0]
-  if s not in h or not math.isfinite(float(price)) or price<=0:
-   d.at[i,"setupSignal"]="NO_DATA";continue
-  vals=setup(*h[s],float(price))
-  for c,v in zip(EXTRA,vals):d.at[i,c]=v
- tmp=OUT.with_suffix(".csv.tmp");d.to_csv(tmp,index=False);tmp.replace(OUT)
- print(f"Per-pair historical Spot Grid settings written: {len(d)} pairs")
+    if not OUTPUT.exists():
+        raise SystemExit(f"Missing {OUTPUT}")
 
-if __name__=="__main__":main()
+    data = pd.read_csv(OUTPUT, dtype={"symbol": str})
+    if not {"symbol", "currentPrice"}.issubset(data.columns):
+        raise SystemExit("Required columns missing: symbol/currentPrice")
+
+    missing_base = [column for column in BASE_COLUMNS if column not in data.columns]
+    if missing_base:
+        raise SystemExit(f"Required output columns missing: {missing_base}")
+
+    # Keep only the fields requested for the pair-price file and Claude-style setup.
+    data = data[BASE_COLUMNS].copy()
+    for column in SETUP_COLUMNS:
+        data[column] = None
+
+    history = load_price_history(datetime.now(timezone.utc).timestamp())
+    for index, row in data.iterrows():
+        symbol = str(row["symbol"]).strip()
+        try:
+            current_price = float(row["currentPrice"])
+        except (TypeError, ValueError):
+            current_price = float("nan")
+
+        if symbol not in history or not math.isfinite(current_price) or current_price <= 0:
+            data.at[index, "setupSignal"] = "NO_DATA"
+            continue
+
+        values = recommend_setup(*history[symbol], current_price)
+        for column, value in zip(SETUP_COLUMNS, values):
+            data.at[index, column] = value
+
+    temporary = OUTPUT.with_suffix(".csv.tmp")
+    data.to_csv(temporary, index=False)
+    temporary.replace(OUTPUT)
+    print(f"Claude-style historical setup written for {len(data)} pairs")
+
+
+if __name__ == "__main__":
+    main()
