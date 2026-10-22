@@ -121,6 +121,8 @@ jobs:
             -not -name 'shortlist.csv' \
             -not -name 'history_ranking.csv' \
             -not -name 'scan_meta.json' \
+            -not -name 'current_price.csv' \
+            -not -name 'current_price_history.csv' \
             -delete
           echo "SNAPSHOT=$(python -c "import json; print(json.load(open('results/scan_meta.json'))['snapshot'])")" >> "$GITHUB_ENV"
 
