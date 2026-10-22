@@ -45,6 +45,13 @@ class GridSetupTests(unittest.TestCase):
         self.assertEqual(output.loc[0, "recommendedGridCount"], 6)
         self.assertIn(output.loc[0, "setupSignal"], {"READY_TO_REVIEW", "WAIT_HIGH_RANGE", "WAIT_OUTSIDE_RANGE"})
 
+    def test_arithmetic_and_geometric_levels_differ(self):
+        from src.build_grid_setup import make_levels
+        arithmetic = make_levels(1.0, 4.0, 3, "ARITHMETIC")
+        geometric = make_levels(1.0, 4.0, 3, "GEOMETRIC")
+        self.assertAlmostEqual(arithmetic[1], 2.0)
+        self.assertNotAlmostEqual(geometric[1], arithmetic[1])
+
     def test_invalid_range_is_rejected(self):
         self.assertIsNone(simulate_grid([1.0, 1.1], 0.0, 1.0, 6))
 
