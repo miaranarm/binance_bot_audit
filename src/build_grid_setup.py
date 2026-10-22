@@ -79,7 +79,7 @@ def load_price_history(now):
 def recommend_setup(timestamps, prices, current_price):
     """Use only observed prices: 10-day range plus the 72-hour entry filter."""
     if len(prices) < MIN_POINTS:
-        return [None, None, None, None, None, "INSUFFICIENT_HISTORY"]
+        return [None, None, GRID_COUNT, GRID_MODE, None, None, "INSUFFICIENT_HISTORY"]
 
     recent_mask = timestamps >= timestamps[-1] - HISTORY_DAYS * 86400
     recent_prices = prices[recent_mask]
@@ -89,11 +89,11 @@ def recommend_setup(timestamps, prices, current_price):
     price_low = float(np.min(recent_prices))
     price_high = float(np.max(recent_prices))
     if not (0 < price_low < price_high):
-        return [None, None, GRID_COUNT, GRID_MODE, None, "INSUFFICIENT_RANGE"]
+        return [None, None, GRID_COUNT, GRID_MODE, None, None, "INSUFFICIENT_RANGE"]
 
     recent_72h = prices[timestamps >= timestamps[-1] - LOOKBACK_HOURS * 3600]
     if len(recent_72h) < MIN_POINTS:
-        return [price_low, price_high, GRID_COUNT, GRID_MODE, None, "INSUFFICIENT_72H"]
+        return [price_low, price_high, GRID_COUNT, GRID_MODE, None, None, "INSUFFICIENT_72H"]
 
     low_72h = float(np.min(recent_72h))
     high_72h = float(np.max(recent_72h))
