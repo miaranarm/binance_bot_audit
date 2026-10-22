@@ -138,14 +138,14 @@ def main():
         lot_qty[k] * (final_price - float(buy_prices[k])) - FEE * lot_qty[k] * (float(buy_prices[k]) + final_price)
         for k in range(GRID_COUNT) if bought[k]
     )
-    net_pnl = realized_net + open_unrealized_net - total_buy_fees
+    net_pnl = realized_net + open_unrealized_net
     summary = {
         "symbol": SYMBOL, "start_snapshot": rows[0][0], "start_currentPrice": start_price,
         "end_snapshot": rows[-1][0], "end_currentPrice": final_price,
         "snapshots_used": len(rows), "priceLow": LOW, "priceHigh": HIGH,
         "grid_count": GRID_COUNT, "grid_mode": "GEOMETRIC", "reference_budget_USDT": BUDGET,
         "fee_per_side_pct": FEE * 100, "completed_cycles": cycles,
-        "realized_grid_profit_before_fees_USDT": realized_net,
+        "realized_grid_profit_after_fees_USDT": realized_net,
         "open_inventory_cost_USDT": open_cost, "open_inventory_value_USDT": open_value,
         "open_inventory_unrealized_net_USDT": open_unrealized_net,
         "estimated_net_PnL_USDT": net_pnl, "estimated_net_return_pct": net_pnl / BUDGET * 100,
