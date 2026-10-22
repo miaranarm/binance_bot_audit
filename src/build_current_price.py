@@ -16,7 +16,7 @@ PROJECT_TRACKER = RESULTS / "current_price_history.csv"
 BINANCE_TRACKER = RESULTS / "binance_listing_extrema.csv"
 OUTPUT = RESULTS / "current_price.csv"
 HISTORY = RESULTS / "history"
-API = "https://api.binance.com/api/v3/klines"
+API = "https://data-api.binance.vision/api/v3/klines"
 OUT_COLUMNS = [
     "symbol", "minInvestment", "currentPrice",
     "priceLow", "priceHigh", "binancePriceLow", "binancePriceHigh", "Niveau"
