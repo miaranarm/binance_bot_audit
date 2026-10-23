@@ -1,7 +1,7 @@
 name: Binance Public Bot Audit
 
 # Pipeline unique (remplace audit.yml + pr-validation.yml + pr-e2e-validation.yml) :
-#   audit_all.py -> validate.py raw -> build_multicriteria.py -> validate.py final -> build_current_price.py -> build_grid_setup.py -> select_bots.py -> history_ranking.py
+#   audit_all.py -> validate.py raw -> build_multicriteria.py -> validate.py final -> build_current_price.py -> build_grid_setup.py
 # Hors pull request : commit de results/ sur main. Pull request : même scan complet, sans commit.
 
 on:
@@ -89,10 +89,6 @@ jobs:
         run: python src/build_current_price.py
       - name: Build per-pair Spot Grid range and 72-hour entry filter from stored prices
         run: python src/build_grid_setup.py
-      - name: Shortlist (performance d'abord, risque ensuite) -> results/shortlist.csv
-        run: python src/select_bots.py results/current_multicriteria.csv 1
-      - name: Classement historique (performance observée, risque ignoré) -> results/history_ranking.csv
-        run: python src/history_ranking.py
 
       - name: Upload scan diagnostics (even if a later step fails)
         if: always()
@@ -122,8 +118,6 @@ jobs:
           find results -maxdepth 1 -type f \
             -not -name 'current_multicriteria.csv' \
             -not -name 'current_multicriteria_summary.txt' \
-            -not -name 'shortlist.csv' \
-            -not -name 'history_ranking.csv' \
             -not -name 'scan_meta.json' \
             -not -name 'current_price.csv' \
             -not -name 'current_price_history.csv' \
