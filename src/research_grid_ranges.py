@@ -11,7 +11,9 @@ import math
 import re
 import numpy as np
 import pandas as pd
-from src.build_grid_setup import learn_lower_multiplier
+import sys
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from build_grid_setup import learn_lower_multiplier
 
 HISTORY = Path("results/history")
 CURRENT = Path("results/current_price.csv")
