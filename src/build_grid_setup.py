@@ -11,10 +11,11 @@ import pandas as pd
 RESULTS = Path("results")
 OUTPUT = RESULTS / "current_price.csv"
 HISTORY = RESULTS / "history"
-HISTORY_DAYS = 11
+HISTORY_DAYS = None   # None = tout l'historique de prix disponible (depuis le 07/10/2026) ; un entier = fenêtre glissante en jours
 LOOKBACK_HOURS = 72
 MIN_POINTS = 12
 GRID_COUNT = 5
+MARGIN = 0.03        # marge de 3 % sous le plus bas / au-dessus du plus haut (walk-forward 111 paires : hors-fourchette 8,2 % -> 2,6 %)
 GRID_MODE = "GEOMETRIC"
 SNAPSHOT_PATTERN = re.compile(r"^(\d{8}T\d{6})Z\.csv\.gz$")
 
@@ -77,14 +78,17 @@ def load_price_history(now):
 
 
 def recommend_setup(timestamps, prices, current_price):
-    """Use only observed prices: 10-day range plus the 72-hour entry filter."""
+    """Use only observed prices: full-history range plus the 72-hour entry filter."""
     if len(prices) < MIN_POINTS:
         return [None, None, GRID_COUNT, GRID_MODE, None, None, "INSUFFICIENT_HISTORY"]
 
-    recent_mask = timestamps >= timestamps[-1] - HISTORY_DAYS * 86400
+    recent_mask = (
+        np.ones(len(timestamps), dtype=bool) if HISTORY_DAYS is None
+        else timestamps >= timestamps[-1] - HISTORY_DAYS * 86400
+    )
     recent_prices = prices[recent_mask]
     if len(recent_prices) < MIN_POINTS:
-        return [None, None, None, None, None, "INSUFFICIENT_HISTORY"]
+        return [None, None, GRID_COUNT, GRID_MODE, None, None, "INSUFFICIENT_HISTORY"]
 
     price_low = float(np.min(recent_prices))
     price_high = float(np.max(recent_prices))
@@ -115,7 +119,7 @@ def recommend_setup(timestamps, prices, current_price):
         signal = "READY_TO_REVIEW"
 
     return [
-        price_low, price_high, GRID_COUNT, GRID_MODE,
+        price_low * (1 - MARGIN), price_high * (1 + MARGIN), GRID_COUNT, GRID_MODE,
         position, z_score, signal,
     ]
 
