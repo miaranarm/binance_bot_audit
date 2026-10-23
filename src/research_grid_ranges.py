@@ -282,6 +282,61 @@ def main():
         ["meanNetReturnPct", "meanExcessVsHoldPct"], ascending=False
     )
     summary.to_csv(OUT / "grid_range_research_summary.csv", index=False)
+
+    # Chronological holdout: choose the best configuration on the first 70% of
+    # observed timestamps, then evaluate it only on the later 30%.
+    df["_timestamp"] = pd.to_datetime(df["startUTC"], utc=True)
+    cutoffs = np.sort(df["_timestamp"].dropna().unique())
+    if len(cutoffs) >= 4:
+        split_index = min(len(cutoffs) - 1, max(1, int(len(cutoffs) * 0.70)))
+        cutoff = pd.Timestamp(cutoffs[split_index])
+        train = df[df["_timestamp"] < cutoff].copy()
+        holdout = df[df["_timestamp"] >= cutoff].copy()
+        keys = ["strategy", "parameter", "gridCount", "gridMode"]
+        train_rank = train.groupby(keys, dropna=False).agg(
+            trainWindows=("netReturnPct", "size"),
+            trainMeanNetReturnPct=("netReturnPct", "mean"),
+            trainMeanExcessVsHoldPct=("excessVsHoldPct", "mean"),
+        ).reset_index().sort_values(
+            ["trainMeanNetReturnPct", "trainMeanExcessVsHoldPct"], ascending=False
+        )
+        chosen = train_rank.iloc[0]
+        chosen_mask = pd.Series(True, index=holdout.index)
+        for key in keys:
+            if pd.isna(chosen[key]):
+                chosen_mask &= holdout[key].isna()
+            else:
+                chosen_mask &= holdout[key].eq(chosen[key])
+        selected_test = holdout[chosen_mask]
+        current_test = holdout[holdout["strategy"].eq("CURRENT_METHOD")]
+        holdout_rows = []
+        for label, part in [("TRAIN_SELECTED_CONFIG_ON_HOLDOUT", selected_test),
+                            ("CURRENT_METHOD_ON_HOLDOUT", current_test)]:
+            if part.empty:
+                continue
+            holdout_rows.append({
+                "evaluation": label,
+                "strategy": chosen["strategy"] if label.startswith("TRAIN_") else "CURRENT_METHOD",
+                "parameter": chosen["parameter"] if label.startswith("TRAIN_") else None,
+                "gridCount": int(chosen["gridCount"]) if label.startswith("TRAIN_") else 5,
+                "gridMode": chosen["gridMode"] if label.startswith("TRAIN_") else None,
+                "trainCutoffUTC": cutoff.isoformat(),
+                "trainWindows": int(len(train)),
+                "holdoutWindows": int(len(part)),
+                "meanNetReturnPct": float(part["netReturnPct"].mean()),
+                "medianNetReturnPct": float(part["netReturnPct"].median()),
+                "meanExcessVsHoldPct": float(part["excessVsHoldPct"].mean()),
+                "medianExcessVsHoldPct": float(part["excessVsHoldPct"].median()),
+                "positiveNetPct": float((part["netReturnPct"] > 0).mean() * 100),
+                "positiveExcessPct": float((part["excessVsHoldPct"] > 0).mean() * 100),
+                "medianFills": float(part["fills"].median()),
+            })
+        holdout_summary = pd.DataFrame(holdout_rows)
+        holdout_summary.to_csv(OUT / "grid_range_research_holdout.csv", index=False)
+    else:
+        cutoff = None
+        holdout_summary = pd.DataFrame()
+        holdout_summary.to_csv(OUT / "grid_range_research_holdout.csv", index=False)
     best = summary.iloc[0]
     production = summary[summary["strategy"] == "CURRENT_METHOD"]
     lines = [
@@ -296,7 +351,8 @@ def main():
         f"- Assumed fee: {FEE_RATE * 100:.2f}% per fill.",
         "- Primary objective: highest average net portfolio return; excess vs passive 50/50 hold is also reported.",
         "- Simplified simulator on periodic snapshots, not an exact Binance execution replay.",
-        "- The top configuration is exploratory, not validated on a separate holdout period.",
+        "- A chronological 70/30 holdout is reported separately; the selected configuration is ranked on the earlier training period only.",
+        "- Capital is normalized to 100 units for percentage-return comparison; because minimum notional, tick/step sizes and quote-to-USDT conversion are not simulated, this is not proof that every pair is executable with 100 USDT-equivalent.",
         "",
         "## Highest average net return in this sample",
         "",
@@ -330,7 +386,11 @@ def main():
         "3. Available history is short, so aggregate results have substantial uncertainty.",
         "4. Do not change production recommendations from this comparison alone; validate the chosen family on a later untouched period.",
         "",
-        "Full detail and aggregate CSV files are attached to the workflow run.",
+        "## Chronological holdout (configuration selected on training period only)",
+        "",
+        *([...(holdout_summary.empty ? ["- Holdout unavailable: insufficient distinct timestamps."] : holdout_summary.to_dict("records").map(r => "- " + r["evaluation"] + ": " + str(r["holdoutWindows"]) + " windows; mean net " + format(r["meanNetReturnPct"], ".4f") + "%; mean excess vs hold " + format(r["meanExcessVsHoldPct"], ".4f") + " pp; positive net windows " + format(r["positiveNetPct"], ".1f") + "%."))]),
+        "",
+        "Full detail, aggregate CSV and chronological holdout CSV are attached to the workflow run.",
     ]
     (OUT / "grid_range_research_summary.md").write_text("\\n".join(lines) + "\\n", encoding="utf-8")
     print("\\n".join(lines))
