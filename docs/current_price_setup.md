@@ -1,11 +1,14 @@
 # current_price.csv — réglage de grille et filtre d'entrée
 
 `src/build_grid_setup.py` ajoute 7 colonnes à `results/current_price.csv` à partir de `results/history/` (prix horaire par paire). Ce sont des aides
-à la décision calculées sur peu d'historique : ni une prévision, ni un conseil d'investissement.
+à la décision, ni une prévision ni un conseil d'investissement.
+
+Dans le CSV, `priceLow` et `priceHigh` sont les extrêmes observés dans les instantanés du projet depuis le début de son historique ;
+`binancePriceLow` et `binancePriceHigh` sont les extrêmes Binance depuis la cotation, vérifiés par comparaison des bougies mensuelles et de l'historique journalier. Ces colonnes ne sont pas les bornes d'une grille recommandée.
 
 | Colonne | Sens |
 |---|---|
-| `recommendedPriceLow` | Plus bas de tout l'historique de prix disponible (depuis le 7 octobre 2026) x 0,97 |
+| `recommendedPriceLow` | Si l'apprentissage dispose d'au moins 14 jours et d'épisodes suffisants : plus bas observé × max(0,01 ; 1 − multiplicateur retenu × volatilité relative sur 96 h). Sinon : plus bas observé × 0,97 |
 | `recommendedPriceHigh` | Plus haut de tout l'historique de prix disponible x 1,03 |
 | `recommendedGridCount` / `recommendedGridMode` | 5 grilles, `GEOMETRIC` |
 | `rangePosition72hPct` | Position du prix dans le range des 72 h (0 = au plus bas, 100 = au plus haut) |
@@ -55,6 +58,7 @@ le cas qui a fait perdre le bot TST simulé.
 ## Limites
 
 - Historique court (11-22 octobre), un seul régime de marché ; seuils (0,3 ; 80 ; 3 % ; 5 grilles) à revalider quand l'historique s'allonge.
+- Le tableau ci-dessus compare des réglages de référence avec une borne basse à marge fixe ; il ne constitue pas un backtest indépendant de la stratégie adaptative actuelle. L'apprentissage est walk-forward pour choisir le multiplicateur, mais la performance de la stratégie adaptative doit encore être évaluée sur une période de test séparée.
 - Le backtest utilise une fenêtre de 96 h pour le plus bas / plus haut ; la colonne utilise tout l'historique disponible (`HISTORY_DAYS = None`), comme demandé. Cette version n'a pas pu être testée en walk-forward faute de recul.
   Pour TST, 96 h donne 0,014133 à 0,01681, tout l'historique donne 0,014133 à 0,018715 : le haut vient du pic du 11 octobre, loin du prix actuel.
 - Les prix horaires du dépôt commencent le 7 octobre 2026 et sont conservés 30 jours : l'historique utilisé s'arrête donc de s'allonger vers le 6 novembre.
