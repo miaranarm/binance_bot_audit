@@ -97,7 +97,7 @@ def get_klines(symbol, start_ms, end_ms):
 
 
 def quote_to_usdt(symbol, quote, prices):
-    if quote in ("USDT", "USDC", "FDUSD", "TUSD", "USDP", "USD1"):
+    if quote == "USDT":
         return 1.0
     # Use a current conversion pair only when it is explicitly present in the snapshot.
     for candidate in (quote + "USDT", quote + "USDC", quote + "FDUSD"):
