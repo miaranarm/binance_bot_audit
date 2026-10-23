@@ -24,7 +24,7 @@ TARGET_LOWER_EXIT_RATE = 0.05
 LOWER_MULTIPLIERS = (0.0, 0.5, 1.0, 1.5, 2.0, 3.0, 4.0, 6.0, 8.0)
 GRID_MODE = "GEOMETRIC"
 
-# Counterfactual reverse-history grid simulation.
+# Chronological counterfactual grid simulations.
 SIMULATION_COLUMN = "simulationReturnPct"
 RECOMMENDED_SIMULATION_COLUMN = "recommendedSimulationReturnPct"
 SIMULATION_CAPITAL = 100.0
@@ -32,38 +32,46 @@ SIMULATION_FEE = 0.001  # 0.1% per executed order
 SIMULATION_GRIDS = 5
 
 
-def simulate_reverse_history_return(prices, entry_price, lower, upper):
-    """Replay stored prices backwards from the latest price, starting with 100% quote cash.
+def simulate_grid_return(prices, entry_price, final_price, lower, upper):
+    """Simulate a Spot Grid forward through stored snapshots, from the project's first date to today.
 
-    Five geometric intervals create six price levels. A buy uses up to 1/5 of
-    initial capital when a lower level is crossed; that lot is sold only if the
-    next higher grid level is later crossed and the lot is still held.
-    Remaining TST is marked to the final replayed price. This is a counterfactual
-    reverse-history simulation, not a forward historical backtest.
+    The hypothetical initial price is today's currentPrice, as requested; the first
+    stored observation is replaced with that entry price. The final mark is also
+    today's currentPrice. Intermediate observations remain in chronological order.
+    Starts with 100 units of quote currency, uses five geometric intervals, buys
+    on downward level crossings and sells each bought lot at the next upper level.
+    Fees are charged at 0.1% on each executed buy/sell order. Returns net percentage
+    on the initial quote-currency capital; this is a historical counterfactual.
     """
     try:
         values = np.asarray(prices, dtype=float)
+        entry_price = float(entry_price)
+        final_price = float(final_price)
+        lower = float(lower)
+        upper = float(upper)
     except (TypeError, ValueError):
         return None
-    values = values[np.isfinite(values) & (values > 0)]
-    if (len(values) < 2 or not math.isfinite(float(entry_price))
-            or not math.isfinite(float(lower)) or not math.isfinite(float(upper))
-            or entry_price <= 0 or lower <= 0 or upper <= lower):
+
+    valid = np.isfinite(values) & (values > 0)
+    values = values[valid]
+    if (len(values) < 2 or not all(math.isfinite(v) and v > 0
+                                  for v in (entry_price, final_price, lower, upper))
+            or upper <= lower):
         return None
 
-    # Enter at the current price, then walk from the latest stored observation
-    # into older observations. The current price replaces the latest snapshot.
-    path = np.concatenate(([float(entry_price)], values[:-1][::-1]))
-    levels = np.geomspace(float(lower), float(upper), SIMULATION_GRIDS + 1)
+    path = values.copy()
+    path[0] = entry_price
+    path[-1] = final_price
+    levels = np.geomspace(lower, upper, SIMULATION_GRIDS + 1)
     cash = SIMULATION_CAPITAL
     lots = {i: 0.0 for i in range(SIMULATION_GRIDS)}
     order_budget = SIMULATION_CAPITAL / SIMULATION_GRIDS
     previous = float(path[0])
 
-    for current in path[1:]:
-        current = float(current)
+    for current_value in path[1:]:
+        current = float(current_value)
         if current < previous:
-            # A downward crossing of a grid level buys only with available cash.
+            # Process crossed levels from high to low, buying at each crossed level.
             for i in range(SIMULATION_GRIDS - 1, -1, -1):
                 level = float(levels[i])
                 if previous > level >= current and cash > 0:
@@ -71,7 +79,7 @@ def simulate_reverse_history_return(prices, entry_price, lower, upper):
                     lots[i] += spend * (1.0 - SIMULATION_FEE) / level
                     cash -= spend
         elif current > previous:
-            # A lot bought at level i is sold at its next upper level only.
+            # Sell a lot at its next upper grid level when that level is crossed.
             for i in range(SIMULATION_GRIDS):
                 sell_level = float(levels[i + 1])
                 if previous < sell_level <= current and lots[i] > 0:
@@ -79,9 +87,9 @@ def simulate_reverse_history_return(prices, entry_price, lower, upper):
                     lots[i] = 0.0
         previous = current
 
-    final_price = float(path[-1])
     final_value = cash + sum(quantity * final_price for quantity in lots.values())
     return (final_value / SIMULATION_CAPITAL - 1.0) * 100.0
+
 LEARNING_OUTPUT = RESULTS / "current_price_learning.csv"
 SNAPSHOT_PATTERN = re.compile(r"^(\d{8}T\d{6})Z\.csv\.gz$")
 
@@ -365,22 +373,22 @@ def main():
             upper = float(row["priceHigh"])
         except (TypeError, ValueError):
             lower, upper = float("nan"), float("nan")
-        data.at[index, SIMULATION_COLUMN] = simulate_reverse_history_return(
-            prices, current_price, lower, upper
+        data.at[index, SIMULATION_COLUMN] = simulate_grid_return(
+            prices, current_price, current_price, lower, upper
         )
         learning = learn_lower_multiplier(timestamps, prices)
         values = recommend_setup(timestamps, prices, current_price, validated_config)
         for column, value in zip(SETUP_COLUMNS, values):
             data.at[index, column] = value
-        # Counterfactual: same historical replay and fee assumptions, but use
-        # the adaptive recommended range instead of the currently listed bot range.
+        # Same forward chronological simulation and fee assumptions, but use the
+        # adaptive recommended range instead of the existing project-history range.
         try:
             recommended_low = float(values[0])
             recommended_high = float(values[1])
         except (TypeError, ValueError):
             recommended_low, recommended_high = float("nan"), float("nan")
-        data.at[index, RECOMMENDED_SIMULATION_COLUMN] = simulate_reverse_history_return(
-            prices, current_price, recommended_low, recommended_high
+        data.at[index, RECOMMENDED_SIMULATION_COLUMN] = simulate_grid_return(
+            prices, current_price, current_price, recommended_low, recommended_high
         )
         learning_rows.append({
             "symbol": symbol,
