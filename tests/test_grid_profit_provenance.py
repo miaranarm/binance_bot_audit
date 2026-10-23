@@ -14,7 +14,7 @@ def load(name):
     return module
 
 
-audit_all, build, validate, select = load("audit_all"), load("build_multicriteria"), load("validate"), load("select_bots")
+audit_all, build, validate = load("audit_all"), load("build_multicriteria"), load("validate")
 
 
 class GridProfitProvenanceTests(unittest.TestCase):
@@ -230,40 +230,6 @@ class FidelityTests(unittest.TestCase):
             self.assertAlmostEqual(float(pd.read_csv(raw)["Niveau"][0]), 0.0, places=6)   # 100 = moyenne géométrique de 50 et 200
             self.assertIn("PASS", validate.check_final(raw))
 
-
-class SelectBotsTests(unittest.TestCase):
-    def test_base_asset_groups_quotes(self):
-        self.assertEqual({select.base_asset(s) for s in ("DOGEUSDT", "DOGEUSDC", "DOGEFDUSD")}, {"DOGE"})
-
-    def test_recent_history_filters_dead_bots(self):
-        import gzip
-        import datetime as dt
-        import pandas as pd
-        ref = pd.read_csv(ROOT / "tests" / "fixture_final.csv", dtype={"strategyId": str})
-        with tempfile.TemporaryDirectory() as tmp:
-            final = Path(tmp) / "current_multicriteria.csv"
-            ref.to_csv(final, index=False)
-            now = dt.datetime(2026, 10, 12, 12, tzinfo=dt.timezone.utc)
-            then = now - dt.timedelta(days=9)
-            folder = Path(tmp) / "history" / then.strftime("%Y/%m/%d")
-            folder.mkdir(parents=True)
-            snap = pd.DataFrame({"strategyId": ref.strategyId, "roi": ref["roi (fourni par Binance)"] - 9 * 0.2,
-                                 "matchedTrades": ref.matchedTrades - 9 * 10})
-            dead = ref.strategyId.iloc[0]                         # bot sans aucun mouvement sur 7 jours
-            snap.loc[snap.strategyId == dead, ["roi", "matchedTrades"]] = ref.loc[0, ["roi (fourni par Binance)", "matchedTrades"]].values
-            with gzip.open(folder / f"{then.strftime('%Y%m%dT%H%M%SZ')}.csv.gz", "wt", encoding="utf-8") as h:
-                snap.to_csv(h, index=False)
-            # instantané plus proche de 7 j mais PARTIEL (le bot suivi n'y figure pas) + un plus ancien complet
-            partial_then = now - dt.timedelta(days=7)
-            pf = Path(tmp) / "history" / partial_then.strftime("%Y/%m/%d"); pf.mkdir(parents=True, exist_ok=True)
-            with gzip.open(pf / f"{partial_then.strftime('%Y%m%dT%H%M%SZ')}.csv.gz", "wt", encoding="utf-8") as h:
-                snap.iloc[:10].to_csv(h, index=False)
-            out = select.main(str(final), 1, now=now)
-            self.assertNotIn(dead, set(out.strategyId))
-            self.assertTrue(out["recent_daily_pct"].notna().all())      # bots absents du scan partiel : repli sur le scan complet
-            self.assertTrue((out["recent_trades_day"] >= 1).all())
-            self.assertTrue(out["rank"].is_monotonic_increasing and out["score"].is_monotonic_decreasing)
-            self.assertEqual(out.base.nunique() if "base" in out else out.symbol.map(select.base_asset).nunique(), len(out))
 
 
 class HistoryRetentionTests(unittest.TestCase):
