@@ -1,10 +1,9 @@
 # current_price.csv — réglage de grille et filtre d'entrée
 
-`src/build_grid_setup.py` ajoute 7 colonnes à `results/current_price.csv` à partir de `results/history/` (prix horaire par paire). Ce sont des aides
+`src/build_grid_setup.py` ajoute 7 colonnes de recommandation à `results/current_price.csv` à partir de `results/history/` (prix horaire par paire). Ce sont des aides
 à la décision, ni une prévision ni un conseil d'investissement.
 
-Dans le CSV, `priceLow` et `priceHigh` sont les extrêmes observés dans les instantanés du projet depuis le début de son historique ;
-`binancePriceLow` et `binancePriceHigh` sont les extrêmes Binance depuis la cotation, vérifiés par comparaison des bougies mensuelles et de l'historique journalier. Ces colonnes ne sont pas les bornes d'une grille recommandée.
+Dans le CSV, `priceLow` et `priceHigh` sont les extrêmes observés dans les instantanés du projet depuis le début de son historique. Ils ne sont pas les bornes d'une grille recommandée.
 
 | Colonne | Sens |
 |---|---|

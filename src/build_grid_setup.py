@@ -26,10 +26,7 @@ GRID_MODE = "GEOMETRIC"
 LEARNING_OUTPUT = RESULTS / "current_price_learning.csv"
 SNAPSHOT_PATTERN = re.compile(r"^(\d{8}T\d{6})Z\.csv\.gz$")
 
-BASE_COLUMNS = [
-    "symbol", "minInvestment", "currentPrice", "priceLow", "priceHigh",
-    "binancePriceLow", "binancePriceHigh", "Niveau",
-]
+BASE_COLUMNS = ["symbol", "minInvestment", "currentPrice", "priceLow", "priceHigh"]
 SETUP_COLUMNS = [
     "recommendedPriceLow", "recommendedPriceHigh", "recommendedGridCount",
     "recommendedGridMode", "rangePosition72hPct", "zScore72h", "setupSignal",

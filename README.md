@@ -20,7 +20,7 @@ Pas de classement : les colonnes `rank` et `score` existent mais restent vides. 
 | `src/audit_all.py` | Collecte + Grid Profit exact/estimé + profit par grille → CSV brut |
 | `src/validate.py` | Contrôles `raw` (provenance) puis `final` (schéma et calculs) |
 | `src/build_multicriteria.py` | Réécrit le CSV brut au format final figé de 31 colonnes |
-| `src/build_current_price.py` | Prix par paire et extrêmes observés / Binance listing |
+| `src/build_current_price.py` | Prix par paire et extrêmes observés dans l'historique du projet |
 | `src/build_grid_setup.py` | Fourchette Spot Grid indicative, apprentissage walk-forward de la limite basse et filtre d'entrée 72 h |
 | `results/current_price_learning.csv` | Diagnostics de l'apprentissage : historique, épisodes, volatilité 96 h, multiplicateur et taux de sorties par le bas |
 | `src/replay_tst_grid.py` | Simulation historique spécifique TSTUSDT (approximation, non-exécution Binance) |
