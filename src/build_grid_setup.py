@@ -4,6 +4,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 import math
 import re
+import json
 
 import numpy as np
 import pandas as pd
@@ -163,8 +164,36 @@ def learn_lower_multiplier(timestamps, prices):
             "candidate_rates": candidate_rates}
 
 
-def recommend_setup(timestamps, prices, current_price):
-    """Use only observed prices: full-history range plus the 72-hour entry filter."""
+def load_validated_grid_config():
+    """Use a research-selected family only when its later-time holdout is adequate and profitable."""
+    path = RESULTS / "learned_grid_config.json"
+    if not path.exists():
+        return None
+    try:
+        with path.open(encoding="utf-8") as handle:
+            config = json.load(handle)
+        required = ("widthSigma", "lowAsymmetry", "highAsymmetry", "gridCount", "gridMode",
+                    "validationAdequate", "holdoutMeanCycleProfitPct")
+        if not all(key in config for key in required):
+            return None
+        if not bool(config["validationAdequate"]) or float(config["holdoutMeanCycleProfitPct"]) <= 0:
+            return None
+        width = float(config["widthSigma"])
+        low_asym = float(config["lowAsymmetry"])
+        high_asym = float(config["highAsymmetry"])
+        count = int(config["gridCount"])
+        mode = str(config["gridMode"]).upper()
+        if width <= 0 or low_asym <= 0 or high_asym <= 0 or count < 2 or mode not in {"GEOMETRIC", "ARITHMETIC"}:
+            return None
+        return {"widthSigma": width, "lowAsymmetry": low_asym,
+                "highAsymmetry": high_asym, "gridCount": count, "gridMode": mode,
+                "holdoutMeanCycleProfitPct": float(config["holdoutMeanCycleProfitPct"])}
+    except (OSError, ValueError, TypeError, json.JSONDecodeError):
+        return None
+
+
+def recommend_setup(timestamps, prices, current_price, validated_config=None):
+    """Use a validated learned family when available; otherwise retain a clearly provisional fallback."""
     if len(prices) < MIN_POINTS:
         return [None, None, GRID_COUNT, GRID_MODE, None, None, "INSUFFICIENT_HISTORY"]
 
@@ -177,19 +206,39 @@ def recommend_setup(timestamps, prices, current_price):
         return [None, None, GRID_COUNT, GRID_MODE, None, None, "INSUFFICIENT_HISTORY"]
 
     observed_low = float(np.min(recent_prices))
-    price_high = float(np.max(recent_prices))
-    if not (0 < observed_low < price_high):
+    observed_high = float(np.max(recent_prices))
+    if not (0 < observed_low < observed_high):
         return [None, None, GRID_COUNT, GRID_MODE, None, None, "INSUFFICIENT_RANGE"]
 
-    learning = learn_lower_multiplier(timestamps, prices)
-    if learning["active"] and learning["multiplier"] is not None and learning["volatility"] is not None:
-        price_low = observed_low * max(0.01, 1 - learning["multiplier"] * learning["volatility"])
+    recent_mask_48h = timestamps >= timestamps[-1] - 48 * 3600
+    recent_48h = prices[recent_mask_48h]
+    recent_times_48h = timestamps[recent_mask_48h]
+    if len(recent_48h) >= MIN_POINTS:
+        log_returns = np.diff(np.log(recent_48h))
+        typical_step_hours = max(1 / 60, float(np.median(np.diff(recent_times_48h))) / 3600)
+        sigma_48h = float(np.std(log_returns, ddof=0) * math.sqrt(48 / typical_step_hours))
     else:
-        price_low = observed_low * (1 - MARGIN)
+        sigma_48h = 0.0
+
+    if validated_config is not None and math.isfinite(sigma_48h) and sigma_48h > 0:
+        width = validated_config["widthSigma"] * sigma_48h
+        price_low = current_price * math.exp(-min(width * validated_config["lowAsymmetry"], 1.0))
+        price_high = current_price * math.exp(min(width * validated_config["highAsymmetry"], 1.0))
+        grid_count = validated_config["gridCount"]
+        grid_mode = validated_config["gridMode"]
+    else:
+        # Provisional fallback: full-history range and lower-break learner.
+        learning = learn_lower_multiplier(timestamps, prices)
+        if learning["active"] and learning["multiplier"] is not None and learning["volatility"] is not None:
+            price_low = observed_low * max(0.01, 1 - learning["multiplier"] * learning["volatility"])
+        else:
+            price_low = observed_low * (1 - MARGIN)
+        price_high = observed_high * (1 + MARGIN)
+        grid_count, grid_mode = GRID_COUNT, GRID_MODE
 
     recent_72h = prices[timestamps >= timestamps[-1] - LOOKBACK_HOURS * 3600]
     if len(recent_72h) < MIN_POINTS:
-        return [price_low, price_high, GRID_COUNT, GRID_MODE, None, None, "INSUFFICIENT_72H"]
+        return [price_low, price_high, grid_count, grid_mode, None, None, "INSUFFICIENT_72H"]
 
     low_72h = float(np.min(recent_72h))
     high_72h = float(np.max(recent_72h))
@@ -210,10 +259,7 @@ def recommend_setup(timestamps, prices, current_price):
     else:
         signal = "READY_TO_REVIEW"
 
-    return [
-        price_low, price_high * (1 + MARGIN), GRID_COUNT, GRID_MODE,
-        position, z_score, signal,
-    ]
+    return [price_low, price_high, grid_count, grid_mode, position, z_score, signal]
 
 
 def main():
@@ -234,6 +280,8 @@ def main():
         data[column] = None
 
     history = load_price_history(datetime.now(timezone.utc).timestamp())
+    validated_config = load_validated_grid_config()
+    print(f"Validated profit-first grid family active: {validated_config is not None}")
     learning_rows = []
     for index, row in data.iterrows():
         symbol = str(row["symbol"]).strip()
@@ -255,7 +303,7 @@ def main():
 
         timestamps, prices = history[symbol]
         learning = learn_lower_multiplier(timestamps, prices)
-        values = recommend_setup(timestamps, prices, current_price)
+        values = recommend_setup(timestamps, prices, current_price, validated_config)
         for column, value in zip(SETUP_COLUMNS, values):
             data.at[index, column] = value
         learning_rows.append({
