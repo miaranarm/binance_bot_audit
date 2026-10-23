@@ -113,7 +113,7 @@ def simulate(prices, low, high, grid_count):
     for raw in prices[1:]:
         current = float(raw)
         if current < previous:
-            crossed = [j for j in range(1, len(levels) - 1)
+            crossed = [j for j in range(len(levels))
                        if current <= levels[j] < previous]
             for j in sorted(crossed, reverse=True):
                 if states[j] != "buy":
@@ -129,7 +129,7 @@ def simulate(prices, low, high, grid_count):
                 states[j] = None
                 states[j + 1] = "sell"
         elif current > previous:
-            crossed = [j for j in range(1, len(levels) - 1)
+            crossed = [j for j in range(len(levels))
                        if previous < levels[j] <= current]
             for j in sorted(crossed):
                 if states[j] != "sell" or base + 1e-12 < qty:
