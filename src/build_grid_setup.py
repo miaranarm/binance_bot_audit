@@ -26,6 +26,7 @@ GRID_MODE = "GEOMETRIC"
 
 # Counterfactual reverse-history grid simulation.
 SIMULATION_COLUMN = "simulationReturnPct"
+RECOMMENDED_SIMULATION_COLUMN = "recommendedSimulationReturnPct"
 SIMULATION_CAPITAL = 100.0
 SIMULATION_FEE = 0.001  # 0.1% per executed order
 SIMULATION_GRIDS = 5
@@ -332,6 +333,7 @@ def main():
     # Keep only the fields requested for the pair-price file and Claude-style setup.
     data = data[BASE_COLUMNS].copy()
     data[SIMULATION_COLUMN] = None
+    data[RECOMMENDED_SIMULATION_COLUMN] = None
     for column in SETUP_COLUMNS:
         data[column] = None
 
@@ -370,6 +372,16 @@ def main():
         values = recommend_setup(timestamps, prices, current_price, validated_config)
         for column, value in zip(SETUP_COLUMNS, values):
             data.at[index, column] = value
+        # Counterfactual: same historical replay and fee assumptions, but use
+        # the adaptive recommended range instead of the currently listed bot range.
+        try:
+            recommended_low = float(values[0])
+            recommended_high = float(values[1])
+        except (TypeError, ValueError):
+            recommended_low, recommended_high = float("nan"), float("nan")
+        data.at[index, RECOMMENDED_SIMULATION_COLUMN] = simulate_reverse_history_return(
+            prices, current_price, recommended_low, recommended_high
+        )
         learning_rows.append({
             "symbol": symbol,
             "historyDays": round((timestamps[-1] - timestamps[0]) / 86400, 3) if len(timestamps) else 0,
@@ -387,7 +399,8 @@ def main():
         })
 
     data[SIMULATION_COLUMN] = pd.to_numeric(data[SIMULATION_COLUMN], errors="coerce")
-    data = data.sort_values(SIMULATION_COLUMN, ascending=False, na_position="last", kind="stable")
+    data[RECOMMENDED_SIMULATION_COLUMN] = pd.to_numeric(data[RECOMMENDED_SIMULATION_COLUMN], errors="coerce")
+    data = data.sort_values(RECOMMENDED_SIMULATION_COLUMN, ascending=False, na_position="last", kind="stable")
     temporary = OUTPUT.with_suffix(".csv.tmp")
     data.to_csv(temporary, index=False)
     temporary.replace(OUTPUT)
