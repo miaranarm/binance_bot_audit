@@ -35,9 +35,8 @@ SIMULATION_GRIDS = 5
 def simulate_grid_return(prices, entry_price, final_price, lower, upper):
     """Simulate a Spot Grid forward through stored snapshots, from the project's first date to today.
 
-    The hypothetical initial price is today's currentPrice, as requested; the first
-    stored observation is replaced with that entry price. The final mark is also
-    today's currentPrice. Intermediate observations remain in chronological order.
+    Entry is the first historical currentPrice available for the pair; the final
+    mark is today's currentPrice. Intermediate observations remain chronological.
     Starts with 100 units of quote currency, uses five geometric intervals, buys
     on downward level crossings and sells each bought lot at the next upper level.
     Fees are charged at 0.1% on each executed buy/sell order. Returns net percentage
@@ -374,7 +373,7 @@ def main():
         except (TypeError, ValueError):
             lower, upper = float("nan"), float("nan")
         data.at[index, SIMULATION_COLUMN] = simulate_grid_return(
-            prices, current_price, current_price, lower, upper
+            prices, float(prices[0]), current_price, lower, upper
         )
         learning = learn_lower_multiplier(timestamps, prices)
         values = recommend_setup(timestamps, prices, current_price, validated_config)
@@ -388,7 +387,7 @@ def main():
         except (TypeError, ValueError):
             recommended_low, recommended_high = float("nan"), float("nan")
         data.at[index, RECOMMENDED_SIMULATION_COLUMN] = simulate_grid_return(
-            prices, current_price, current_price, recommended_low, recommended_high
+            prices, float(prices[0]), current_price, recommended_low, recommended_high
         )
         learning_rows.append({
             "symbol": symbol,
