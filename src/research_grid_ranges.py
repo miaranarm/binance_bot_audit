@@ -218,7 +218,18 @@ def main():
     if not CURRENT.exists():
         raise SystemExit(f"Missing {CURRENT}; run the regular audit first.")
     current = pd.read_csv(CURRENT, dtype={"symbol": str})
-    symbols = set(current["symbol"].astype(str).str.strip())
+    # A 100 USDT simulation is only directly comparable for USDT-quoted pairs.
+    # Respect the repository's reported minimum investment; do not invent FX conversions.
+    current["symbol"] = current["symbol"].astype(str).str.strip()
+    current["minInvestment"] = pd.to_numeric(current["minInvestment"], errors="coerce")
+    eligible = current[
+        current["symbol"].str.endswith("USDT")
+        & current["minInvestment"].notna()
+        & (current["minInvestment"] <= INITIAL_CAPITAL_USDT)
+    ]
+    symbols = set(eligible["symbol"])
+    if not symbols:
+        raise SystemExit("No USDT-quoted pairs fit the 100 USDT capital/minimum-investment filter.")
     histories, file_count = load_histories(symbols)
     detail = []
     for symbol, (timestamps, prices) in histories.items():
@@ -282,6 +293,7 @@ def main():
         "# Spot Grid range research — exploratory",
         "",
         f"- Historical snapshot files read: {file_count}",
+        f"- Eligible USDT pairs under the 100 USDT minimum-investment filter: {len(symbols)}",
         f"- Pairs with simulations: {df['symbol'].nunique()}",
         f"- Pair × time-window × strategy simulations: {len(df):,}",
         f"- Holding period: {HOLD_HOURS} hours; starting capital: {INITIAL_CAPITAL_USDT:.0f} USDT, split 50% quote / 50% base.",
