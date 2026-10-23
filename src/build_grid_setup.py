@@ -23,6 +23,64 @@ MARGIN = 0.03
 TARGET_LOWER_EXIT_RATE = 0.05
 LOWER_MULTIPLIERS = (0.0, 0.5, 1.0, 1.5, 2.0, 3.0, 4.0, 6.0, 8.0)
 GRID_MODE = "GEOMETRIC"
+
+# Counterfactual reverse-history grid simulation.
+SIMULATION_COLUMN = "simulationReturnPct"
+SIMULATION_CAPITAL = 100.0
+SIMULATION_FEE = 0.001  # 0.1% per executed order
+SIMULATION_GRIDS = 5
+
+
+def simulate_reverse_history_return(prices, entry_price, lower, upper):
+    """Replay stored prices backwards from the latest price, starting with 100% quote cash.
+
+    Five geometric intervals create six price levels. A buy uses up to 1/5 of
+    initial capital when a lower level is crossed; that lot is sold only if the
+    next higher grid level is later crossed and the lot is still held.
+    Remaining TST is marked to the final replayed price. This is a counterfactual
+    reverse-history simulation, not a forward historical backtest.
+    """
+    try:
+        values = np.asarray(prices, dtype=float)
+    except (TypeError, ValueError):
+        return None
+    values = values[np.isfinite(values) & (values > 0)]
+    if (len(values) < 2 or not math.isfinite(float(entry_price))
+            or not math.isfinite(float(lower)) or not math.isfinite(float(upper))
+            or entry_price <= 0 or lower <= 0 or upper <= lower):
+        return None
+
+    # Enter at the current price, then walk from the latest stored observation
+    # into older observations. The current price replaces the latest snapshot.
+    path = np.concatenate(([float(entry_price)], values[:-1][::-1]))
+    levels = np.geomspace(float(lower), float(upper), SIMULATION_GRIDS + 1)
+    cash = SIMULATION_CAPITAL
+    lots = {i: 0.0 for i in range(SIMULATION_GRIDS)}
+    order_budget = SIMULATION_CAPITAL / SIMULATION_GRIDS
+    previous = float(path[0])
+
+    for current in path[1:]:
+        current = float(current)
+        if current < previous:
+            # A downward crossing of a grid level buys only with available cash.
+            for i in range(SIMULATION_GRIDS - 1, -1, -1):
+                level = float(levels[i])
+                if previous > level >= current and cash > 0:
+                    spend = min(order_budget, cash)
+                    lots[i] += spend * (1.0 - SIMULATION_FEE) / level
+                    cash -= spend
+        elif current > previous:
+            # A lot bought at level i is sold at its next upper level only.
+            for i in range(SIMULATION_GRIDS):
+                sell_level = float(levels[i + 1])
+                if previous < sell_level <= current and lots[i] > 0:
+                    cash += lots[i] * sell_level * (1.0 - SIMULATION_FEE)
+                    lots[i] = 0.0
+        previous = current
+
+    final_price = float(path[-1])
+    final_value = cash + sum(quantity * final_price for quantity in lots.values())
+    return (final_value / SIMULATION_CAPITAL - 1.0) * 100.0
 LEARNING_OUTPUT = RESULTS / "current_price_learning.csv"
 SNAPSHOT_PATTERN = re.compile(r"^(\d{8}T\d{6})Z\.csv\.gz$")
 
