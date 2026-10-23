@@ -89,6 +89,98 @@ def simulate_grid_return(prices, entry_price, final_price, lower, upper):
     final_value = cash + sum(quantity * final_price for quantity in lots.values())
     return (final_value / SIMULATION_CAPITAL - 1.0) * 100.0
 
+def simulate_walk_forward_recommended_return(timestamps, prices, final_price):
+    """Backtest recommended Spot Grid settings without using future observations.
+
+    Recompute provisional recommendations every six hours from the price history
+    available at that moment. The settings apply only to the following interval.
+    Cash and open inventory persist across reconfigurations. Existing buys retain
+    their original next-grid sell target. The learned configuration trained on
+    the full current history is deliberately excluded to avoid future leakage.
+    """
+    try:
+        times = np.asarray(timestamps, dtype=float)
+        values = np.asarray(prices, dtype=float)
+        final_price = float(final_price)
+    except (TypeError, ValueError):
+        return None
+
+    valid = np.isfinite(times) & np.isfinite(values) & (values > 0)
+    times, values = times[valid], values[valid]
+    if len(values) < 2 or not math.isfinite(final_price) or final_price <= 0:
+        return None
+
+    path = values.copy()
+    path[-1] = final_price
+    cash = SIMULATION_CAPITAL
+    lots = []  # each item: [base-asset quantity, sell target]
+    active_levels = None
+    active_count = None
+    last_recommendation_time = None
+    order_budget = None
+    refresh_seconds = 6 * 3600
+
+    for i in range(1, len(path)):
+        # Recalculate using only prices known at the start of this interval.
+        if (last_recommendation_time is None
+                or times[i - 1] - last_recommendation_time >= refresh_seconds):
+            prefix_times = times[:i]
+            prefix_prices = values[:i]
+            recommendation = recommend_setup(
+                prefix_times, prefix_prices, float(prefix_prices[-1]),
+                validated_config=None,
+            )
+            try:
+                low = float(recommendation[0])
+                high = float(recommendation[1])
+                grid_count = int(recommendation[2])
+                grid_mode = str(recommendation[3]).upper()
+            except (TypeError, ValueError, IndexError):
+                low, high, grid_count, grid_mode = float("nan"), float("nan"), 0, ""
+
+            if (math.isfinite(low) and math.isfinite(high) and 0 < low < high
+                    and grid_count >= 2 and grid_mode in {"GEOMETRIC", "ARITHMETIC"}):
+                active_levels = (
+                    np.geomspace(low, high, grid_count + 1)
+                    if grid_mode == "GEOMETRIC"
+                    else np.linspace(low, high, grid_count + 1)
+                )
+                active_count = grid_count
+                order_budget = SIMULATION_CAPITAL / grid_count
+            else:
+                active_levels = None
+                active_count = None
+                order_budget = None
+            last_recommendation_time = float(times[i - 1])
+
+        previous = float(path[i - 1])
+        current = float(path[i])
+
+        # Existing positions keep their original sell target across reconfigurations.
+        if current > previous:
+            remaining_lots = []
+            for quantity, target in lots:
+                if previous < target <= current:
+                    cash += quantity * target * (1.0 - SIMULATION_FEE)
+                else:
+                    remaining_lots.append([quantity, target])
+            lots = remaining_lots
+
+        if active_levels is not None and current < previous and cash > 0:
+            # Buy at each crossed level; sell that lot at the next upper level
+            # from the configuration known at the start of this interval.
+            for level_index in range(active_count - 1, -1, -1):
+                level = float(active_levels[level_index])
+                if previous > level >= current and cash > 0:
+                    spend = min(float(order_budget), cash)
+                    quantity = spend * (1.0 - SIMULATION_FEE) / level
+                    lots.append([quantity, float(active_levels[level_index + 1])])
+                    cash -= spend
+
+    final_value = cash + sum(quantity * final_price for quantity, _ in lots)
+    return (final_value / SIMULATION_CAPITAL - 1.0) * 100.0
+
+
 LEARNING_OUTPUT = RESULTS / "current_price_learning.csv"
 SNAPSHOT_PATTERN = re.compile(r"^(\d{8}T\d{6})Z\.csv\.gz$")
 
@@ -379,15 +471,10 @@ def main():
         values = recommend_setup(timestamps, prices, current_price, validated_config)
         for column, value in zip(SETUP_COLUMNS, values):
             data.at[index, column] = value
-        # Same forward chronological simulation and fee assumptions, but use the
-        # adaptive recommended range instead of the existing project-history range.
-        try:
-            recommended_low = float(values[0])
-            recommended_high = float(values[1])
-        except (TypeError, ValueError):
-            recommended_low, recommended_high = float("nan"), float("nan")
-        data.at[index, RECOMMENDED_SIMULATION_COLUMN] = simulate_grid_return(
-            prices, float(prices[0]), current_price, recommended_low, recommended_high
+        # Walk-forward simulation: every recommendation uses only data available
+        # at that historical moment, and its settings are applied to the next interval.
+        data.at[index, RECOMMENDED_SIMULATION_COLUMN] = (
+            simulate_walk_forward_recommended_return(timestamps, prices, current_price)
         )
         learning_rows.append({
             "symbol": symbol,
