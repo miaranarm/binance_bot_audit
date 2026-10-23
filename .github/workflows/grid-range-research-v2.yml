@@ -1,0 +1,38 @@
+name: Spot Grid Range Research v2
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'src/research_grid_ranges_v2.py'
+      - '.github/workflows/grid-range-research-v2.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  research:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install research dependencies
+        run: pip install numpy pandas
+      - name: Compile research program
+        run: python -m py_compile src/research_grid_ranges_v2.py
+      - name: Run candle-based Spot Grid research
+        run: python src/research_grid_ranges_v2.py
+      - name: Upload reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: spot-grid-range-research-v2
+          path: research_output_v2/
+          if-no-files-found: warn
+          retention-days: 30
