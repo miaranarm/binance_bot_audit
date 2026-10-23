@@ -340,7 +340,7 @@ def main():
                 "gridMode": str(candidate["gridMode"]),
                 "status": "ACTIVE_VALIDATED_HOLDOUT"
             })
-    config_path.write_text(json.dumps(learned_config, indent=2) + "\\n", encoding="utf-8")
+    config_path.write_text(json.dumps(learned_config, indent=2) + "\n", encoding="utf-8")
     pd.DataFrame(errors).to_csv(OUT/"grid_range_research_data_issues.csv", index=False)
     best = summary.iloc[0] if not summary.empty else None
     lines = ["# Spot Grid research v2 — candle-based, research only", "",
