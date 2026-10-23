@@ -273,6 +273,7 @@ def main():
 
     # Keep only the fields requested for the pair-price file and Claude-style setup.
     data = data[BASE_COLUMNS].copy()
+    data[SIMULATION_COLUMN] = None
     for column in SETUP_COLUMNS:
         data[column] = None
 
@@ -299,6 +300,14 @@ def main():
             continue
 
         timestamps, prices = history[symbol]
+        try:
+            lower = float(row["priceLow"])
+            upper = float(row["priceHigh"])
+        except (TypeError, ValueError):
+            lower, upper = float("nan"), float("nan")
+        data.at[index, SIMULATION_COLUMN] = simulate_reverse_history_return(
+            prices, current_price, lower, upper
+        )
         learning = learn_lower_multiplier(timestamps, prices)
         values = recommend_setup(timestamps, prices, current_price, validated_config)
         for column, value in zip(SETUP_COLUMNS, values):
@@ -319,6 +328,8 @@ def main():
             ),
         })
 
+    data[SIMULATION_COLUMN] = pd.to_numeric(data[SIMULATION_COLUMN], errors="coerce")
+    data = data.sort_values(SIMULATION_COLUMN, ascending=False, na_position="last", kind="stable")
     temporary = OUTPUT.with_suffix(".csv.tmp")
     data.to_csv(temporary, index=False)
     temporary.replace(OUTPUT)
