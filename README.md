@@ -31,8 +31,8 @@ Pas de classement : les colonnes `rank` et `score` existent mais restent vides. 
 
 - `gridProfit` rempli = valeur **exacte** lue sur la page de détail Binance ; vide = estimation, visible uniquement dans `gridProfitEstimateLow/Mid/High`.
 - Estimation du Grid Profit (Spot Grid) : calculée aussi quand le prix est **hors plage**. Le prix de départ du bot étant alors inconnu, la fourchette Low/High est plus large (confiance `LOW` dans le brut) et le Mid suppose un départ au centre de la plage.
-- `gridProfitTotalProfitRatio` : numérique si le Grid Profit est exact ; préfixé `≈` s'il est estimé ; vide si le Total Profit est nul. Aucun plafond à 100 % ou 500 %.
-- `floatingProfit` : vide dès que le Grid Profit n'est pas exact.
+- `gridProfitTotalProfitRatio` : ratio numérique sans préfixe d'approximation, que le Grid Profit soit exact ou estimé ; vide si le Total Profit est nul. Aucun plafond à 100 % ou 500 %.
+- `floatingProfit` : estimation centrale = `totalProfit - gridProfitEstimateMid` quand le Grid Profit est estimé et le Total Profit disponible ; calcul exact = `totalProfit - gridProfit` quand les deux valeurs sont exactes et sur la même base. Une valeur calculée à partir d'une estimation reste une estimation, pas une donnée officielle Binance.
 - `totalProfit` : PNL Marketplace (USD) ; remplacé par le Total Profit de la page de détail uniquement pour une cotation stable USD, si cette valeur est cohérente avec le PNL.
 - `roi (calculé)` = PNL / investissement minimum × 100 (indicateur de comparaison, pas le ROI Binance).
 - `profitPerGridAfterFees` : valeur Binance si exposée ; sinon formule Binance avec frais de 0,1 % par ordre (constante `FEE`). Géométrique : valeur unique. Arithmétique : fourchette. Les frais réels (paire, VIP, BNB) peuvent différer.
