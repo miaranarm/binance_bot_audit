@@ -43,6 +43,13 @@ jobs:
           set -e
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          # The audit workflow can commit current_price.csv while research is running.
+          # Preserve this run's research output, fast-forward to the latest main, then publish it.
+          cp results/learned_grid_config.json /tmp/learned_grid_config.json
+          git fetch origin main
+          git reset --hard origin/main
+          mkdir -p results
+          cp /tmp/learned_grid_config.json results/learned_grid_config.json
           git add results/learned_grid_config.json
           if git diff --cached --quiet; then
             echo "Learned configuration unchanged."
