@@ -25,6 +25,7 @@ STEP_HOURS = 24
 GRID_COUNTS = (5, 10)
 FIXED_WIDTHS = (0.05, 0.08, 0.10, 0.12, 0.15, 0.20, 0.25, 0.30, 0.40)
 VOL_MULTIPLIERS = (0.5, 0.75, 1.0, 1.25, 1.5, 2.0, 2.5, 3.0)
+ASYM_MULTIPLIERS = (0.5, 0.75, 1.0, 1.5, 2.0, 3.0)
 PATTERN = re.compile(r"^(\d{8}T\d{6})Z\.csv\.gz$")
 
 
@@ -170,6 +171,31 @@ def candidates(prices, timestamps, i):
             for count in GRID_COUNTS:
                 result.append((f"VOL_{mult:g}x96H", mult, count,
                                start * math.exp(-width), start * math.exp(width)))
+    if sigma is not None and math.isfinite(sigma) and sigma > 0:
+        for low_mult in ASYM_MULTIPLIERS:
+            for high_mult in ASYM_MULTIPLIERS:
+                low = start * math.exp(-min(low_mult * sigma, 1.5))
+                high = start * math.exp(min(high_mult * sigma, 1.5))
+                for count in GRID_COUNTS:
+                    result.append((f"ASYM_L{low_mult:g}_H{high_mult:g}",
+                                   f"{low_mult:g}/{high_mult:g}", count, low, high))
+        # Pre-specified directional rule: widen the side in the direction of the
+        # trailing 96h trend, keeping the opposite side tighter.
+        mask = timestamps[:i + 1] >= timestamps[i] - 96 * 3600
+        recent = prices[:i + 1][mask]
+        if len(recent) >= 2:
+            trend = float(start / recent[0] - 1)
+            if trend > 0.03:
+                low_mult, high_mult, regime = 0.75, 2.5, "UP"
+            elif trend < -0.03:
+                low_mult, high_mult, regime = 2.5, 0.75, "DOWN"
+            else:
+                low_mult, high_mult, regime = 1.25, 1.25, "FLAT"
+            low = start * math.exp(-min(low_mult * sigma, 1.5))
+            high = start * math.exp(min(high_mult * sigma, 1.5))
+            result.append((f"TREND_ASYM_{regime}", f"{low_mult:g}/{high_mult:g}",
+                           5, low, high))
+
     # Production range logic, recalculated using past data only.
     observed_low, observed_high = float(np.min(past)), float(np.max(past))
     learning = learn_lower_multiplier(ts, past)
@@ -230,16 +256,19 @@ def main():
     df.to_csv(OUT / "grid_range_research_detail.csv", index=False)
     summary = df.groupby(["strategy", "parameter", "gridCount"], dropna=False).agg(
         testWindows=("excessVsHoldPct", "size"),
+        meanNetReturnPct=("netReturnPct", "mean"),
         medianNetReturnPct=("netReturnPct", "median"),
-        medianExcessVsHoldPct=("excessVsHoldPct", "median"),
+        meanHoldReturnPct=("holdReturnPct", "mean"),
         meanExcessVsHoldPct=("excessVsHoldPct", "mean"),
+        medianExcessVsHoldPct=("excessVsHoldPct", "median"),
+        positiveNetPct=("netReturnPct", lambda x: float((x > 0).mean() * 100)),
         positiveExcessPct=("excessVsHoldPct", lambda x: float((x > 0).mean() * 100)),
         medianFills=("fills", "median"),
         medianFees=("fees", "median"),
         medianLowVsStartPct=("lowVsStartPct", "median"),
         medianHighVsStartPct=("highVsStartPct", "median"),
     ).reset_index().sort_values(
-        ["medianExcessVsHoldPct", "positiveExcessPct"], ascending=False
+        ["meanNetReturnPct", "meanExcessVsHoldPct"], ascending=False
     )
     summary.to_csv(OUT / "grid_range_research_summary.csv", index=False)
     best = summary.iloc[0]
@@ -252,16 +281,17 @@ def main():
         f"- Pair × time-window × strategy simulations: {len(df):,}",
         f"- Holding period: {HOLD_HOURS} hours; starting portfolio: 50% quote / 50% base.",
         f"- Assumed fee: {FEE_RATE * 100:.2f}% per fill.",
-        "- Objective: net portfolio return relative to passive 50/50 hold, after simulated fees.",
+        "- Primary objective: highest average net portfolio return; excess vs passive 50/50 hold is also reported.",
         "- Simplified simulator on periodic snapshots, not an exact Binance execution replay.",
         "- The top configuration is exploratory, not validated on a separate holdout period.",
         "",
-        "## Highest median excess return in this sample",
+        "## Highest average net return in this sample",
         "",
         f"- Strategy: {best['strategy']}; grid count {int(best['gridCount'])}",
-        f"- Median excess vs hold: {best['medianExcessVsHoldPct']:.4f} percentage points",
+        f"- Mean net return: {best['meanNetReturnPct']:.4f}%",
         f"- Mean excess vs hold: {best['meanExcessVsHoldPct']:.4f} percentage points",
-        f"- Positive windows: {best['positiveExcessPct']:.1f}%",
+        f"- Median excess vs hold: {best['medianExcessVsHoldPct']:.4f} percentage points",
+        f"- Positive net-return windows: {best['positiveNetPct']:.1f}%",
         f"- Median fills per 48h: {best['medianFills']:.1f}",
         "",
         "## Current production method benchmark",
