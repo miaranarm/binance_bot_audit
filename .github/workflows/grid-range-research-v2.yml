@@ -9,7 +9,7 @@ on:
       - '.github/workflows/grid-range-research-v2.yml'
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   research:
@@ -36,3 +36,17 @@ jobs:
           path: research_output_v2/
           if-no-files-found: warn
           retention-days: 30
+
+      - name: Publish learned configuration for production
+        if: success()
+        run: |
+          set -e
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add results/learned_grid_config.json
+          if git diff --cached --quiet; then
+            echo "Learned configuration unchanged."
+            exit 0
+          fi
+          git commit -m "research: update validated Spot Grid configuration [skip ci]"
+          git push origin HEAD:main
