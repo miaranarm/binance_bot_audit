@@ -267,7 +267,8 @@ def main():
     # All parameter variants for a given block therefore stay on the same side of the split.
     times = np.array(sorted(d.blockTime.dropna().unique()))
     hold_rows = []
-    cutoff = (pd.Timestamp(times[max(0, min(len(times)-1, int(math.floor(len(times)*0.70))))]).tz_localize("UTC")
+cutoff_index = max(0, min(len(times) - 1, int(math.floor(len(times) * 0.70)))) if len(times) else 0
+    cutoff = pd.Timestamp(times[cutoff_index]).tz_localize("UTC") if len(times) else None
               if len(times) else None
     train = d[d.blockTime < cutoff] if cutoff is not None else d.iloc[0:0]
     test = d[d.blockTime >= cutoff] if cutoff is not None else d.iloc[0:0]
