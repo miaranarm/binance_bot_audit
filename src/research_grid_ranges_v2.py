@@ -131,6 +131,7 @@ def simulate(close, low, high, n, mode, capital_quote, quote_usdt):
     qty = per_order_quote / close[0]
     # Each grid level has a resting order side; a fill flips that level to the opposite side.
     side = ["buy" if x < close[0] else "sell" if x > close[0] else None for x in levels]
+    bought_cells = [False] * n
     fills = cycles = 0
     cycle_profit = fees = 0.0
     prev = close[0]
@@ -143,7 +144,7 @@ def simulate(close, low, high, n, mode, capital_quote, quote_usdt):
                     fee = cost * FEE
                     if quote >= cost + fee:
                         quote -= cost + fee; base += qty; fees += fee; fills += 1
-                        side[j] = None; side[j + 1] = "sell"
+                        side[j] = None; side[j + 1] = "sell"; bought_cells[j] = True
         elif px > prev:
             for j in range(1, n + 1):
                 if prev < levels[j] <= px and side[j] == "sell":
@@ -152,8 +153,10 @@ def simulate(close, low, high, n, mode, capital_quote, quote_usdt):
                     if base >= qty:
                         quote += proceeds - fee; base -= qty; fees += fee; fills += 1
                         side[j] = None; side[j - 1] = "buy"
-                        cycle_profit += qty * (levels[j] - levels[j-1]) - FEE * qty * (levels[j] + levels[j-1])
-                        cycles += 1
+                        if bought_cells[j - 1]:
+                            cycle_profit += qty * (levels[j] - levels[j-1]) - FEE * qty * (levels[j] + levels[j-1])
+                            cycles += 1
+                            bought_cells[j - 1] = False
         prev = px
     final = quote + base * close[-1]
     passive = capital_quote / 2 + capital_quote / 2 * close[-1] / close[0]
