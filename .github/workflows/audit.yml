@@ -66,8 +66,6 @@ jobs:
           (
             github.event.head_commit != null &&
             !contains(github.event.head_commit.message, 'audit: hourly snapshot') &&
-            !contains(github.event.head_commit.message, 'extrema diagnostic bootstrap') &&
-            !contains(github.event.head_commit.message, 'extrema diagnostic report')
           )
         )
       )
