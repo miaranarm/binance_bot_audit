@@ -30,7 +30,7 @@ MAX_GRIDS = 20
 GRID_COUNTS = (3, 4, 5, 6, 8, 10, 12, 16, 20)
 WIDTHS_SIGMA = (0.5, 0.75, 1.0, 1.25, 1.5, 2.0)
 ASYMMETRIES = ((1.0, 1.0), (0.75, 1.5), (1.5, 0.75), (0.5, 2.0), (2.0, 0.5))
-MAX_HISTORY_DAYS = 30
+MAX_HISTORY_DAYS = None  # Use the complete retained project history; never roll off older observations.
 MIN_CANDLES = 96
 
 
@@ -197,7 +197,8 @@ def main():
         hist = hist.dropna(subset=["ts", "price"]).sort_values("ts")
         if len(hist) < 12:
             continue
-        start_ms = int(max(hist.ts.iloc[0], hist.ts.iloc[-1] - MAX_HISTORY_DAYS*86400)*1000)
+        start_ts = float(hist.ts.iloc[0]) if MAX_HISTORY_DAYS is None else max(float(hist.ts.iloc[0]), float(hist.ts.iloc[-1]) - MAX_HISTORY_DAYS*86400)
+        start_ms = int(start_ts*1000)
         end_ms = int(hist.ts.iloc[-1]*1000)
         quote = quote_asset(symbol)
         conversion = quote_to_usdt(symbol, quote, prices) if quote else None
@@ -312,6 +313,7 @@ def main():
     best = summary.iloc[0] if not summary.empty else None
     lines = ["# Spot Grid research v2 — candle-based, research only", "",
       f"- Symbols with usable histories: {d.symbol.nunique()}",
+      f"- History policy: full retained project snapshot history from each pair's first stored observation (no rolling 30-day cutoff).",
       f"- 15-minute candle simulations: {len(d):,}",
       f"- Quote conversion is required for a 100 USDT-equivalent notional; pairs without a snapshot conversion are listed as excluded, not silently treated as USDT.",
       f"- Minimum order: {MIN_ORDER_USDT:.2f} USDT-equivalent; minimum grid spacing: {MIN_STEP_PCT*100:.2f}%; maximum grids: {MAX_GRIDS}.",
