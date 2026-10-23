@@ -97,12 +97,28 @@ def get_klines(symbol, start_ms, end_ms):
 
 
 def quote_to_usdt(symbol, quote, prices):
+    """Convert one unit of quote asset to USDT using explicit snapshot pairs only."""
     if quote == "USDT":
         return 1.0
-    # Use a current conversion pair only when it is explicitly present in the snapshot.
-    for candidate in (quote + "USDT", quote + "USDC", quote + "FDUSD"):
-        if candidate in prices and prices[candidate] > 0:
-            return prices[candidate] if candidate.endswith("USDT") else None
+    direct = prices.get(quote + "USDT")
+    if direct is not None and math.isfinite(float(direct)) and float(direct) > 0:
+        return float(direct)
+    # Cross stablecoin conversions are only used when both legs are observed.
+    stable_usdt = {"USDC": prices.get("USDCUSDT"),
+                   "FDUSD": prices.get("FDUSDUSDT"),
+                   "TUSD": prices.get("TUSDUSDT"),
+                   "USDP": prices.get("USDPUSDT"),
+                   "USD1": prices.get("USD1USDT")}
+    for bridge in ("USDC", "FDUSD"):
+        cross = prices.get(quote + bridge)
+        bridge_rate = stable_usdt.get(bridge)
+        if cross is not None and bridge_rate is not None:
+            try:
+                value = float(cross) * float(bridge_rate)
+                if math.isfinite(value) and value > 0:
+                    return value
+            except (TypeError, ValueError):
+                pass
     return None
 
 
@@ -246,27 +262,51 @@ def main():
     summary = summary.sort_values(["meanCycleProfitPct","medianCycleProfitPct","meanExcessVsPassivePct"], ascending=False)
     summary.to_csv(OUT/"grid_range_research_summary.csv", index=False)
     d["blockTime"] = pd.to_datetime(d.startUTC, utc=True)
-    cutoff = d.blockTime.quantile(.70)
-    train = d[d.blockTime < cutoff]
-    test = d[d.blockTime >= cutoff]
+    # Chronological holdout split is made on distinct time blocks, not individual rows.
+    # All parameter variants for a given block therefore stay on the same side of the split.
+    times = np.array(sorted(d.blockTime.dropna().unique()))
     hold_rows = []
-    if not train.empty and not test.empty and not summary.empty:
-        train_sum = train.groupby(keys, dropna=False).agg(trainMeanCycleProfitPct=("cycleProfitPct","mean"),
-            trainWindows=("symbol","size"), trainPairs=("symbol","nunique")).reset_index()
-        train_sum = train_sum[train_sum.trainPairs >= max(3, int(train.symbol.nunique()*0.10))]
+    cutoff = pd.Timestamp(times[max(0, min(len(times)-1, int(math.floor(len(times)*0.70))))], tz="UTC") if len(times) else None
+    train = d[d.blockTime < cutoff] if cutoff is not None else d.iloc[0:0]
+    test = d[d.blockTime >= cutoff] if cutoff is not None else d.iloc[0:0]
+    if not train.empty and not test.empty:
+        train_sum = train.groupby(keys, dropna=False).agg(
+            trainMeanCycleProfitPct=("cycleProfitPct","mean"),
+            trainMedianCycleProfitPct=("cycleProfitPct","median"),
+            trainWindows=("symbol","size"), trainPairs=("symbol","nunique"),
+            trainPositiveWindowPct=("cycleProfitPct", lambda x: 100*(x > 0).mean())
+        ).reset_index()
+        # Require at least three pairs and several independent chronological windows.
+        min_train_pairs = max(3, int(math.ceil(train.symbol.nunique()*0.10)))
+        train_sum = train_sum[(train_sum.trainPairs >= min_train_pairs) & (train_sum.trainWindows >= 6)]
         if not train_sum.empty:
-            chosen = train_sum.sort_values("trainMeanCycleProfitPct", ascending=False).iloc[0]
+            # Select only on training cycle profit; never use holdout metrics for selection.
+            chosen = train_sum.sort_values(
+                ["trainMeanCycleProfitPct", "trainMedianCycleProfitPct", "trainPositiveWindowPct"],
+                ascending=False).iloc[0]
             mask = pd.Series(True, index=test.index)
             for k in keys:
                 mask &= test[k].eq(chosen[k])
             hold = test[mask]
             if not hold.empty:
-                hold_rows.append({"evaluation":"TRAIN_SELECTED_ON_LATER_TIME_BLOCK","trainCutoffUTC":cutoff.isoformat(),
-                    **{k:chosen[k] for k in keys}, "trainWindows":int(chosen.trainWindows),
-                    "holdoutWindows":len(hold), "holdoutPairs":hold.symbol.nunique(),
-                    "meanCycleProfitPct":hold.cycleProfitPct.mean(),"medianCycleProfitPct":hold.cycleProfitPct.median(),
-                    "meanNetReturnPct":hold.netReturnPct.mean(),"meanExcessVsPassivePct":hold.excessVsPassivePct.mean(),
-                    "positiveCycleProfitPct":100*(hold.cycleProfitPct>0).mean()})
+                hold_rows.append({
+                    "evaluation":"TRAIN_SELECTED_ON_LATER_TIME_BLOCK",
+                    "trainCutoffUTC":cutoff.isoformat(),
+                    **{k:chosen[k] for k in keys},
+                    "trainWindows":int(chosen.trainWindows),
+                    "trainPairs":int(chosen.trainPairs),
+                    "trainMeanCycleProfitPct":float(chosen.trainMeanCycleProfitPct),
+                    "trainPositiveWindowPct":float(chosen.trainPositiveWindowPct),
+                    "holdoutWindows":int(len(hold)),
+                    "holdoutDistinctTimeBlocks":int(hold.blockTime.nunique()),
+                    "holdoutPairs":int(hold.symbol.nunique()),
+                    "holdoutMeanCycleProfitPct":float(hold.cycleProfitPct.mean()),
+                    "holdoutMedianCycleProfitPct":float(hold.cycleProfitPct.median()),
+                    "holdoutPositiveWindowPct":float(100*(hold.cycleProfitPct > 0).mean()),
+                    "holdoutMeanNetReturnPct":float(hold.netReturnPct.mean()),
+                    "holdoutMeanExcessVsPassivePct":float(hold.excessVsPassivePct.mean()),
+                    "validationAdequate":bool(hold.symbol.nunique() >= 3 and hold.blockTime.nunique() >= 3)
+                })
     pd.DataFrame(hold_rows).to_csv(OUT/"grid_range_research_holdout.csv", index=False)
     pd.DataFrame(errors).to_csv(OUT/"grid_range_research_data_issues.csv", index=False)
     best = summary.iloc[0] if not summary.empty else None
@@ -287,8 +327,10 @@ def main():
           f"- Median cycle profit: {best.medianCycleProfitPct:.4f}%; median completed cycles: {best.medianCycles:.1f}.",
           f"- Mean total portfolio return: {best.meanNetReturnPct:.4f}%; mean excess vs passive: {best.meanExcessVsPassivePct:.4f} pp.", ""]
     lines += ["## Validation and data issues", "",
-      f"- Later-time holdout rows: {len(hold_rows)}.",
+      f"- Distinct chronological test blocks: {d.blockTime.nunique()}.",
+      f"- Later-time holdout result rows: {len(hold_rows)}.",
       f"- Pair/data exclusions: {len(errors)} (see grid_range_research_data_issues.csv).",
+      "- A holdout is considered adequate only with at least 3 pairs and 3 distinct later-time blocks; otherwise evidence remains insufficient.",
       "- Do not deploy a configuration solely because it ranks first in the same sample; require positive later-block cycle profit and inspect mark-to-market losses.", ""]
     (OUT/"grid_range_research_summary.md").write_text("\n".join(lines), encoding="utf-8")
     print("\n".join(lines))
