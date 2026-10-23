@@ -22,7 +22,9 @@ FEE_RATE = 0.001
 HOLD_HOURS = 48
 WARMUP_DAYS = 7
 STEP_HOURS = 24
-GRID_COUNTS = (5, 10)
+GRID_COUNTS = (3, 4, 5, 6, 8, 10)
+GRID_MODES = ("GEOMETRIC", "ARITHMETIC")
+INITIAL_CAPITAL_USDT = 100.0
 FIXED_WIDTHS = (0.05, 0.08, 0.10, 0.12, 0.15, 0.20, 0.25, 0.30, 0.40)
 VOL_MULTIPLIERS = (0.5, 0.75, 1.0, 1.25, 1.5, 2.0, 2.5, 3.0)
 ASYM_MULTIPLIERS = (0.5, 0.75, 1.0, 1.5, 2.0, 3.0)
@@ -94,11 +96,13 @@ def sigma_horizon(prices, timestamps, i, hours=96):
     return float(np.std(returns, ddof=0) * math.sqrt(hours * 3600 / step))
 
 
-def simulate(prices, low, high, grid_count):
+def simulate(prices, low, high, grid_count, grid_mode):
     start, end = float(prices[0]), float(prices[-1])
     if not (0 < low < start < high) or len(prices) < 2:
         return None
-    levels = np.geomspace(low, high, grid_count + 1)
+    levels = (np.geomspace(low, high, grid_count + 1)
+              if grid_mode == "GEOMETRIC"
+              else np.linspace(low, high, grid_count + 1))
     states = [None] * len(levels)
     for i, level in enumerate(levels):
         if level < start:
@@ -109,7 +113,7 @@ def simulate(prices, low, high, grid_count):
     sell_count = sum(side == "sell" for side in states)
     if not buy_levels or sell_count == 0:
         return None
-    initial = 2000.0
+    initial = INITIAL_CAPITAL_USDT
     quote, base = initial / 2, (initial / 2) / start
     qty = min(quote / sum(buy_levels), base / sell_count) * 0.98
     fills, fees, previous = 0, 0.0, start
@@ -207,7 +211,7 @@ def candidates(prices, timestamps, i):
     high = observed_high * 1.03
     if 0 < low < start < high:
         result.append(("CURRENT_METHOD", None, 5, low, high))
-    return result
+    return [(*candidate, mode) for candidate in result for mode in GRID_MODES]
 
 
 def main():
@@ -234,8 +238,8 @@ def main():
                 target += STEP_HOURS * 3600
                 continue
             test_prices = prices[i:end_i + 1]
-            for name, param, count, low, high in candidates(prices, timestamps, i):
-                metrics = simulate(test_prices, low, high, count)
+            for name, param, count, low, high, mode in candidates(prices, timestamps, i):
+                metrics = simulate(test_prices, low, high, count, mode)
                 if metrics is None:
                     continue
                 detail.append({
@@ -244,6 +248,7 @@ def main():
                     "strategy": name,
                     "parameter": param,
                     "gridCount": count,
+                    "gridMode": mode,
                     "lowVsStartPct": (low / prices[i] - 1) * 100,
                     "highVsStartPct": (high / prices[i] - 1) * 100,
                     **metrics,
@@ -254,7 +259,7 @@ def main():
     df = pd.DataFrame(detail)
     OUT.mkdir(parents=True, exist_ok=True)
     df.to_csv(OUT / "grid_range_research_detail.csv", index=False)
-    summary = df.groupby(["strategy", "parameter", "gridCount"], dropna=False).agg(
+    summary = df.groupby(["strategy", "parameter", "gridCount", "gridMode"], dropna=False).agg(
         testWindows=("excessVsHoldPct", "size"),
         meanNetReturnPct=("netReturnPct", "mean"),
         medianNetReturnPct=("netReturnPct", "median"),
@@ -279,7 +284,8 @@ def main():
         f"- Historical snapshot files read: {file_count}",
         f"- Pairs with simulations: {df['symbol'].nunique()}",
         f"- Pair × time-window × strategy simulations: {len(df):,}",
-        f"- Holding period: {HOLD_HOURS} hours; starting portfolio: 50% quote / 50% base.",
+        f"- Holding period: {HOLD_HOURS} hours; starting capital: {INITIAL_CAPITAL_USDT:.0f} USDT, split 50% quote / 50% base.",
+        f"- Grid counts tested: {list(GRID_COUNTS)}; modes: {list(GRID_MODES)}.",
         f"- Assumed fee: {FEE_RATE * 100:.2f}% per fill.",
         "- Primary objective: highest average net portfolio return; excess vs passive 50/50 hold is also reported.",
         "- Simplified simulator on periodic snapshots, not an exact Binance execution replay.",
@@ -287,7 +293,7 @@ def main():
         "",
         "## Highest average net return in this sample",
         "",
-        f"- Strategy: {best['strategy']}; grid count {int(best['gridCount'])}",
+        f"- Strategy: {best['strategy']}; grid count {int(best['gridCount'])}; mode {best['gridMode']}",
         f"- Mean net return: {best['meanNetReturnPct']:.4f}%",
         f"- Mean excess vs hold: {best['meanExcessVsHoldPct']:.4f} percentage points",
         f"- Median excess vs hold: {best['medianExcessVsHoldPct']:.4f} percentage points",
