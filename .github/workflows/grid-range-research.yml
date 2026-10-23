@@ -1,0 +1,34 @@
+name: Grid Range Research
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'src/research_grid_ranges.py'
+      - '.github/workflows/grid-range-research.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  research:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install pandas numpy
+      - name: Compare Spot Grid ranges on stored historical snapshots
+        run: python src/research_grid_ranges.py
+      - name: Upload research results
+        uses: actions/upload-artifact@v4
+        with:
+          name: grid-range-research
+          path: research_output/
+          if-no-files-found: error
+          retention-days: 30
