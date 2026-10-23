@@ -21,7 +21,8 @@ Pas de classement : les colonnes `rank` et `score` existent mais restent vides. 
 | `src/validate.py` | Contrôles `raw` (provenance) puis `final` (schéma et calculs) |
 | `src/build_multicriteria.py` | Réécrit le CSV brut au format final figé de 31 colonnes |
 | `src/build_current_price.py` | Prix par paire et extrêmes observés / Binance listing |
-| `src/build_grid_setup.py` | Fourchette Spot Grid indicative à partir de l'historique et filtre d'entrée 72 h |
+| `src/build_grid_setup.py` | Fourchette Spot Grid indicative, apprentissage walk-forward de la limite basse et filtre d'entrée 72 h |
+| `results/current_price_learning.csv` | Diagnostics de l'apprentissage : historique, épisodes, volatilité 96 h, multiplicateur et taux de sorties par le bas |
 | `src/replay_tst_grid.py` | Simulation historique spécifique TSTUSDT (approximation, non-exécution Binance) |
 | `tests/` | Tests unitaires et test de bout en bout sur données synthétiques |
 | `.github/workflows/audit.yml` | Pipeline horaire (HH:15) + tests et scan complet sur pull request |
@@ -43,3 +44,10 @@ Une collecte est exhaustive uniquement si `scan_meta.json` indique `collection_c
 `audit_all.py` → `validate.py raw` → `build_multicriteria.py` → `validate.py final` → `build_current_price.py` → `build_grid_setup.py`. Les pages de détail sont visitées dans la limite d'un budget de temps, dans un ordre qui change chaque heure ; les bots non visités restent en estimation, clairement distinguée de l'exact.
 
 Manuel : **Actions → Binance Public Bot Audit → Run workflow**, ou commentaire `/audit-run` sur l'issue d'exploitation. Python 3.11, dépendances dans `requirements.txt` (plus `pandas` et `numpy`).
+
+
+## Apprentissage de la fourchette Spot Grid
+
+À partir d'au moins 14 jours d'historique, `build_grid_setup.py` estime la volatilité relative des 96 dernières heures et rejoue des départs historiques espacés de 6 heures sur un horizon futur de 96 heures. Pour chaque départ, le prix le plus bas connu jusque-là et la volatilité connue à ce moment servent à calculer la limite basse candidate. Le script choisit le plus petit multiplicateur testé dont le taux historique de cassure basse ne dépasse pas 5 %. Si aucun multiplicateur ne satisfait la cible, le plus grand testé est retenu et `targetMet` reste faux. Les données insuffisantes déclenchent un repli sur la marge fixe de 3 %.
+
+Les diagnostics sont écrits dans `results/current_price_learning.csv`; ce fichier doit rester conservé avec les résultats courants. La limite haute reste le plus haut observé × 1,03. Le filtre d'entrée `WAIT_HIGH_RANGE` continue d'utiliser la position dans le range et le z-score sur 72 heures. L'apprentissage vise à réduire les sorties par le bas ; il ne garantit ni un profit positif ni l'absence de perte, et ses statistiques dépendent du régime de marché historique.
