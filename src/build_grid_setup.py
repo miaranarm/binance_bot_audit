@@ -244,6 +244,13 @@ def main():
 
         if symbol not in history or not math.isfinite(current_price) or current_price <= 0:
             data.at[index, "setupSignal"] = "NO_DATA"
+            learning_rows.append({
+                "symbol": symbol, "historyDays": 0, "learningActive": False,
+                "learningReason": "NO_DATA", "episodes": 0, "volatility96hPct": None,
+                "selectedMultiplier": None, "lowerExitRatePct": None,
+                "targetLowerExitRatePct": TARGET_LOWER_EXIT_RATE * 100,
+                "targetMet": False, "candidateExitRatesPct": "",
+            })
             continue
 
         timestamps, prices = history[symbol]
