@@ -388,12 +388,19 @@ def main():
         "",
         "## Chronological holdout (configuration selected on training period only)",
         "",
-        *([...(holdout_summary.empty ? ["- Holdout unavailable: insufficient distinct timestamps."] : holdout_summary.to_dict("records").map(r => "- " + r["evaluation"] + ": " + str(r["holdoutWindows"]) + " windows; mean net " + format(r["meanNetReturnPct"], ".4f") + "%; mean excess vs hold " + format(r["meanExcessVsHoldPct"], ".4f") + " pp; positive net windows " + format(r["positiveNetPct"], ".1f") + "%."))]),
+        *(
+            ["- Holdout unavailable: insufficient distinct timestamps."]
+            if holdout_summary.empty else [
+                f"- {r['evaluation']}: {int(r['holdoutWindows'])} windows; mean net {r['meanNetReturnPct']:.4f}%; "
+                f"mean excess vs hold {r['meanExcessVsHoldPct']:.4f} pp; positive net windows {r['positiveNetPct']:.1f}%."
+                for r in holdout_summary.to_dict("records")
+            ]
+        ),
         "",
         "Full detail, aggregate CSV and chronological holdout CSV are attached to the workflow run.",
     ]
-    (OUT / "grid_range_research_summary.md").write_text("\\n".join(lines) + "\\n", encoding="utf-8")
-    print("\\n".join(lines))
+    (OUT / "grid_range_research_summary.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
+    print("\n".join(lines))
 
 
 if __name__ == "__main__":
