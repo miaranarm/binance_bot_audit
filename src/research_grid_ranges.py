@@ -308,7 +308,7 @@ def main():
             else:
                 chosen_mask &= holdout[key].eq(chosen[key])
         selected_test = holdout[chosen_mask]
-        current_test = holdout[holdout["strategy"].eq("CURRENT_METHOD")]
+        current_test = holdout[holdout["strategy"].eq("CURRENT_METHOD") & holdout["gridMode"].eq("GEOMETRIC")]
         holdout_rows = []
         for label, part in [("TRAIN_SELECTED_CONFIG_ON_HOLDOUT", selected_test),
                             ("CURRENT_METHOD_ON_HOLDOUT", current_test)]:
