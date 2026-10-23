@@ -146,8 +146,10 @@ def learn_lower_multiplier(timestamps, prices):
 
     candidate_rates = {}
     for multiplier in LOWER_MULTIPLIERS:
-        exits = sum(future_low < known_low * (1 - multiplier * vol)
-                    for known_low, vol, future_low in episodes)
+        exits = sum(
+            future_low < known_low * max(0.01, 1 - multiplier * vol)
+            for known_low, vol, future_low in episodes
+        )
         candidate_rates[str(multiplier)] = exits / len(episodes)
 
     eligible = [m for m in LOWER_MULTIPLIERS
@@ -181,7 +183,7 @@ def recommend_setup(timestamps, prices, current_price):
 
     learning = learn_lower_multiplier(timestamps, prices)
     if learning["active"] and learning["multiplier"] is not None and learning["volatility"] is not None:
-        price_low = observed_low * (1 - learning["multiplier"] * learning["volatility"])
+        price_low = observed_low * max(0.01, 1 - learning["multiplier"] * learning["volatility"])
     else:
         price_low = observed_low * (1 - MARGIN)
 
