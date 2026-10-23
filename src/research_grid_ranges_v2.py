@@ -309,6 +309,37 @@ def main():
                     "validationAdequate":bool(hold.symbol.nunique() >= 3 and hold.blockTime.nunique() >= 3)
                 })
     pd.DataFrame(hold_rows).to_csv(OUT/"grid_range_research_holdout.csv", index=False)
+    # Production may consume only a family selected on earlier blocks and positive on an adequate later holdout.
+    config_path = ROOT / "results" / "learned_grid_config.json"
+    config_path.parent.mkdir(parents=True, exist_ok=True)
+    learned_config = {
+        "schemaVersion": 1,
+        "source": "research_grid_ranges_v2",
+        "historyPolicy": "full_retained_project_history",
+        "validationAdequate": False,
+        "holdoutMeanCycleProfitPct": None,
+        "widthSigma": None,
+        "lowAsymmetry": None,
+        "highAsymmetry": None,
+        "gridCount": None,
+        "gridMode": None,
+        "status": "NO_ADEQUATE_PROFITABLE_HOLDOUT",
+        "updatedUTC": datetime.now(timezone.utc).isoformat()
+    }
+    if hold_rows:
+        candidate = hold_rows[0]
+        if candidate["validationAdequate"] and candidate["holdoutMeanCycleProfitPct"] > 0:
+            learned_config.update({
+                "validationAdequate": True,
+                "holdoutMeanCycleProfitPct": candidate["holdoutMeanCycleProfitPct"],
+                "widthSigma": float(candidate["widthSigma"]),
+                "lowAsymmetry": float(candidate["lowAsymmetry"]),
+                "highAsymmetry": float(candidate["highAsymmetry"]),
+                "gridCount": int(candidate["gridCount"]),
+                "gridMode": str(candidate["gridMode"]),
+                "status": "ACTIVE_VALIDATED_HOLDOUT"
+            })
+    config_path.write_text(json.dumps(learned_config, indent=2) + "\\n", encoding="utf-8")
     pd.DataFrame(errors).to_csv(OUT/"grid_range_research_data_issues.csv", index=False)
     best = summary.iloc[0] if not summary.empty else None
     lines = ["# Spot Grid research v2 — candle-based, research only", "",
