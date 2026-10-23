@@ -14,6 +14,12 @@ on:
     - cron: "15 * * * *"
   push:
     branches: [main]
+    paths:
+      - 'src/**'
+      - 'tests/**'
+      - '.github/workflows/audit.yml'
+      - 'requirements.txt'
+      - 'results/**'
   pull_request:
     branches: [main]
     paths: ['src/**', 'tests/**', '.github/workflows/audit.yml', 'requirements.txt']
