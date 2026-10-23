@@ -31,7 +31,14 @@ class RecommendSetupTests(unittest.TestCase):
         self.assertIsNone(gs.HISTORY_DAYS)
         times = np.arange(400, dtype=float) * 86400.0 / 4                       # 100 jours de points
         prices = np.concatenate([[50.0], np.full(399, 100.0)])                  # un plus bas très ancien
-        low, high, *_ = gs.recommend_setup(times, prices, 100.0)
+        # Isoler la règle de repli : l'apprentissage adaptatif a ses propres tests.
+        inactive_learning = {
+            "active": False, "multiplier": None, "volatility": None,
+            "episodes": 0, "lower_exit_rate": None, "target_met": False,
+            "reason": "LESS_THAN_14_DAYS", "candidate_rates": {},
+        }
+        with mock.patch.object(gs, "learn_lower_multiplier", return_value=inactive_learning):
+            low, high, *_ = gs.recommend_setup(times, prices, 100.0)
         self.assertAlmostEqual(low, 50.0 * (1 - gs.MARGIN))
 
     def test_range_has_margin_around_observed_extremes(self):
