@@ -1,115 +1,59 @@
+import sys
 import unittest
-from datetime import datetime, timezone
+from pathlib import Path
+from unittest import mock
 
 import numpy as np
-import pandas as pd
 
-from src.build_grid_setup import add_setup_columns, evaluate_rule, simulate_grid
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
+import build_grid_setup as gs  # noqa: E402
+
+HOUR = 3600.0
 
 
-class GridSetupTests(unittest.TestCase):
-    def test_grid_replay_counts_completed_cycles_and_nets_fees(self):
-        prices = [0.95, 0.80, 0.95, 1.10, 0.95, 0.80, 1.10]
-        result = simulate_grid(prices, 0.80, 1.20, 4)
-        self.assertIsNotNone(result)
-        self.assertGreater(result["cycles"], 0)
-        self.assertGreater(result["profit_pct"], 0)
-        self.assertGreaterEqual(result["outside_pct"], 0)
-        self.assertLessEqual(result["outside_pct"], 100)
+def series(values):
+    values = np.asarray(values, dtype=float)
+    return np.arange(len(values), dtype=float) * HOUR, values
 
-    def test_rule_uses_prior_range_and_returns_outside_measure(self):
-        window = {
-            "low72": 0.90,
-            "high72": 1.10,
-            "future": [1.00, 0.95, 1.05, 1.00],
-        }
-        result = evaluate_rule(window, 0.04, 6)
-        self.assertAlmostEqual(result["low"], 0.864)
-        self.assertAlmostEqual(result["high"], 1.144)
-        self.assertGreaterEqual(result["outside_pct"], 0)
-        self.assertLessEqual(result["outside_pct"], 100)
 
-    def test_setup_columns_can_hold_numeric_and_text_values(self):
-        times = np.arange(200, dtype=float) * 3600.0
-        prices = 1.0 + 0.1 * np.sin(np.arange(200, dtype=float) / 10.0)
-        current = pd.DataFrame([{"symbol": "ABCUSDT", "currentPrice": 1.0, "priceLow": 0.8}])
-        output = add_setup_columns(
-            current,
-            {"ABCUSDT": (times, prices)},
-            {},
-            {"bufferPct": 4.0, "gridCount": 6},
-            datetime.now(timezone.utc),
-        )
-        self.assertGreater(float(output.loc[0, "recommendedPriceLow"]), 0)
-        self.assertGreater(float(output.loc[0, "recommendedPriceHigh"]), float(output.loc[0, "recommendedPriceLow"]))
-        self.assertEqual(output.loc[0, "recommendedGridCount"], 6)
-        self.assertIn(output.loc[0, "setupSignal"], {"READY_TO_REVIEW", "WAIT_HIGH_RANGE", "WAIT_OUTSIDE_RANGE"})
+class RecommendSetupTests(unittest.TestCase):
+    def test_columns_always_match_setup_columns(self):
+        times, prices = series([1.0] * 5)                                     # trop peu de points
+        self.assertEqual(len(gs.recommend_setup(times, prices, 1.0)), len(gs.SETUP_COLUMNS))
+        times = np.array([0.0] * 14 + [30 * 86400.0])                           # 14 anciens points, 1 seul récent
+        prices = np.linspace(1.0, 1.1, 15)
+        with mock.patch.object(gs, "HISTORY_DAYS", 11):                         # fenêtre glissante : 1 point récent seulement
+            result = gs.recommend_setup(times, prices, 1.1)
+        self.assertEqual(len(result), len(gs.SETUP_COLUMNS))
+        self.assertEqual(result[-1], "INSUFFICIENT_HISTORY")
 
-    def test_short_history_pair_uses_selected_rule_without_fake_72h_indicators(self):
-        times = np.arange(20, dtype=float) * 3600.0
-        prices = 1.0 + 0.05 * np.sin(np.arange(20, dtype=float) / 3.0)
-        current = pd.DataFrame([{"symbol": "SHORTUSDT", "currentPrice": float(prices[-1])}])
-        chosen = {"bufferPct": 4.0, "gridCount": 5, "gridMode": "GEOMETRIC"}
-        output = add_setup_columns(
-            current, {"SHORTUSDT": (times, prices)}, {}, chosen,
-            datetime.now(timezone.utc),
-        )
-        row = output.iloc[0]
-        self.assertGreater(float(row["recommendedPriceLow"]), 0)
-        self.assertGreater(float(row["recommendedPriceHigh"]), float(row["recommendedPriceLow"]))
-        self.assertEqual(row["recommendedGridCount"], 5)
-        self.assertEqual(row["recommendedGridMode"], "GEOMETRIC")
-        self.assertEqual(row["setupSignal"], "PROVISIONAL_SHORT_HISTORY")
-        self.assertTrue(pd.isna(row["rangePosition72hPct"]))
-        self.assertTrue(pd.isna(row["zScore72h"]))
+    def test_full_history_is_used_by_default(self):
+        self.assertIsNone(gs.HISTORY_DAYS)
+        times = np.arange(400, dtype=float) * 86400.0 / 4                       # 100 jours de points
+        prices = np.concatenate([[50.0], np.full(399, 100.0)])                  # un plus bas très ancien
+        low, high, *_ = gs.recommend_setup(times, prices, 100.0)
+        self.assertAlmostEqual(low, 50.0 * (1 - gs.MARGIN))
 
-    def test_no_selected_rule_does_not_invent_grid_parameters(self):
-        times = np.arange(20, dtype=float) * 3600.0
-        prices = 1.0 + 0.05 * np.sin(np.arange(20, dtype=float) / 3.0)
-        current = pd.DataFrame([{"symbol": "UNVALIDATEDUSDT", "currentPrice": float(prices[-1])}])
-        output = add_setup_columns(
-            current, {"UNVALIDATEDUSDT": (times, prices)}, {}, None,
-            datetime.now(timezone.utc),
-        )
-        row = output.iloc[0]
-        self.assertTrue(pd.isna(row["recommendedPriceLow"]))
-        self.assertTrue(pd.isna(row["recommendedPriceHigh"]))
-        self.assertTrue(pd.isna(row["recommendedGridCount"]))
-        self.assertTrue(pd.isna(row["recommendedGridMode"]))
-        self.assertEqual(row["setupSignal"], "RULE_NOT_VALIDATED")
+    def test_range_has_margin_around_observed_extremes(self):
+        times, prices = series(100 + 5 * np.sin(np.linspace(0, 6 * np.pi, 200)))
+        low, high, count, mode, position, z, signal = gs.recommend_setup(times, prices, float(prices[-1]))
+        self.assertAlmostEqual(low, float(prices.min()) * (1 - gs.MARGIN))
+        self.assertAlmostEqual(high, float(prices.max()) * (1 + gs.MARGIN))
+        self.assertLess(low, float(prices[-1]))
+        self.assertGreater(high, float(prices[-1]))
+        self.assertEqual((count, mode), (gs.GRID_COUNT, gs.GRID_MODE))
 
-    def test_arithmetic_and_geometric_levels_differ(self):
-        from src.build_grid_setup import make_levels
-        arithmetic = make_levels(1.0, 4.0, 3, "ARITHMETIC")
-        geometric = make_levels(1.0, 4.0, 3, "GEOMETRIC")
-        self.assertAlmostEqual(arithmetic[1], 2.0)
-        self.assertNotAlmostEqual(geometric[1], arithmetic[1])
+    def test_wait_when_price_is_high_in_72h_range(self):
+        times, prices = series(np.linspace(100, 120, 120) + np.sin(np.arange(120)))
+        *_, position, z, signal = gs.recommend_setup(times, prices, float(prices[-1]))
+        self.assertGreater(position, 80)
+        self.assertEqual(signal, "WAIT_HIGH_RANGE")
 
-    def test_initial_setup_profit_uses_only_past_data_to_configure(self):
-        from src.build_grid_setup import historical_initial_setup_profit
-        times = np.arange(24 * 12, dtype=float) * 3600.0
-        prices = 1.0 + 0.08 * np.sin(np.arange(len(times), dtype=float) / 7.0)
-        results = historical_initial_setup_profit({"ABCUSDT": (times, prices)})
-        self.assertIn("ABCUSDT", results)
-        self.assertTrue(np.isfinite(results["ABCUSDT"]))
-
-    def test_initial_setup_profit_handles_pairs_added_later(self):
-        from src.build_grid_setup import historical_initial_setup_profit
-        # Pair A establishes the archive start; pair B appears ten days later.
-        times_a = np.arange(24 * 30, dtype=float) * 3600.0
-        prices_a = 1.0 + 0.08 * np.sin(np.arange(len(times_a), dtype=float) / 7.0)
-        times_b = np.arange(24 * 20, dtype=float) * 3600.0 + 10 * 24 * 3600.0
-        prices_b = 2.0 + 0.12 * np.sin(np.arange(len(times_b), dtype=float) / 6.0)
-        results = historical_initial_setup_profit({
-            "EARLYUSDT": (times_a, prices_a),
-            "LATEUSDT": (times_b, prices_b),
-        })
-        self.assertIn("EARLYUSDT", results)
-        self.assertIn("LATEUSDT", results)
-        self.assertTrue(np.isfinite(results["LATEUSDT"]))
-
-    def test_invalid_range_is_rejected(self):
-        self.assertIsNone(simulate_grid([1.0, 1.1], 0.0, 1.0, 6))
+    def test_ready_when_price_is_mid_range(self):
+        times, prices = series(100 + 5 * np.sin(np.linspace(0, 6 * np.pi, 193)))   # finit à 100 (milieu)
+        *_, position, z, signal = gs.recommend_setup(times, prices, float(prices[-1]))
+        self.assertTrue(20 <= position <= 80)
+        self.assertEqual(signal, "READY_TO_REVIEW")
 
 
 if __name__ == "__main__":
