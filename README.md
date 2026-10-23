@@ -23,7 +23,6 @@ Pas de classement : les colonnes `rank` et `score` existent mais restent vides. 
 | `src/build_current_price.py` | Prix par paire et extrêmes observés / Binance listing |
 | `src/build_grid_setup.py` | Fourchette Spot Grid indicative à partir de l'historique et filtre d'entrée 72 h |
 | `src/replay_tst_grid.py` | Simulation historique spécifique TSTUSDT (approximation, non-exécution Binance) |
-| `src/select_bots.py` / `src/history_ranking.py` | Sorties secondaires de présélection et de performance historique, séparées du CSV principal |
 | `tests/` | Tests unitaires et test de bout en bout sur données synthétiques |
 | `.github/workflows/audit.yml` | Pipeline horaire (HH:15) + tests et scan complet sur pull request |
 
@@ -41,6 +40,6 @@ Une collecte est exhaustive uniquement si `scan_meta.json` indique `collection_c
 
 ## Pipeline
 
-`audit_all.py` → `validate.py raw` → `build_multicriteria.py` → `validate.py final`. Les pages de détail sont visitées dans la limite d'un budget de temps, dans un ordre qui change chaque heure ; les bots non visités restent en estimation, clairement distinguée de l'exact.
+`audit_all.py` → `validate.py raw` → `build_multicriteria.py` → `validate.py final` → `build_current_price.py` → `build_grid_setup.py`. Les pages de détail sont visitées dans la limite d'un budget de temps, dans un ordre qui change chaque heure ; les bots non visités restent en estimation, clairement distinguée de l'exact.
 
 Manuel : **Actions → Binance Public Bot Audit → Run workflow**, ou commentaire `/audit-run` sur l'issue d'exploitation. Python 3.11, dépendances dans `requirements.txt` (plus `pandas` et `numpy`).
