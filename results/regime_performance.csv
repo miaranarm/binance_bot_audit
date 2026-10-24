@@ -1,0 +1,6 @@
+regime,nObs,nSymbols,nSlices,medianPnlPct24h,meanPnlPct24hClipped,winRate,medianPnlPct24hCalm,medianTrades24h,exitedRangeRate,tStatVsZero
+MIXED,9930.0,446.0,16,0.0435,0.2809,0.511,0.1692,5.0,0.0521,-0.3707
+RANGE,10024.0,443.0,16,-0.1521,-0.0688,0.4554,-0.0784,5.0,0.0514,-0.3417
+TREND,9594.0,433.0,16,-0.1663,-0.4656,0.4599,0.0053,5.0,0.0595,-0.7203
+UNKNOWN,324.0,61.0,3,0.1395,-3.8283,0.5973,,5.0,,
+RANGE_minus_TREND,,,16,0.1563,,,,,,0.825
