@@ -34,7 +34,7 @@ OUT_COLUMNS = [
     "currentPrice", "rangePositionPct", "gridStepPct",
     "indicatorTimeframe", "dataSource", "nBars", "historyDays",
     "dailyVolPct", "atrPct", "volOverStep",
-    "adx14", "chop14", "hurst", "efficiencyRatio48", "regime",
+    "adx14", "chop14", "hurst", "efficiencyRatio48", "trendScore", "regime",
     "rsi14", "zScore72h", "rangePos72hPct",
     "distToLowATR", "distToHighATR", "exitRisk96hPct",
     "bestIndicators",
@@ -219,6 +219,29 @@ def regime(adx, er, chop=None):
     return "MIXED"
 
 
+def relative_regimes(table, min_group=9):
+    """Régime relatif à l'univers, par fréquence : score de tendance 0-100 = moyenne des rangs
+    percentiles (ADX haut, ratio d'efficacité haut, CHOP bas) ; tiers supérieur = TREND,
+    tiers inférieur = RANGE, milieu = MIXED. `table` : une ligne par (paire, fréquence) avec
+    indicatorTimeframe, adx14, chop14, efficiencyRatio48. Groupe trop petit : seuils absolus."""
+    score = pd.Series(np.nan, index=table.index)
+    label = pd.Series("UNKNOWN", index=table.index)
+    for _, g in table.groupby("indicatorTimeframe"):
+        ranks = pd.concat([g["adx14"].rank(pct=True),
+                           g["efficiencyRatio48"].rank(pct=True),
+                           1 - g["chop14"].rank(pct=True)], axis=1)
+        sc = 100 * ranks.mean(axis=1, skipna=True)
+        score.loc[g.index] = sc
+        if sc.notna().sum() < min_group:
+            for i, row in g.iterrows():
+                label.loc[i] = regime(row["adx14"], row["efficiencyRatio48"], row["chop14"])
+            continue
+        lo, hi = sc.quantile(1 / 3), sc.quantile(2 / 3)
+        label.loc[g.index] = np.where(sc >= hi, "TREND", np.where(sc <= lo, "RANGE", "MIXED"))
+        label.loc[sc.index[sc.isna()]] = "UNKNOWN"
+    return label, score
+
+
 def grid_step_pct(row):
     lo, hi, n, px = row["priceRangeLow"], row["priceRangeHigh"], row["gridCount"], row["currentPrice"]
     if not (lo > 0 and hi > lo and n > 0 and px > 0):
@@ -297,6 +320,18 @@ def main():
         ind.update(indicatorTimeframe=used, dataSource=src)
         cache[(sym, tf)] = ind
 
+    keys = [k for k, v in cache.items() if v is not None]
+    regime_label, regime_score = {}, {}
+    if keys:
+        table = pd.DataFrame([{c: cache[k][c] for c in
+                               ("indicatorTimeframe", "adx14", "chop14", "efficiencyRatio48")}
+                              for k in keys])  # index 0..n-1, même ordre que `keys`
+        no_chop = [i for i, k in enumerate(keys) if cache[k]["dataSource"] != "BINANCE_KLINES"]
+        table.loc[no_chop, "chop14"] = np.nan  # clôtures seules : CHOP non fiable
+        labels, scores = relative_regimes(table)
+        regime_label = dict(zip(keys, labels))
+        regime_score = dict(zip(keys, scores))
+
     rows = []
     for _, b in cur.iterrows():
         ind = cache.get((b["symbol"], b["tfWanted"]))
@@ -312,9 +347,10 @@ def main():
         else:
             r.update({k: ind[k] for k in ind if k not in {"atr", "lastClose"}})
             r["volOverStep"] = ind["dailyVolPct"] / r["gridStepPct"] if r["gridStepPct"] > 0 else np.nan
-            ohlc = ind["dataSource"] == "BINANCE_KLINES"
-            r["regime"] = regime(ind["adx14"], ind["efficiencyRatio48"], ind["chop14"] if ohlc else None)
-            if not ohlc:
+            key = (b["symbol"], b["tfWanted"])
+            r["regime"] = regime_label.get(key, "UNKNOWN")
+            r["trendScore"] = regime_score.get(key, np.nan)
+            if ind["dataSource"] != "BINANCE_KLINES":
                 r["chop14"] = np.nan  # CHOP sur clôtures seules : biaisé, non publié
             atr_abs = ind["atr"] * (px / ind["lastClose"]) if ind["lastClose"] > 0 else np.nan
             r["distToLowATR"] = (px - lo) / atr_abs if atr_abs > 0 else np.nan
