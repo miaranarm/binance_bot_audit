@@ -66,6 +66,35 @@ class RelativeRegimeTests(unittest.TestCase):
         self.assertEqual(label.tolist(), ["RANGE", "TREND", "MIXED"])
 
 
+class ValidatedIndicatorTests(unittest.TestCase):
+    def write(self, rows):
+        import tempfile
+        path = Path(tempfile.mkdtemp()) / "perf.csv"
+        pd.DataFrame(rows, columns=["feature", "target", "signal", "nSlices", "icT"]).to_csv(path, index=False)
+        return path
+
+    def test_keeps_only_significant_pnl_features_ordered_by_abs_t(self):
+        path = self.write([
+            ["gridCount", "pnlPct24h", "SIGNIFICANT", 16, -5.4],
+            ["exitRisk96hPct", "pnlPct24h", "SIGNIFICANT", 16, 7.0],
+            ["adx14", "pnlPct24h", "NOT_SIGNIFICANT", 16, 0.8],
+            ["volOverStep", "trades24h", "SIGNIFICANT", 16, 80.0],     # autre cible : ignoré
+            ["runningDays", "pnlPct24h", "SIGNIFICANT", 16, -4.8],      # pas une colonne du fichier
+            ["rsi14", "pnlPct24h", "SIGNIFICANT", 4, 9.0],              # trop peu de jours
+        ])
+        self.assertEqual(bi.validated_indicators(path), ["exitRisk96hPct", "gridCount"])
+
+    def test_missing_file_gives_rules_only(self):
+        self.assertEqual(bi.validated_indicators(Path("/nonexistent.csv")), [])
+        r = {"rangePositionPct": 50, "volOverStep": 2, "indicatorTimeframe": "1h"}
+        self.assertEqual(bi.best_indicators(r), "adx14|chop14|zScore72h")
+        self.assertEqual(bi.best_indicators(r, ["exitRisk96hPct", "gridCount"]),
+                         "exitRisk96hPct|gridCount|adx14")
+        near = dict(r, rangePositionPct=5)
+        self.assertEqual(bi.best_indicators(near, ["exitRisk96hPct", "gridCount"]),
+                         "exitRisk96hPct|gridCount|distToLowATR")
+
+
 class GeometryTests(unittest.TestCase):
     def test_grid_step_and_exit_risk(self):
         row = {"priceRangeLow": 100.0, "priceRangeHigh": 200.0, "gridCount": 10,
