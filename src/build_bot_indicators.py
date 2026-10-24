@@ -22,6 +22,7 @@ RESULTS = Path("results")
 CURRENT = RESULTS / "current_multicriteria.csv"
 HISTORY = RESULTS / "history"
 OUTPUT = RESULTS / "bot_indicators.csv"
+PERFORMANCE = RESULTS / "indicator_performance.csv"  # écrit par analyze_indicator_performance.py
 
 KLINE_HOSTS = ["https://data-api.binance.vision", "https://api.binance.com"]
 KLINE_BUDGET_S = 600
@@ -261,9 +262,25 @@ def exit_risk(px, lo, hi, daily_vol):
     return 100 * min(1.0, p_low + p_high)
 
 
-def best_indicators(r):
-    """Les 3 indicateurs les plus pertinents pour ce bot (règles, non validées statistiquement)."""
-    picks = []
+def validated_indicators(path=PERFORMANCE, top=2, min_slices=10):
+    """Indicateurs dont le lien avec le PNL réel à 24 h est significatif (|t| >= 2 sur au moins
+    `min_slices` jours) dans l'analyse walk-forward, du plus au moins significatif. Seuls ceux qui sont
+    des colonnes de ce fichier sont retenus. Vide si l'analyse n'existe pas encore."""
+    try:
+        t = pd.read_csv(path)
+    except Exception:
+        return []
+    t = t[(t["target"] == "pnlPct24h") & (t["signal"] == "SIGNIFICANT")
+          & (t["nSlices"] >= min_slices) & t["feature"].isin(OUT_COLUMNS)]
+    t = t.assign(absT=t["icT"].abs()).sort_values("absT", ascending=False)
+    return t["feature"].head(top).tolist()
+
+
+def best_indicators(r, validated=()):
+    """Les 3 indicateurs les plus pertinents pour ce bot : d'abord ceux validés par les résultats réels
+    (au plus 2), puis ceux que dicte la situation du bot (proche d'une borne, peu actif...), puis les
+    indicateurs de régime. Sans validation disponible, ce sont les règles seules."""
+    picks = list(validated)
     pos = r["rangePositionPct"]
     if pd.notna(pos) and (pos < 15 or pos > 85):
         picks += ["distToLowATR" if pos < 15 else "distToHighATR", "exitRisk96hPct"]
@@ -332,6 +349,9 @@ def main():
         regime_label = dict(zip(keys, labels))
         regime_score = dict(zip(keys, scores))
 
+    validated = validated_indicators()
+    print(f"indicateurs validés par l'analyse : {validated or 'aucun (règles seules)'}")
+
     rows = []
     for _, b in cur.iterrows():
         ind = cache.get((b["symbol"], b["tfWanted"]))
@@ -359,7 +379,7 @@ def main():
         r.setdefault("regime", "UNKNOWN")
         r["bestIndicators"] = best_indicators({
             "rangePositionPct": r["rangePositionPct"], "volOverStep": r.get("volOverStep", np.nan),
-            "indicatorTimeframe": r["indicatorTimeframe"]})
+            "indicatorTimeframe": r["indicatorTimeframe"]}, validated)
         rows.append(r)
 
     out = pd.DataFrame(rows).reindex(columns=OUT_COLUMNS).sort_values("strategyId", kind="stable")
