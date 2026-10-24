@@ -128,6 +128,7 @@ jobs:
             -not -name 'current_price.csv' \
             -not -name 'current_price_history.csv' \
             -not -name 'current_price_learning.csv' \
+            -not -name 'bot_indicators.csv' \
             -not -name 'learned_grid_config.json' \
             -delete
           echo "SNAPSHOT=$(python -c "import json; print(json.load(open('results/scan_meta.json'))['snapshot'])")" >> "$GITHUB_ENV"
