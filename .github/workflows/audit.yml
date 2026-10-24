@@ -93,6 +93,8 @@ jobs:
         run: python src/build_current_price.py
       - name: Build per-pair Spot Grid range and 72-hour entry filter from stored prices
         run: python src/build_grid_setup.py
+      - name: Build per-bot indicators (klines Binance si joignables, sinon historique du projet)
+        run: python src/build_bot_indicators.py
 
       - name: Upload scan diagnostics (even if a later step fails)
         if: always()
