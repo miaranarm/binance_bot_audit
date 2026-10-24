@@ -95,6 +95,8 @@ jobs:
         run: python src/build_grid_setup.py
       - name: Build per-bot indicators (klines Binance si joignables, sinon historique du projet)
         run: python src/build_bot_indicators.py
+      - name: Analyse walk-forward indicateurs vs performance réelle des bots
+        run: python src/analyze_indicator_performance.py
 
       - name: Upload scan diagnostics (even if a later step fails)
         if: always()
@@ -129,6 +131,8 @@ jobs:
             -not -name 'current_price_history.csv' \
             -not -name 'current_price_learning.csv' \
             -not -name 'bot_indicators.csv' \
+            -not -name 'indicator_performance.csv' \
+            -not -name 'regime_performance.csv' \
             -not -name 'learned_grid_config.json' \
             -delete
           echo "SNAPSHOT=$(python -c "import json; print(json.load(open('results/scan_meta.json'))['snapshot'])")" >> "$GITHUB_ENV"
