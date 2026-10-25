@@ -8,8 +8,8 @@ Ordre du classement final (rankGridFavorability, 1 = le plus favorable au grid) 
      gridFavorabilityScore (0-100) = 50 % régime de marché (range plutôt que tendance, retour à la moyenne)
      + 25 % prix centré dans la plage + 25 % économie de la grille (profit par grille après frais).
      Les bots sont répartis en 5 niveaux de taille égale (gridFavorabilityLabel).
-  2. à l'intérieur d'un niveau : rentabilité attendue décroissante (% du capital, hors risque) ;
-  3. puis probabilité de réussite à 96 h décroissante.
+  2. à l'intérieur d'un niveau : probabilité de réussite à 96 h décroissante ;
+  3. puis rentabilité attendue décroissante (% du capital, hors risque).
 Pour un tri sur la favorabilité seule, trier sur gridFavorabilityScore. rankProfitability et rankProbability
 donnent les classements globaux de chaque axe.
 
@@ -104,8 +104,8 @@ def score(df):
     d["gridFavorabilityLabel"] = label
     d["_tier"] = tier.where(scored, len(LABELS) + 1)  # sans donnée : après le dernier niveau, conservé
 
-    # Ordre final : niveau de favorabilité, puis rentabilité, puis probabilité.
-    order = d.sort_values(["_tier", "expectedGridReturnPctPerDay", "pSuccess96hPct", "strategyId"],
+    # Ordre final : niveau de favorabilité, puis probabilité, puis rentabilité.
+    order = d.sort_values(["_tier", "pSuccess96hPct", "expectedGridReturnPctPerDay", "strategyId"],
                           ascending=[True, False, False, True], na_position="last").index
     d["rankGridFavorability"] = pd.Series(range(1, len(d) + 1), index=order).reindex(d.index)
     d = d.drop(columns="_tier")
