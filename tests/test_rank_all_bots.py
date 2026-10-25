@@ -59,8 +59,16 @@ class RankingTests(unittest.TestCase):
         self.assertEqual(o.loc[5, "rankGridFavorability"], 6)                      # sans donnée : dernier, conservé
         self.assertEqual(o.loc[5, "gridFavorabilityLabel"], "")
         self.assertLess(o.loc[1, "rankGridFavorability"], o.loc[6, "rankGridFavorability"])   # range avant tendance
-        # même niveau : le plus rentable passe devant
-        self.assertLess(o.loc[2, "rankGridFavorability"], o.loc[1, "rankGridFavorability"])
+        # même niveau : la probabilité passe avant la rentabilité
+        a = bots().iloc[[0, 0]].reset_index(drop=True)
+        a["strategyId"] = [10, 11]
+        a.loc[0, ["volOverStep", "exitRisk96hPct"]] = [1.0, 0.0]    # très sûr mais peu rentable
+        a.loc[1, ["volOverStep", "exitRisk96hPct"]] = [3.0, 60.0]   # rentable mais risqué
+        r = rk.score(a).set_index("strategyId")
+        self.assertEqual(r.loc[10, "gridFavorabilityLabel"], r.loc[11, "gridFavorabilityLabel"])
+        self.assertGreater(r.loc[11, "expectedGridReturnPctPerDay"], r.loc[10, "expectedGridReturnPctPerDay"])
+        self.assertGreater(r.loc[10, "pSuccess96hPct"], r.loc[11, "pSuccess96hPct"])
+        self.assertLess(r.loc[10, "rankGridFavorability"], r.loc[11, "rankGridFavorability"])
         tiers = o.sort_values("rankGridFavorability")["gridFavorabilityLabel"].tolist()
         order = [name for _, name in rk.LABELS]
         idx = [order.index(t) for t in tiers if t]
