@@ -1,0 +1,59 @@
+name: Spot Grid Range Research v2
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'src/research_grid_ranges_v2.py'
+      - '.github/workflows/grid-range-research-v2.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  research:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install research dependencies
+        run: pip install numpy pandas
+      - name: Compile research program
+        run: python -m py_compile src/research_grid_ranges_v2.py
+      - name: Run candle-based Spot Grid research
+        run: python src/research_grid_ranges_v2.py
+      - name: Upload reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: spot-grid-range-research-v2
+          path: research_output_v2/
+          if-no-files-found: warn
+          retention-days: 30
+
+      - name: Publish learned configuration for production
+        if: success()
+        run: |
+          set -e
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          # The audit workflow can commit current_price.csv while research is running.
+          # Preserve this run's research output, fast-forward to the latest main, then publish it.
+          cp results/learned_grid_config.json /tmp/learned_grid_config.json
+          git fetch origin main
+          git reset --hard origin/main
+          mkdir -p results
+          cp /tmp/learned_grid_config.json results/learned_grid_config.json
+          git add results/learned_grid_config.json
+          if git diff --cached --quiet; then
+            echo "Learned configuration unchanged."
+            exit 0
+          fi
+          git commit -m "research: update validated Spot Grid configuration [skip ci]"
+          git push origin HEAD:main
