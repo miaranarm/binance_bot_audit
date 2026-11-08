@@ -1,15 +1,15 @@
 {
-  "scan_utc": "2026-11-08T15:14:04.256632+00:00",
-  "raw_rows": 4702,
-  "spot_grid_bots": 4702,
+  "scan_utc": "2026-11-08T19:45:12.973886+00:00",
+  "raw_rows": 4712,
+  "spot_grid_bots": 4712,
   "collection_complete": true,
   "incomplete_categories": [],
   "collection": {
     "Spot Grid": {
-      "collected": 4702,
-      "unique_collected": 4702,
+      "collected": 4712,
+      "unique_collected": 4712,
       "duplicate_rows": 0,
-      "expected": 4702,
+      "expected": 4712,
       "complete": true,
       "unsupported_response_schema": false
     }
@@ -17,7 +17,7 @@
   "grid_profit_exact": 0,
   "detail_capture": {
     "budget_s": 900,
-    "candidates": 4702,
+    "candidates": 4712,
     "visited": 25,
     "pending": 0,
     "captured": 0,
@@ -26,22 +26,22 @@
     "endpoints_with_profit_fields": [],
     "unparsed_page_samples": [
       {
-        "strategyId": "9798254",
-        "url": "https://www.binance.com/en/trading-bots/spot/grid/detail?symbol=ADAUSDT&strategyId=9798254",
+        "strategyId": "9818638",
+        "url": "https://www.binance.com/en/trading-bots/spot/grid/detail?symbol=BTCU&strategyId=9818638",
         "login_prompt": true,
         "text_start": "Markets\nTrade\nSquare\nTrading Bots\nMarketplace\nMy Bots\nBot Preferences\nBots List\nAll\nSpot\nFutures\nSpot Grid\nBuy low and sell high. 24/7 availability\nFutures Grid\nAutomate your longs and shorts\nPosition Snowball\nCompounding growth with floating profits.\nFutures DCA\nAuto-scale positions, turn losses to gains.\nArbitrage Bot\nDelta neutral strategy to earn Funding Fee effortlessly\nRebalancing Bot\nSmart strategy for a multi-coin portfolio\nSpot DCA\nLower average entry cost, profit from reversals\nSpot TWAP\nEnhance execution of large orders in smaller blocks.\nFutures TWAP\nReduce execution costs by split"
       },
       {
-        "strategyId": "9593941",
-        "url": "https://www.binance.com/en/trading-bots/spot/grid/detail?symbol=%E5%B8%81%E5%AE%89%E4%BA%BA%E7%94%9FUSDT&strategyId=9593941",
+        "strategyId": "9682710",
+        "url": "https://www.binance.com/en/trading-bots/spot/grid/detail?symbol=SOLUSDC&strategyId=9682710",
         "login_prompt": true,
-        "text_start": "Markets\nTrade\nSquare\nDiscover Our Trading Bots\nLearn More\nTrading Bots\nMarketplace\nMy Bots\nBot Preferences\nBots List\nAll\nSpot\nFutures\nSpot Grid\nBuy low and sell high. 24/7 availability\nFutures Grid\nAutomate your longs and shorts\nPosition Snowball\nCompounding growth with floating profits.\nFutures DCA\nAuto-scale positions, turn losses to gains.\nArbitrage Bot\nDelta neutral strategy to earn Funding Fee effortlessly\nRebalancing Bot\nSmart strategy for a multi-coin portfolio\nSpot DCA\nLower average entry cost, profit from reversals\nSpot TWAP\nEnhance execution of large orders in smaller blocks.\nFutures"
+        "text_start": "Markets\nTrade\nSquare\nTrading Bots\nMarketplace\nMy Bots\nBot Preferences\nBots List\nAll\nSpot\nFutures\nSpot Grid\nBuy low and sell high. 24/7 availability\nFutures Grid\nAutomate your longs and shorts\nPosition Snowball\nCompounding growth with floating profits.\nFutures DCA\nAuto-scale positions, turn losses to gains.\nArbitrage Bot\nDelta neutral strategy to earn Funding Fee effortlessly\nRebalancing Bot\nSmart strategy for a multi-coin portfolio\nSpot DCA\nLower average entry cost, profit from reversals\nSpot TWAP\nEnhance execution of large orders in smaller blocks.\nFutures TWAP\nReduce execution costs by split"
       },
       {
-        "strategyId": "9243360",
-        "url": "https://www.binance.com/en/trading-bots/spot/grid/detail?symbol=BTCFDUSD&strategyId=9243360",
+        "strategyId": "10010242",
+        "url": "https://www.binance.com/en/trading-bots/spot/grid/detail?symbol=ENAUSDT&strategyId=10010242",
         "login_prompt": true,
-        "text_start": "Buy Crypto\nMarkets\nTrade\nFutures\nTradFi\n\nNew\n\nEarn\nSquare\nInstitutional\nLog In\nSign Up\nTrading Bots\nMarketplace\nMy Bots\nBot Preferences\nBots List\nAll\nSpot\nFutures\nSpot Grid\nBuy low and sell high. 24/7 availability\nFutures Grid\nAutomate your longs and shorts\nPosition Snowball\nCompounding growth with floating profits.\nFutures DCA\nAuto-scale positions, turn losses to gains.\nArbitrage Bot\nDelta neutral strategy to earn Funding Fee effortlessly\nRebalancing Bot\nSmart strategy for a multi-coin portfolio\nSpot DCA\nLower average entry cost, profit from reversals\nSpot TWAP\nEnhance execution of large orde"
+        "text_start": "Markets\nTrade\nSquare\nTrading Bots\nMarketplace\nMy Bots\nBot Preferences\nBots List\nAll\nSpot\nFutures\nSpot Grid\nBuy low and sell high. 24/7 availability\nFutures Grid\nAutomate your longs and shorts\nPosition Snowball\nCompounding growth with floating profits.\nFutures DCA\nAuto-scale positions, turn losses to gains.\nArbitrage Bot\nDelta neutral strategy to earn Funding Fee effortlessly\nRebalancing Bot\nSmart strategy for a multi-coin portfolio\nSpot DCA\nLower average entry cost, profit from reversals\nSpot TWAP\nEnhance execution of large orders in smaller blocks.\nFutures TWAP\nReduce execution costs by split"
       }
     ]
   },
@@ -65,8 +65,8 @@
     "unresolved_quote_assets": []
   },
   "endpoint_errors": [],
-  "snapshot": "results/history/2026/11/08/20261108T151404Z.csv.gz",
-  "old_snapshots_removed": 3,
+  "snapshot": "results/history/2026/11/08/20261108T194512Z.csv.gz",
+  "old_snapshots_removed": 0,
   "profit_per_grid_fee_reference": "0.10% par ordre (Spot) ; les frais réels varient selon paire / VIP / BNB.",
   "strategy_type_probe_max": 100,
   "limitations": [
@@ -75,7 +75,7 @@
     "Tout strategyType dont la réponse BAPI ne contient pas une liste reconnue reste incomplet, jamais supposé vide."
   ],
   "validation": {
-    "reconstructed": 4702,
+    "reconstructed": 4712,
     "exact": 0,
     "unavailable": 0,
     "unknownSource": 0,
@@ -85,22 +85,22 @@
     "sourceErrors": 0,
     "negativeEstimateRows": 8,
     "ratiosOver100Percent": 0,
-    "estimatedRatiosOver100Percent": 2373,
-    "estimatedRatioOver100PositiveTotal": 2373,
+    "estimatedRatiosOver100Percent": 2362,
+    "estimatedRatioOver100PositiveTotal": 2362,
     "estimatedRatioOver100NegativeTotal": 0,
-    "estimatedRatioOver100PositiveGridProfit": 2373,
+    "estimatedRatioOver100PositiveGridProfit": 2362,
     "estimatedRatioOver100NegativeGridProfit": 0,
-    "estimatedRatioOver100ImpliedFloatingNegative": 2373,
+    "estimatedRatioOver100ImpliedFloatingNegative": 2362,
     "estimatedRatioOver100ImpliedFloatingNonNegative": 0,
     "estimatedRatioOver100Examples": [
       {
         "strategyId": "8205304",
         "symbol": "LINKETH",
         "category": "Spot Grid",
-        "totalProfit": 40529.10766571,
-        "estimatedGridProfitMid": 199099.93839891642,
-        "estimatedRatio": 4.912517197297355,
-        "impliedFloatingProfit": -158570.8307332064,
+        "totalProfit": 42260.78129836,
+        "estimatedGridProfitMid": 198851.0307016513,
+        "estimatedRatio": 4.705332570587569,
+        "impliedFloatingProfit": -156590.2494032913,
         "confidence": "MEDIUM",
         "method": "BINANCE_FORMULA_RECONSTRUCTION_ROUNDED_ROI_AND_GRID_RANGE"
       },
@@ -108,32 +108,32 @@
         "strategyId": "7257253",
         "symbol": "UNIUSDT",
         "category": "Spot Grid",
-        "totalProfit": 8248.46414099,
-        "estimatedGridProfitMid": 12656.364867152415,
-        "estimatedRatio": 1.5343904817695393,
-        "impliedFloatingProfit": -4407.900726162416,
+        "totalProfit": 8289.51169383,
+        "estimatedGridProfitMid": 12525.659452383916,
+        "estimatedRatio": 1.5110250054544154,
+        "impliedFloatingProfit": -4236.147758553916,
         "confidence": "MEDIUM",
         "method": "BINANCE_FORMULA_RECONSTRUCTION_ROUNDED_ROI_AND_GRID_RANGE"
       },
       {
-        "strategyId": "9729271",
-        "symbol": "ASTERUSDT",
+        "strategyId": "10196367",
+        "symbol": "ZECUSDT",
         "category": "Spot Grid",
-        "totalProfit": 6374.5250816,
-        "estimatedGridProfitMid": 7044.325430553952,
-        "estimatedRatio": 1.1050745491436411,
-        "impliedFloatingProfit": -669.8003489539524,
+        "totalProfit": 3654.41463325,
+        "estimatedGridProfitMid": 3775.2253695567115,
+        "estimatedRatio": 1.0330588475668592,
+        "impliedFloatingProfit": -120.81073630671153,
         "confidence": "MEDIUM",
         "method": "BINANCE_FORMULA_RECONSTRUCTION_ROUNDED_ROI_AND_GRID_RANGE"
       },
       {
-        "strategyId": "6883234",
-        "symbol": "CAKEUSDT",
+        "strategyId": "9451652",
+        "symbol": "SOLUSDT",
         "category": "Spot Grid",
-        "totalProfit": 5190.81207822,
-        "estimatedGridProfitMid": 12129.059913628656,
-        "estimatedRatio": 2.336640150106893,
-        "impliedFloatingProfit": -6938.247835408656,
+        "totalProfit": 3418.63083392,
+        "estimatedGridProfitMid": 5364.572366181339,
+        "estimatedRatio": 1.5692166328559114,
+        "impliedFloatingProfit": -1945.941532261339,
         "confidence": "MEDIUM",
         "method": "BINANCE_FORMULA_RECONSTRUCTION_ROUNDED_ROI_AND_GRID_RANGE"
       },
@@ -141,10 +141,10 @@
         "strategyId": "9604825",
         "symbol": "PEPEUSDT",
         "category": "Spot Grid",
-        "totalProfit": 3376.35732621,
-        "estimatedGridProfitMid": 3889.8422741931345,
-        "estimatedRatio": 1.1520825251513078,
-        "impliedFloatingProfit": -513.4849479831346,
+        "totalProfit": 3403.86091932,
+        "estimatedGridProfitMid": 3933.8702628332085,
+        "estimatedRatio": 1.1557082842324504,
+        "impliedFloatingProfit": -530.0093435132085,
         "confidence": "LOW",
         "method": "BINANCE_FORMULA_RECONSTRUCTION_ROUNDED_ROI_AND_GRID_RANGE_FEASIBILITY_CLAMPED"
       },
@@ -152,10 +152,10 @@
         "strategyId": "10048718",
         "symbol": "BTCUSD1",
         "category": "Spot Grid",
-        "totalProfit": 2859.09888367,
-        "estimatedGridProfitMid": 17446.47430308904,
-        "estimatedRatio": 6.102088459666835,
-        "impliedFloatingProfit": -14587.375419419039,
+        "totalProfit": 2826.13838558,
+        "estimatedGridProfitMid": 34596.13539073837,
+        "estimatedRatio": 12.24148667569168,
+        "impliedFloatingProfit": -31769.997005158366,
         "confidence": "LOW",
         "method": "BINANCE_FORMULA_RECONSTRUCTION_ROUNDED_ROI_AND_GRID_RANGE"
       },
@@ -163,32 +163,32 @@
         "strategyId": "9755328",
         "symbol": "BNBBTC",
         "category": "Spot Grid",
-        "totalProfit": 2576.08419505,
-        "estimatedGridProfitMid": 3155.8608359913683,
-        "estimatedRatio": 1.2250612158000975,
-        "impliedFloatingProfit": -579.7766409413684,
+        "totalProfit": 2626.68949308,
+        "estimatedGridProfitMid": 3152.868324735576,
+        "estimatedRatio": 1.2003201493902464,
+        "impliedFloatingProfit": -526.1788316555762,
         "confidence": "MEDIUM",
         "method": "BINANCE_FORMULA_RECONSTRUCTION_ROUNDED_ROI_AND_GRID_RANGE"
       },
       {
-        "strategyId": "7169273",
-        "symbol": "LINKUSDC",
+        "strategyId": "10076299",
+        "symbol": "BNBBTC",
         "category": "Spot Grid",
-        "totalProfit": 2408.84735855,
-        "estimatedGridProfitMid": 5436.077845550154,
-        "estimatedRatio": 2.256713289140242,
-        "impliedFloatingProfit": -3027.230487000154,
-        "confidence": "LOW",
-        "method": "BINANCE_FORMULA_RECONSTRUCTION_ROUNDED_ROI_AND_GRID_RANGE_FEASIBILITY_CLAMPED"
+        "totalProfit": 2309.38396678,
+        "estimatedGridProfitMid": 2561.4155670913383,
+        "estimatedRatio": 1.109133692766885,
+        "impliedFloatingProfit": -252.03160031133848,
+        "confidence": "MEDIUM",
+        "method": "BINANCE_FORMULA_RECONSTRUCTION_ROUNDED_ROI_AND_GRID_RANGE"
       },
       {
         "strategyId": "5533222",
         "symbol": "UNIUSDT",
         "category": "Spot Grid",
-        "totalProfit": 2278.46131789,
-        "estimatedGridProfitMid": 2398.649421067405,
-        "estimatedRatio": 1.0527496790196582,
-        "impliedFloatingProfit": -120.18810317740508,
+        "totalProfit": 2288.68835025,
+        "estimatedGridProfitMid": 2392.8399455831122,
+        "estimatedRatio": 1.0455071112332683,
+        "impliedFloatingProfit": -104.15159533311225,
         "confidence": "MEDIUM",
         "method": "BINANCE_FORMULA_RECONSTRUCTION_ROUNDED_ROI_AND_GRID_RANGE"
       },
@@ -196,15 +196,15 @@
         "strategyId": "9645839",
         "symbol": "BTCUSDT",
         "category": "Spot Grid",
-        "totalProfit": 2183.09178131,
-        "estimatedGridProfitMid": 4262.876471830545,
-        "estimatedRatio": 1.9526785398241644,
-        "impliedFloatingProfit": -2079.7846905205447,
+        "totalProfit": 2174.35179143,
+        "estimatedGridProfitMid": 4269.117069726193,
+        "estimatedRatio": 1.9633975912051171,
+        "impliedFloatingProfit": -2094.765278296193,
         "confidence": "MEDIUM",
         "method": "BINANCE_FORMULA_RECONSTRUCTION_ROUNDED_ROI_AND_GRID_RANGE"
       }
     ],
-    "rows": 4702,
+    "rows": 4712,
     "status": "PASS",
     "examples": []
   }
