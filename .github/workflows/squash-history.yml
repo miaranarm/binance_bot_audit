@@ -1,0 +1,53 @@
+name: Squash history (capacité GitHub)
+
+# Ramène le dépôt à une taille minimale :
+#   1. convertit results/history/ au format allégé (src/compact_history.py, sans effet s'il est déjà converti) ;
+#   2. remplace tout l'historique Git de main par UN commit (les fichiers sont conservés, seuls les anciens commits disparaissent).
+# Lancement manuel (Actions > Squash history > Run workflow) puis automatique chaque dimanche à 04:40 UTC.
+# Nécessite que main accepte les push forcés (pas de protection de branche).
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "40 4 * * 0"
+
+permissions:
+  contents: write
+
+# Même groupe que l'audit horaire : jamais de squash pendant qu'un scan écrit sur main.
+concurrency:
+  group: binance-public-bot-audit
+  cancel-in-progress: false
+
+jobs:
+  squash:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 1
+          # Si GitHub refuse le push (« refusing to allow ... workflow »), créer le secret SQUASH_TOKEN
+          # (jeton personnel avec les droits repo + workflow) : il est utilisé automatiquement.
+          token: ${{ secrets.SQUASH_TOKEN || github.token }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install pandas numpy
+      - name: Convertir l'historique au format allégé
+        run: python src/compact_history.py
+      - name: Retirer les fichiers parasites suivis par Git
+        run: |
+          git rm -r -q --cached --ignore-unmatch src/__pycache__ || true
+          rm -f .github/workflows/test
+      - name: Réécrire main en un seul commit
+        run: |
+          set -e
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout --orphan squashed
+          git add -A
+          git commit -q -m "squash: historique compacté [skip ci]"
+          git push --force origin squashed:main
+          du -sh .git

@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "source": "research_grid_ranges_v2",
+  "historyPolicy": "full_retained_project_history",
+  "validationAdequate": true,
+  "holdoutMeanCycleProfitPct": 0.265964925236138,
+  "widthSigma": 0.5,
+  "lowAsymmetry": 2.0,
+  "highAsymmetry": 0.5,
+  "gridCount": 4,
+  "gridMode": "ARITHMETIC",
+  "status": "ACTIVE_VALIDATED_HOLDOUT",
+  "updatedUTC": "2026-10-23T10:14:07.117578+00:00"
+}
